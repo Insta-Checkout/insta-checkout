@@ -1,0 +1,18 @@
+{
+  "name": "insta-checkout",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/checkout",
+    "apps/landing"
+  ],
+  "scripts": {
+    "dev": "npm run dev:landing",
+    "dev:checkout": "npm run dev --workspace=checkout",
+    "dev:landing": "npm run dev --workspace=landing",
+    "build": "npm run build --workspaces",
+    "build:checkout": "npm run build --workspace=checkout",
+    "build:landing": "npm run build --workspace=landing",
+    "lint": "npm run lint --workspaces"
+  }
+}
