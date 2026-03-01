@@ -6,8 +6,39 @@ import { connectToMongo } from "./db.js"
 const app = express()
 const PORT = process.env.PORT ?? 4000
 
-app.use(cors())
+const allowedOrigins = [
+  "https://instacheckouteg.com",
+  "https://www.instacheckouteg.com",
+  "https://checkout.instacheckouteg.com",
+  "https://landing.instacheckouteg.com",
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002",
+]
+if (process.env.CORS_ORIGINS) {
+  allowedOrigins.push(...process.env.CORS_ORIGINS.split(",").map((o) => o.trim()))
+}
+
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+      cb(null, false)
+    },
+  })
+)
 app.use(express.json())
+
+// Root info
+app.get("/", (_req, res) => {
+  res.json({
+    status: "ok",
+    service: "insta-checkout-backend",
+    version: "0.1.0",
+    endpoints: { health: "/health", db: "/api/health/db" },
+    timestamp: new Date().toISOString(),
+  })
+})
 
 // Health check (no DB required)
 app.get("/health", (_req, res) => {
