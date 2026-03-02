@@ -3,6 +3,7 @@ import { Cairo } from 'next/font/google'
 import { Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
+import { FirebaseAnalytics } from '@/components/firebase-analytics'
 import './globals.css'
 
 const _cairo = Cairo({ subsets: ['arabic', 'latin'], variable: '--font-cairo' })
@@ -32,6 +33,7 @@ export default function RootLayout({
         {children}
         <Toaster position="top-center" richColors />
         <Analytics />
+        <FirebaseAnalytics />
       </body>
     </html>
   )
