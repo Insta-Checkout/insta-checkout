@@ -47,7 +47,7 @@ export function OnboardingForm() {
     };
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+      const apiUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:4000";
       const res = await fetch(`${apiUrl}/sellers`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
