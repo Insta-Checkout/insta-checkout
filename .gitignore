@@ -10,3 +10,7 @@ node_modules/
 .env*.local
 .DS_Store
 .vercel
+
+# Temp/chunk files
+_b64_chunk_*.txt
+_full_b64.txt
