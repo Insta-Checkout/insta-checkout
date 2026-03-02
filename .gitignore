@@ -6,6 +6,11 @@ __v0_jsx-dev-runtime.ts
 # Common ignores
 node_modules/
 .next/
+.env
 .env*.local
 .DS_Store
 .vercel
+
+# Temp/chunk files
+_b64_chunk_*.txt
+_full_b64.txt
