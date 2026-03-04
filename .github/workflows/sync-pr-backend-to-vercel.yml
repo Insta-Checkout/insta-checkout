@@ -1,0 +1,111 @@
+# Sync Railway PR backend URL to Vercel preview deployments
+#
+# When Railway deploys a PR and posts the backend URL in a comment, this workflow:
+# 1. Extracts the backend URL from Railway's PR comment
+# 2. Sets NEXT_PUBLIC_BACKEND_URL for that branch in Vercel
+# 3. Triggers a Vercel redeploy so the preview uses the PR backend
+#
+# Prerequisites:
+# - Railway PR environments enabled (Project Settings → Environments)
+# - Backend service has a Railway domain in the base environment
+# - Vercel project(s) connected to this repo
+#
+# Required secrets:
+# - VERCEL_TOKEN: Vercel API token (create at vercel.com/account/tokens)
+#
+# Optional (for teams):
+# - VERCEL_TEAM_ID: Your Vercel team ID (omit for personal account)
+#
+# Configure Vercel project(s) - use a matrix if you have multiple frontend apps:
+# - VERCEL_PROJECT_IDS: Comma-separated project IDs/names (e.g. "landing,checkout")
+name: Sync PR Backend to Vercel
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  sync:
+    if: github.event.issue.pull_request != null
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check if comment contains Railway deployment
+        id: railway
+        run: |
+          BODY="${{ github.event.comment.body }}"
+          # Extract first Railway URL (https://xxx.railway.app or https://xxx.up.railway.app)
+          URL=$(echo "$BODY" | grep -oE 'https://[a-zA-Z0-9.-]+\.(up\.)?railway\.app' | head -1)
+          if [ -z "$URL" ]; then
+            echo "No Railway deployment URL found in comment, skipping"
+            exit 0
+          fi
+          # Normalize: ensure https, no trailing slash
+          URL="${URL%/}"
+          [[ "$URL" != https://* ]] && URL="https://${URL#*://}"
+          echo "backend_url=$URL" >> $GITHUB_OUTPUT
+          echo "Found Railway URL: $URL"
+
+      - name: Get PR branch
+        if: steps.railway.outputs.backend_url != ''
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+            core.setOutput('branch', pr.data.head.ref);
+
+      - name: Set Vercel env and redeploy
+        if: steps.railway.outputs.backend_url != '' && steps.pr.outputs.branch != ''
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
+          BACKEND_URL: ${{ steps.railway.outputs.backend_url }}
+          BRANCH: ${{ steps.pr.outputs.branch }}
+        run: |
+          set -e
+          PROJECT_IDS="${{ vars.VERCEL_PROJECT_IDS || 'insta-checkout-landing' }}"
+          for PROJECT in ${PROJECT_IDS//,/ }; do
+            PROJECT=$(echo "$PROJECT" | xargs)
+            [ -z "$PROJECT" ] && continue
+            echo "Configuring project: $PROJECT"
+
+            # Create or update env var for this branch (upsert)
+            ENV_URL="https://api.vercel.com/v10/projects/${PROJECT}/env?upsert=true"
+            [ -n "$VERCEL_TEAM_ID" ] && ENV_URL="${ENV_URL}&teamId=${VERCEL_TEAM_ID}"
+            curl -s -X POST "$ENV_URL" \
+              -H "Authorization: Bearer $VERCEL_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"key\": \"NEXT_PUBLIC_BACKEND_URL\",
+                \"value\": \"$BACKEND_URL\",
+                \"type\": \"plain\",
+                \"target\": [\"preview\"],
+                \"gitBranch\": \"$BRANCH\"
+              }" | jq . || true
+
+            # Trigger redeploy for this branch
+            REPO_OWNER="${{ github.repository_owner }}"
+            REPO_NAME="${{ github.event.repository.name }}"
+            DEPLOY_URL="https://api.vercel.com/v13/deployments"
+            [ -n "$VERCEL_TEAM_ID" ] && DEPLOY_URL="${DEPLOY_URL}?teamId=${VERCEL_TEAM_ID}"
+            DEPLOY_BODY=$(curl -s -X POST "$DEPLOY_URL" \
+              -H "Authorization: Bearer $VERCEL_TOKEN" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"name\": \"$PROJECT\",
+                \"gitSource\": {
+                  \"type\": \"github\",
+                  \"ref\": \"$BRANCH\",
+                  \"org\": \"$REPO_OWNER\",
+                  \"repo\": \"$REPO_NAME\"
+                }
+              }")
+            echo "$DEPLOY_BODY" | jq -r '.url // .error.message // .' || echo "$DEPLOY_BODY"
+          done

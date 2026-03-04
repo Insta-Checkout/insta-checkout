@@ -28,7 +28,10 @@ app.use((req, _res, next) => {
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+      if (!origin) return cb(null, true)
+      if (allowedOrigins.includes(origin)) return cb(null, true)
+      // Allow Vercel preview deployments (*.vercel.app)
+      if (/^https:\/\/[a-z0-9-]+\.vercel\.app$/.test(origin)) return cb(null, true)
       cb(null, false)
     },
   })
@@ -49,6 +52,15 @@ app.get("/", (_req, res) => {
 // Health check (no DB required)
 app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() })
+})
+
+// PR environment test - hit this to verify it's the PR deployment
+app.get("/pr-test", (_req, res) => {
+  res.json({
+    message: "PR environment is working!",
+    branch: process.env.RAILWAY_GIT_BRANCH ?? "unknown",
+    timestamp: new Date().toISOString(),
+  })
 })
 
 // Sellers API
