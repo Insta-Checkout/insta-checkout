@@ -54,15 +54,6 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() })
 })
 
-// PR environment test - hit this to verify it's the PR deployment
-app.get("/pr-test", (_req, res) => {
-  res.json({
-    message: "PR environment is working!",
-    branch: process.env.RAILWAY_GIT_BRANCH ?? "unknown",
-    timestamp: new Date().toISOString(),
-  })
-})
-
 // Sellers API
 app.use("/sellers", sellersRouter)
 

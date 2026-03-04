@@ -1,5 +1,4 @@
 import { CreditCard, Instagram } from "lucide-react"
-import { BackendStatus } from "./backend-status"
 
 const productLinks = [
   { label: "الميزات", href: "#features" },
@@ -144,12 +143,9 @@ export function Footer() {
               <FacebookIcon className="h-5 w-5" />
             </a>
           </div>
-          <div className="flex items-center gap-3">
-            <BackendStatus />
-            <p className="text-xs text-footer-muted">
-              {'© ٢٠٢٦ InstaPay Checkout. كل الحقوق محفوظة.'}
-            </p>
-          </div>
+          <p className="text-xs text-footer-muted">
+            {'© ٢٠٢٦ InstaPay Checkout. كل الحقوق محفوظة.'}
+          </p>
         </div>
       </div>
     </footer>
