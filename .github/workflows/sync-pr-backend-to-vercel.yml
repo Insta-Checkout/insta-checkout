@@ -1,9 +1,10 @@
 # Sync Railway PR backend URL to Vercel preview deployments
 #
-# When Railway deploys a PR and posts the backend URL in a comment, this workflow:
-# 1. Extracts the backend URL from Railway's PR comment
-# 2. Sets NEXT_PUBLIC_BACKEND_URL for that branch in Vercel
-# 3. Triggers a Vercel redeploy so the preview uses the PR backend
+# Runs when a PR is opened or updated (from the PR branch - no merge required).
+# 1. Waits for Railway to deploy and post the backend URL in a comment
+# 2. Extracts the backend URL from Railway's PR comment
+# 3. Sets NEXT_PUBLIC_BACKEND_URL for that branch in Vercel
+# 4. Triggers a Vercel redeploy so the preview uses the PR backend
 #
 # Prerequisites:
 # - Railway PR environments enabled (Project Settings → Environments)
@@ -16,58 +17,65 @@
 # Optional (for teams):
 # - VERCEL_TEAM_ID: Your Vercel team ID (omit for personal account)
 #
-# Configure Vercel project(s) - use a matrix if you have multiple frontend apps:
-# - VERCEL_PROJECT_IDS: Comma-separated project IDs/names (e.g. "landing,checkout")
+# Configure Vercel project(s):
+# - VERCEL_PROJECT_IDS: Repo variable, comma-separated (e.g. "insta-checkout-landing,insta-checkout-checkout")
 name: Sync PR Backend to Vercel
 
 on:
-  issue_comment:
-    types: [created, edited]
+  pull_request:
+    types: [opened, synchronize]
 
 jobs:
   sync:
-    if: github.event.issue.pull_request != null
     runs-on: ubuntu-latest
     permissions:
       contents: read
       pull-requests: read
     steps:
-      - name: Check if comment contains Railway deployment
+      - name: Wait for Railway deployment and get backend URL
         id: railway
-        run: |
-          BODY="${{ github.event.comment.body }}"
-          # Extract first Railway URL (https://xxx.railway.app or https://xxx.up.railway.app)
-          URL=$(echo "$BODY" | grep -oE 'https://[a-zA-Z0-9.-]+\.(up\.)?railway\.app' | head -1)
-          if [ -z "$URL" ]; then
-            echo "No Railway deployment URL found in comment, skipping"
-            exit 0
-          fi
-          # Normalize: ensure https, no trailing slash
-          URL="${URL%/}"
-          [[ "$URL" != https://* ]] && URL="https://${URL#*://}"
-          echo "backend_url=$URL" >> $GITHUB_OUTPUT
-          echo "Found Railway URL: $URL"
-
-      - name: Get PR branch
-        if: steps.railway.outputs.backend_url != ''
-        id: pr
         uses: actions/github-script@v7
         with:
           script: |
-            const pr = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            });
-            core.setOutput('branch', pr.data.head.ref);
+            const prNumber = context.payload.pull_request.number;
+            const maxAttempts = 10;
+            const delayMs = 30000;
+
+            for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+              const { data: comments } = await github.rest.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+              });
+
+              for (const comment of comments) {
+                if (comment.user?.login?.includes('railway') && comment.body) {
+                  const match = comment.body.match(/https:\/\/[a-zA-Z0-9.-]+\.(up\.)?railway\.app/);
+                  if (match) {
+                    const url = match[0].replace(/\/$/, '');
+                    core.setOutput('backend_url', url);
+                    core.info(`Found Railway URL: ${url}`);
+                    return;
+                  }
+                }
+              }
+
+              if (attempt < maxAttempts) {
+                core.info(`Attempt ${attempt}/${maxAttempts}: Railway comment not found yet, waiting ${delayMs/1000}s...`);
+                await new Promise(r => setTimeout(r, delayMs));
+              }
+            }
+
+            core.setOutput('backend_url', '');
+            core.warning('Railway deployment URL not found in PR comments after waiting.');
 
       - name: Set Vercel env and redeploy
-        if: steps.railway.outputs.backend_url != '' && steps.pr.outputs.branch != ''
+        if: steps.railway.outputs.backend_url != ''
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
           BACKEND_URL: ${{ steps.railway.outputs.backend_url }}
-          BRANCH: ${{ steps.pr.outputs.branch }}
+          BRANCH: ${{ github.head_ref }}
         run: |
           set -e
           PROJECT_IDS="${{ vars.VERCEL_PROJECT_IDS || 'insta-checkout-landing' }}"
