@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useTranslations } from "@/lib/locale-provider";
+import { auth } from "@/lib/firebase";
 import { StepIndicator } from "./step-indicator";
 import { StepTwo } from "./step-two";
 import { StepThree } from "./step-three";
@@ -60,6 +61,19 @@ export function OnboardingForm() {
         }
 
         if (res.status === 201) {
+          const user = auth.currentUser;
+          if (user) {
+            try {
+              const idToken = await user.getIdToken();
+              await fetch("/api/session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ idToken }),
+              });
+            } catch (e) {
+              console.warn("[Session] Failed to set cookie:", e);
+            }
+          }
           setIsComplete(true);
           return;
         }
