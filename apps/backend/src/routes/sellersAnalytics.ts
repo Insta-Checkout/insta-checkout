@@ -167,4 +167,40 @@ router.get("/orders", async (req: Request, res: Response) => {
   }
 })
 
+router.post("/resend-verification", async (req: Request, res: Response) => {
+  const firebaseUid = req.firebaseUid
+  if (!firebaseUid) {
+    res.status(401).json({ error: "UNAUTHORIZED" })
+    return
+  }
+
+  const sellerId = await getSellerId(firebaseUid)
+  if (!sellerId) {
+    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
+    return
+  }
+
+  try {
+    const db = await connectToMongo()
+    const seller = await db.collection("sellers").findOne({ _id: sellerId })
+    if (!seller?.whatsappNumber) {
+      res.status(400).json({ error: "NO_WHATSAPP", message: "No WhatsApp number" })
+      return
+    }
+    if (seller.whatsappVerified) {
+      res.status(400).json({ error: "ALREADY_VERIFIED", message: "Already verified" })
+      return
+    }
+
+    const { createVerification, sendOtpViaWhatsApp } = await import("../services/verification.js")
+    const { code } = await createVerification(sellerId, seller.whatsappNumber)
+    sendOtpViaWhatsApp(seller.whatsappNumber, code)
+
+    res.json({ success: true, message: "Verification code sent" })
+  } catch (err) {
+    console.error("[POST /sellers/me/resend-verification]", err)
+    res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to send verification" })
+  }
+})
+
 export default router

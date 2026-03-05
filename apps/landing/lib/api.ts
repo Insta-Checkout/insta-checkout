@@ -14,3 +14,15 @@ export async function healthCheck(): Promise<{ status: string }> {
   if (!res.ok) throw new Error(`Health check failed: ${res.status}`)
   return res.json()
 }
+
+/** Fetch with Firebase ID token for authenticated backend calls. */
+export async function fetchWithAuth(
+  url: string,
+  options: RequestInit = {},
+  getToken: () => Promise<string | null>
+): Promise<Response> {
+  const token = await getToken()
+  const headers = new Headers(options.headers)
+  if (token) headers.set("Authorization", `Bearer ${token}`)
+  return fetch(url, { ...options, headers })
+}
