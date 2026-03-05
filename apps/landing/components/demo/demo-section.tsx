@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { DemoForm } from "./demo-form";
-import type { BusinessType } from "./smart-defaults";
+import { BUSINESS_TYPES, type BusinessType } from "./smart-defaults";
+
+const FIRST_CATEGORY = BUSINESS_TYPES[0].value;
 
 export function DemoSection() {
-  const [selectedCategory, setSelectedCategory] = useState<BusinessType | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<BusinessType>(FIRST_CATEGORY);
 
-  const ctaHref = selectedCategory
-    ? `/onboard?category=${encodeURIComponent(selectedCategory)}`
-    : "/onboard";
+  const ctaHref = `/onboard?category=${encodeURIComponent(selectedCategory)}`;
 
   return (
     <section id="demo" className="bg-white px-4 py-16 lg:px-8 lg:py-24">

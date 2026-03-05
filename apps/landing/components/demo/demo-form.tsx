@@ -1,21 +1,29 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useCallback, useEffect } from "react";
+import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CheckoutPreview } from "@/components/onboarding/checkout-preview";
 import { BusinessTypePills } from "./business-type-pills";
-import { getDefaults, type BusinessType } from "./smart-defaults";
+import { getDefaults, BUSINESS_TYPES, type BusinessType } from "./smart-defaults";
 
 interface DemoFormProps {
-  onCategoryChange?: (category: BusinessType | null) => void;
+  onCategoryChange?: (category: BusinessType) => void;
 }
 
+const FIRST_CATEGORY = BUSINESS_TYPES[0].value;
+
 export function DemoForm({ onCategoryChange }: DemoFormProps) {
-  const [selectedType, setSelectedType] = useState<BusinessType | null>(null);
-  const [productName, setProductName] = useState("");
-  const [price, setPrice] = useState<number | "">("");
+  const [selectedType, setSelectedType] = useState<BusinessType>(FIRST_CATEGORY);
+  const defaults = getDefaults(FIRST_CATEGORY);
+  const [productName, setProductName] = useState(defaults.defaultProduct);
+  const [price, setPrice] = useState<number | "">(defaults.defaultPrice);
+
+  // Notify parent component of initial category selection
+  useEffect(() => {
+    onCategoryChange?.(FIRST_CATEGORY);
+  }, [onCategoryChange]);
 
   const handleTypeSelect = useCallback(
     (type: BusinessType) => {
@@ -27,8 +35,6 @@ export function DemoForm({ onCategoryChange }: DemoFormProps) {
     },
     [onCategoryChange]
   );
-
-  const hasSelection = selectedType !== null;
 
   return (
     <div className="grid gap-6 md:grid-cols-2 md:gap-8">
@@ -78,41 +84,20 @@ export function DemoForm({ onCategoryChange }: DemoFormProps) {
 
       {/* Preview — left side in RTL */}
       <div className="flex items-center justify-center order-2 md:order-2">
-        <AnimatePresence mode="wait">
-          {hasSelection ? (
-            <motion.div
-              key="preview"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
-            >
-              <CheckoutPreview
-                businessName="اسم البيزنس بتاعك"
-                productName={productName || "اسم المنتج"}
-                price={typeof price === "number" ? price : 0}
-                businessType={selectedType ?? "Food & Desserts"}
-                inPhoneFrame
-                disabled
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="placeholder"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex flex-col items-center justify-center gap-4 rounded-[2rem] border-[3px] border-dashed border-[#E2E8F0] bg-[#FAFAF9] w-[280px] h-[400px] p-6"
-            >
-              <div className="flex flex-col items-center gap-2 text-center">
-                <span className="text-4xl">📱</span>
-                <p className="text-sm font-medium text-[#64748B]">
-                  اختار نوع البيزنس عشان تشوف البريفيو 👆
-                </p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          <CheckoutPreview
+            businessName="اسم البيزنس بتاعك"
+            productName={productName || "اسم المنتج"}
+            price={typeof price === "number" ? price : 0}
+            businessType={selectedType}
+            inPhoneFrame
+            disabled
+          />
+        </motion.div>
       </div>
     </div>
   );
