@@ -295,6 +295,7 @@
       "googleNotEnabled": "Google sign-in is not enabled — enable it in Firebase Console",
       "unauthorizedDomain": "This domain is not allowed — add it in Firebase → Authorized domains",
       "emailInUse": "This email is already registered. Try signing in instead.",
+      "emailInUseSignIn": "Email already registered. Signing you in…",
       "emailNotEnabled": "Email sign-up is not enabled — enable it in Firebase Console",
       "invalidCredentials": "Wrong email or password. Try again.",
       "userNotFound": "No account with this email. Create a new account first.",
@@ -360,6 +361,23 @@
     "meta": {
       "title": "Dashboard — InstaPay Checkout",
       "description": "Your dashboard — coming soon"
+    },
+    "sidebar": {
+      "home": "Home",
+      "products": "Products",
+      "links": "Payment Links",
+      "settings": "Settings"
+    },
+    "products": {
+      "name": "Name",
+      "namePlaceholder": "Product name",
+      "nameTranslationEn": "Translation (English) (optional)",
+      "nameTranslationEnPlaceholder": "Product name in English",
+      "nameTranslationAr": "Translation (Arabic) (optional)",
+      "nameTranslationArPlaceholder": "اسم المنتج بالعربي",
+      "addProduct": "Add product",
+      "editProduct": "Edit product",
+      "startWithFirst": "Start by adding your first product"
     },
     "title": "Welcome to your dashboard",
     "subtitle": "Your store dashboard — soon you'll be able to see orders, add products, and send payment links to customers.",

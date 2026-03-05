@@ -295,6 +295,7 @@
       "googleNotEnabled": "تسجيل الدخول بجوجل مش مفعّل — فعّله من Firebase Console",
       "unauthorizedDomain": "الدومين ده مش مسموح — أضفه في Firebase → Authorized domains",
       "emailInUse": "الإيميل ده مسجل. جرّب تسجيل الدخول بدل التسجيل.",
+      "emailInUseSignIn": "الإيميل مسجل. بنسجّل دخولك…",
       "emailNotEnabled": "التسجيل بالإيميل مش مفعّل — فعّله من Firebase Console",
       "invalidCredentials": "الإيميل أو كلمة السر غلط. جرّب تاني.",
       "userNotFound": "مفيش حساب بالإيميل ده. سجّل حساب جديد أولاً.",
@@ -360,6 +361,23 @@
     "meta": {
       "title": "لوحة التحكم — InstaPay Checkout",
       "description": "لوحة التحكم الخاصة بك — قريباً"
+    },
+    "sidebar": {
+      "home": "الرئيسية",
+      "products": "المنتجات",
+      "links": "لينكات الدفع",
+      "settings": "الإعدادات"
+    },
+    "products": {
+      "name": "الاسم",
+      "namePlaceholder": "اسم المنتج",
+      "nameTranslationEn": "الترجمة بالإنجليزي (اختياري)",
+      "nameTranslationEnPlaceholder": "Product name in English",
+      "nameTranslationAr": "الترجمة بالعربي (اختياري)",
+      "nameTranslationArPlaceholder": "اسم المنتج بالعربي",
+      "addProduct": "إضافة منتج",
+      "editProduct": "تعديل المنتج",
+      "startWithFirst": "ابدأ بإضافة أول منتج"
     },
     "title": "مرحباً في لوحتك",
     "subtitle": "لوحة التحكم الخاصة بمتجرك — قريباً هتقدر تشوف أوردراتك، تضيف منتجات، وتبعَت لينكات الدفع لعملاءك.",

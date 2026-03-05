@@ -26,6 +26,17 @@ function createEmailSchema(t: (key: string) => string) {
 
 type EmailFormData = z.infer<ReturnType<typeof createEmailSchema>>;
 
+async function setSessionCookie() {
+  const user = auth.currentUser;
+  if (!user) return;
+  const idToken = await user.getIdToken();
+  await fetch("/api/session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ idToken }),
+  });
+}
+
 export default function LoginPage() {
   const { t } = useTranslations();
   const router = useRouter();
@@ -43,8 +54,13 @@ export default function LoginPage() {
   });
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
       if (user) {
+        try {
+          await setSessionCookie();
+        } catch (e) {
+          console.warn("[Session] Failed to set cookie:", e);
+        }
         router.replace("/dashboard");
       }
     });
@@ -55,6 +71,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await signInWithGoogle();
+      await setSessionCookie();
       toast.success(t("onboard.errors.signInSuccess"));
       router.replace("/dashboard");
     } catch (err: unknown) {
@@ -77,6 +94,7 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       await signInWithEmail(data.email, data.password);
+      await setSessionCookie();
       toast.success(t("onboard.errors.signInSuccess"));
       router.replace("/dashboard");
     } catch (err: unknown) {

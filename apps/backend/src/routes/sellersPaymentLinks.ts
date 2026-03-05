@@ -59,13 +59,17 @@ router.get("/payment-links", async (req: Request, res: Response) => {
     ])
 
     const productIds = [...new Set(items.map((i) => i.productId?.toString()).filter(Boolean))]
-    const productMap: Record<string, { name: string }> = {}
+    const productMap: Record<string, { name: string; nameAr?: string | null; nameEn?: string | null }> = {}
     if (productIds.length > 0) {
       const prods = await products
         .find({ _id: { $in: productIds.map((id) => new ObjectId(id)) } })
         .toArray()
       prods.forEach((p) => {
-        productMap[p._id.toString()] = { name: p.name }
+        productMap[p._id.toString()] = {
+          name: p.name,
+          nameAr: p.nameAr ?? null,
+          nameEn: p.nameEn ?? null,
+        }
       })
     }
 
@@ -73,6 +77,8 @@ router.get("/payment-links", async (req: Request, res: Response) => {
       id: i._id,
       productId: i.productId,
       productName: productMap[i.productId?.toString()]?.name ?? "—",
+      productNameAr: productMap[i.productId?.toString()]?.nameAr ?? null,
+      productNameEn: productMap[i.productId?.toString()]?.nameEn ?? null,
       checkoutUrl: i.checkoutUrl ?? "",
       status: i.status ?? "active",
       createdAt: i.createdAt,
@@ -135,6 +141,8 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
       sellerId,
       productId,
       productName: product.name,
+      productNameAr: product.nameAr ?? null,
+      productNameEn: product.nameEn ?? null,
       price: product.price,
       checkoutUrl,
       status: "active",

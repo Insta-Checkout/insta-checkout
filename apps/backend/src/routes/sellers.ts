@@ -80,6 +80,7 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     const db = await connectToMongo()
+    const dbName = db.databaseName
     const sellers = db.collection("sellers")
 
     // Indexes created separately (createIndex blocks for minutes on Atlas)
@@ -105,7 +106,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
     const result = await sellers.insertOne(doc)
-    console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, firebaseUid=${firebaseUid}`)
+    console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, firebaseUid=${firebaseUid}, db=${dbName}`)
 
     try {
       const { code } = await createVerification(result.insertedId as ObjectId, whatsappNumber)

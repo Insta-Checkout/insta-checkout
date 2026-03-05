@@ -2,16 +2,24 @@
 
 import { usePathname } from "next/navigation";
 import { SidebarLink } from "./SidebarLink";
-import { Home, Package, Link2, Settings } from "lucide-react";
+import { Home, Package, Link2, Settings, Languages } from "lucide-react";
+import { useTranslations } from "@/lib/locale-provider";
+import { LOCALES } from "@insta-checkout/i18n";
 
 const NAV_ITEMS = [
-  { label: "الرئيسية", href: "/dashboard/home", icon: Home },
-  { label: "المنتجات", href: "/dashboard/products", icon: Package },
-  { label: "لينكات الدفع", href: "/dashboard/links", icon: Link2 },
+  { labelKey: "dashboard.sidebar.home", href: "/dashboard/home", icon: Home },
+  { labelKey: "dashboard.sidebar.products", href: "/dashboard/products", icon: Package },
+  { labelKey: "dashboard.sidebar.links", href: "/dashboard/links", icon: Link2 },
 ];
+
+const LOCALE_LABELS: Record<string, string> = {
+  ar: "العربية",
+  en: "English",
+};
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { locale, setLocale, t } = useTranslations();
 
   return (
     <nav className="flex flex-col h-full py-6">
@@ -25,17 +33,31 @@ export function Sidebar() {
             key={item.href}
             href={item.href}
             icon={item.icon}
-            label={item.label}
+            label={t(item.labelKey)}
             active={pathname.startsWith(item.href)}
           />
         ))}
       </div>
 
-      <div className="px-3 pt-4 border-t border-slate-200">
+      <div className="px-3 pt-4 border-t border-slate-200 space-y-1">
+        <div className="flex items-center gap-2 px-3 py-2">
+          <Languages className="h-4 w-4 text-slate-400" />
+          <select
+            value={locale}
+            onChange={(e) => setLocale(e.target.value as "ar" | "en")}
+            className="flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm font-cairo"
+          >
+            {LOCALES.map((l) => (
+              <option key={l} value={l}>
+                {LOCALE_LABELS[l]}
+              </option>
+            ))}
+          </select>
+        </div>
         <SidebarLink
           href="/dashboard/settings"
           icon={Settings}
-          label="الإعدادات"
+          label={t("dashboard.sidebar.settings")}
           active={pathname.startsWith("/dashboard/settings")}
         />
       </div>

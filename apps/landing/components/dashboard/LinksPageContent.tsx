@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { getBackendUrl, fetchWithAuth } from "@/lib/api";
+import { useTranslations } from "@/lib/locale-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,11 +14,18 @@ import { toast } from "sonner";
 type PaymentLink = {
   id: string;
   productName: string;
+  productNameAr?: string | null;
+  productNameEn?: string | null;
   checkoutUrl: string;
   status: string;
   createdAt: string;
   paidAt: string | null;
 };
+
+function getLinkProductDisplayName(l: PaymentLink, locale: string): string {
+  if (locale === "ar") return l.productNameAr || l.productName;
+  return l.productNameEn || l.productName;
+}
 
 const statusConfig: Record<string, { label: string; className: string }> = {
   active: { label: "نشط", className: "bg-blue-100 text-blue-700" },
@@ -27,6 +35,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 };
 
 export function LinksPageContent() {
+  const { locale } = useTranslations();
   const [links, setLinks] = useState<PaymentLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,6 +57,11 @@ export function LinksPageContent() {
       );
       if (!res.ok) {
         if (res.status === 401) return;
+        if (res.status === 404) {
+          setLinks([]);
+          setLoading(false);
+          return;
+        }
         throw new Error(`Failed: ${res.status}`);
       }
       const data = await res.json();
@@ -68,8 +82,9 @@ export function LinksPageContent() {
     toast.success("تم نسخ اللينك")
   };
 
-  const shareWhatsApp = (url: string, productName: string) => {
-    const text = encodeURIComponent(`المنتج: ${productName}\nلينك الدفع: ${url}`)
+  const shareWhatsApp = (url: string, link: PaymentLink) => {
+    const displayName = getLinkProductDisplayName(link, locale);
+    const text = encodeURIComponent(`المنتج: ${displayName}\nلينك الدفع: ${url}`)
     window.open(
       `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "201000000000"}?text=${text}`,
       "_blank"
@@ -140,16 +155,25 @@ export function LinksPageContent() {
           ))}
         </div>
       ) : links.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Link2 className="mx-auto h-12 w-12 text-slate-300" />
-            <p className="mt-4 font-cairo text-slate-500">لا يوجد لينكات حتى الآن</p>
-            <p className="mt-1 text-sm font-cairo text-slate-400">
-              أنشئ منتجاً ثم أنشئ لينك دفع منه
-            </p>
-            <Link href="/dashboard/products">
-              <Button className="mt-4 font-cairo">الذهاب للمنتجات</Button>
-            </Link>
+        <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/30">
+          <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center sm:flex-row sm:text-right">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/15">
+              <Link2 className="h-10 w-10 text-primary" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold text-slate-900 font-cairo">
+                لا يوجد لينكات دفع حتى الآن
+              </h2>
+              <p className="max-w-md text-slate-600 font-cairo">
+                أنشئ منتجاً أولاً، ثم أنشئ لينك دفع منه لشاركه مع عملائك. بمجرد إنشاء اللينك، ستظهر هنا جميع لينكاتك مع إمكانية النسخ والمشاركة.
+              </p>
+              <Link href="/dashboard/products">
+                <Button className="mt-2 gap-2 font-cairo">
+                  <Package className="h-4 w-4" />
+                  الذهاب للمنتجات
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       ) : (
@@ -183,7 +207,7 @@ export function LinksPageContent() {
                 return (
                   <tr key={link.id} className="border-t border-slate-100">
                     <td className="px-4 py-3 font-medium text-slate-900">
-                      {link.productName}
+                      {getLinkProductDisplayName(link, locale)}
                     </td>
                     <td className="px-4 py-3">
                       <code className="max-w-[200px] truncate block text-xs text-slate-500">
@@ -215,7 +239,7 @@ export function LinksPageContent() {
                               variant="ghost"
                               size="sm"
                               onClick={() =>
-                                shareWhatsApp(link.checkoutUrl, link.productName)
+                                shareWhatsApp(link.checkoutUrl, link)
                               }
                             >
                               <MessageCircle className="h-4 w-4" />

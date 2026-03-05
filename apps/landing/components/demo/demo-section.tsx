@@ -1,16 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { DemoForm } from "./demo-form";
 import { BUSINESS_TYPES, type BusinessType } from "./smart-defaults";
 
 const FIRST_CATEGORY = BUSINESS_TYPES[0].value;
 
+const UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"];
+
 export function DemoSection() {
   const [selectedCategory, setSelectedCategory] = useState<BusinessType>(FIRST_CATEGORY);
+  const searchParams = useSearchParams();
 
-  const ctaHref = `/onboard?category=${encodeURIComponent(selectedCategory)}`;
+  const ctaHref = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set("category", selectedCategory);
+    UTM_KEYS.forEach((key) => {
+      const val = searchParams.get(key);
+      if (val) params.set(key, val);
+    });
+    return `/onboard?${params.toString()}`;
+  }, [selectedCategory, searchParams]);
 
   return (
     <section id="demo" className="bg-white px-4 py-16 lg:px-8 lg:py-24">

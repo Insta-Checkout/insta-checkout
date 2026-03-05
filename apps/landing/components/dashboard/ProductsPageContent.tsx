@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
+import { auth, uploadProductImage } from "@/lib/firebase";
 import { getBackendUrl, fetchWithAuth } from "@/lib/api";
+import { useTranslations } from "@/lib/locale-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,22 +12,30 @@ import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Package, Plus, Pencil, Trash2, Link2, Copy, MessageCircle } from "lucide-react";
+import { Package, Plus, Pencil, Trash2, Link2, Copy, MessageCircle, ImagePlus } from "lucide-react";
 import { toast } from "sonner";
 
 type Product = {
   id: string;
   name: string;
+  nameAr?: string | null;
+  nameEn?: string | null;
   price: number;
   description: string | null;
   imageUrl: string | null;
   category: string | null;
   status: string;
 };
+
+function getProductDisplayName(p: Product, locale: string): string {
+  if (locale === "ar") return p.nameAr || p.name;
+  return p.nameEn || p.name;
+}
 
 function formatEgp(n: number): string {
   return (
@@ -39,15 +48,22 @@ function formatEgp(n: number): string {
 }
 
 export function ProductsPageContent() {
+  const { t, locale } = useTranslations();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formName, setFormName] = useState("");
+  const [formNameTranslation, setFormNameTranslation] = useState("");
   const [formPrice, setFormPrice] = useState("");
   const [formDescription, setFormDescription] = useState("");
+  const [formCategory, setFormCategory] = useState("");
+  const [formImageUrl, setFormImageUrl] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [saving, setSaving] = useState(false);
+
+  const CATEGORIES = ["حلويات", "ملابس", "إلكترونيات", "خدمات", "أخرى"];
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [generatedLink, setGeneratedLink] = useState<{
     checkoutUrl: string;
@@ -70,6 +86,11 @@ export function ProductsPageContent() {
       );
       if (!res.ok) {
         if (res.status === 401) return;
+        if (res.status === 404) {
+          setProducts([]);
+          setLoading(false);
+          return;
+        }
         throw new Error(`Failed: ${res.status}`);
       }
       const data = await res.json();
@@ -88,31 +109,69 @@ export function ProductsPageContent() {
   const openCreate = () => {
     setEditingId(null);
     setFormName("");
+    setFormNameTranslation("");
     setFormPrice("");
     setFormDescription("");
+    setFormCategory("");
+    setFormImageUrl(null);
     setModalOpen(true);
   };
 
   const openEdit = (p: Product) => {
     setEditingId(p.id);
     setFormName(p.name);
+    setFormNameTranslation(locale === "ar" ? (p.nameEn || "") : (p.nameAr || ""));
     setFormPrice(String(p.price));
     setFormDescription(p.description || "");
+    setFormCategory(p.category || "");
+    setFormImageUrl(p.imageUrl);
     setModalOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !auth.currentUser) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("يرجى اختيار صورة");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("حجم الصورة يجب أن يكون أقل من 5 ميجابايت");
+      return;
+    }
+    setUploadingImage(true);
+    try {
+      const url = await uploadProductImage(file, auth.currentUser.uid, editingId);
+      setFormImageUrl(url);
+      toast.success("تم رفع الصورة");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "فشل رفع الصورة");
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const name = formName.trim();
     const price = parseFloat(formPrice);
+    const translation = formNameTranslation.trim() || null;
     if (!name || name.length < 2) {
-      toast.error("الاسم مطلوب (حرفين على الأقل)");
+      toast.error(locale === "ar" ? "الاسم مطلوب (حرفين على الأقل)" : "Name is required (at least 2 characters)");
       return;
     }
     if (isNaN(price) || price <= 0) {
-      toast.error("السعر يجب أن يكون رقماً موجباً");
+      toast.error(locale === "ar" ? "السعر يجب أن يكون رقماً موجباً" : "Price must be a positive number");
       return;
     }
+    const payload = {
+      name,
+      price,
+      description: formDescription.trim() || null,
+      imageUrl: formImageUrl || null,
+      category: formCategory.trim() || null,
+      ...(locale === "ar" ? { nameEn: translation } : { nameAr: translation }),
+    };
     setSaving(true);
     try {
       if (editingId) {
@@ -121,38 +180,32 @@ export function ProductsPageContent() {
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name,
-              price,
-              description: formDescription.trim() || null,
-            }),
+            body: JSON.stringify(payload),
           },
           getToken
         );
         if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.details?.[0] || "فشل التحديث");
+          const err = await res.json().catch(() => ({}));
+          const msg = err.message || err.details?.[0] || (locale === "ar" ? "فشل التحديث" : "Update failed");
+          throw new Error(msg);
         }
-        toast.success("تم تحديث المنتج");
+        toast.success(locale === "ar" ? "تم تحديث المنتج" : "Product updated");
       } else {
         const res = await fetchWithAuth(
           `${getBackendUrl()}/sellers/me/products`,
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name,
-              price,
-              description: formDescription.trim() || null,
-            }),
+            body: JSON.stringify(payload),
           },
           getToken
         );
         if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.details?.[0] || "فشل الإنشاء");
+          const err = await res.json().catch(() => ({}));
+          const msg = err.message || err.details?.[0] || (locale === "ar" ? "فشل الإنشاء" : "Create failed");
+          throw new Error(msg);
         }
-        toast.success("تم إضافة المنتج");
+        toast.success(locale === "ar" ? "تم إضافة المنتج" : "Product added");
       }
       setModalOpen(false);
       loadProducts();
@@ -179,7 +232,7 @@ export function ProductsPageContent() {
       const data = await res.json();
       setGeneratedLink({
         checkoutUrl: data.checkoutUrl,
-        productName: p.name,
+        productName: getProductDisplayName(p, locale),
         expiresAt: data.expiresAt,
       });
       setLinkModalOpen(true);
@@ -249,7 +302,7 @@ export function ProductsPageContent() {
         <h1 className="text-2xl font-bold text-slate-900 font-cairo">المنتجات</h1>
         <Button onClick={openCreate} className="gap-2 font-cairo">
           <Plus className="h-4 w-4" />
-          إضافة منتج
+          {t("dashboard.products.addProduct")}
         </Button>
       </div>
 
@@ -260,21 +313,42 @@ export function ProductsPageContent() {
           ))}
         </div>
       ) : products.length === 0 ? (
-        <Card>
-          <CardContent className="py-16 text-center">
-            <Package className="mx-auto h-12 w-12 text-slate-300" />
-            <p className="mt-4 font-cairo text-slate-500">ابدأ بإضافة أول منتج</p>
-            <Button onClick={openCreate} className="mt-4 font-cairo">
-              إضافة منتج
-            </Button>
+        <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/30">
+          <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center sm:flex-row sm:text-right">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/15">
+              <Package className="h-10 w-10 text-primary" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-xl font-bold text-slate-900 font-cairo">
+                {locale === "ar" ? "ابدأ بإضافة منتجك الأول" : "Add your first product"}
+              </h2>
+              <p className="max-w-md text-slate-600 font-cairo">
+                {locale === "ar"
+                  ? "أضف منتجاتك مع السعر والوصف، ثم أنشئ لينكات دفع لشاركها مع عملائك على واتساب أو أي منصة."
+                  : "Add your products with price and description, then create payment links to share with customers on WhatsApp or any platform."}
+              </p>
+              <Button onClick={openCreate} className="mt-2 gap-2 font-cairo">
+                <Plus className="h-4 w-4" />
+                {t("dashboard.products.addProduct")}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {products.map((p) => (
-            <Card key={p.id} className="font-cairo">
+            <Card key={p.id} className="font-cairo overflow-hidden">
+              {p.imageUrl && (
+                <div className="aspect-video w-full bg-slate-100">
+                  <img
+                    src={p.imageUrl}
+                    alt={getProductDisplayName(p, locale)}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
               <CardHeader className="flex flex-row items-start justify-between pb-2">
-                <CardTitle className="text-lg">{p.name}</CardTitle>
+                <CardTitle className="text-lg">{getProductDisplayName(p, locale)}</CardTitle>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs ${
                     p.status === "active"
@@ -286,9 +360,16 @@ export function ProductsPageContent() {
                 </span>
               </CardHeader>
               <CardContent>
-                <p className="text-xl font-bold text-primary font-mono">
-                  {formatEgp(p.price)}
-                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="text-xl font-bold text-primary font-mono">
+                    {formatEgp(p.price)}
+                  </p>
+                  {p.category && (
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+                      {p.category}
+                    </span>
+                  )}
+                </div>
                 {p.description && (
                   <p className="mt-2 text-sm text-slate-500 line-clamp-2">
                     {p.description}
@@ -340,22 +421,73 @@ export function ProductsPageContent() {
         <DialogContent className="font-cairo sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {editingId ? "تعديل المنتج" : "إضافة منتج"}
+              {editingId ? t("dashboard.products.editProduct") : t("dashboard.products.addProduct")}
             </DialogTitle>
+            <DialogDescription>
+              {editingId ? (locale === "ar" ? "تعديل تفاصيل المنتج" : "Edit product details") : (locale === "ar" ? "أضف منتج جديد للكتالوج" : "Add a new product to your catalog")}
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="name">الاسم</Label>
+              <Label htmlFor="image">{locale === "ar" ? "صورة المنتج (اختياري)" : "Product image (optional)"}</Label>
+              <div className="mt-1 flex items-center gap-3">
+                {formImageUrl ? (
+                  <div className="relative">
+                    <img
+                      src={formImageUrl}
+                      alt="معاينة"
+                      className="h-20 w-20 rounded-lg object-cover border border-slate-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setFormImageUrl(null)}
+                      className="absolute -top-1 -right-1 rounded-full bg-red-500 text-white text-xs w-5 h-5"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ) : (
+                  <label className="flex h-20 w-20 cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-slate-200 hover:border-primary/50 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleImageUpload}
+                      disabled={uploadingImage}
+                    />
+                    {uploadingImage ? (
+                      <span className="text-xs text-slate-500">جاري الرفع...</span>
+                    ) : (
+                      <ImagePlus className="h-8 w-8 text-slate-400" />
+                    )}
+                  </label>
+                )}
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="name">{t("dashboard.products.name")}</Label>
               <Input
                 id="name"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                placeholder="اسم المنتج"
+                placeholder={t("dashboard.products.namePlaceholder")}
                 className="mt-1"
               />
             </div>
             <div>
-              <Label htmlFor="price">السعر (ج.م)</Label>
+              <Label htmlFor="nameTranslation">
+                {locale === "ar" ? t("dashboard.products.nameTranslationEn") : t("dashboard.products.nameTranslationAr")}
+              </Label>
+              <Input
+                id="nameTranslation"
+                value={formNameTranslation}
+                onChange={(e) => setFormNameTranslation(e.target.value)}
+                placeholder={locale === "ar" ? t("dashboard.products.nameTranslationEnPlaceholder") : t("dashboard.products.nameTranslationArPlaceholder")}
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label htmlFor="price">{locale === "ar" ? "السعر (ج.م)" : "Price (EGP)"}</Label>
               <Input
                 id="price"
                 type="number"
@@ -368,12 +500,28 @@ export function ProductsPageContent() {
               />
             </div>
             <div>
-              <Label htmlFor="desc">الوصف (اختياري)</Label>
+              <Label htmlFor="category">{locale === "ar" ? "الفئة (اختياري)" : "Category (optional)"}</Label>
+              <select
+                id="category"
+                value={formCategory}
+                onChange={(e) => setFormCategory(e.target.value)}
+                className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-cairo"
+              >
+                <option value="">اختر الفئة</option>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="desc">{locale === "ar" ? "الوصف (اختياري)" : "Description (optional)"}</Label>
               <Input
                 id="desc"
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
-                placeholder="وصف قصير"
+                placeholder={locale === "ar" ? "وصف قصير" : "Short description"}
                 className="mt-1"
               />
             </div>
@@ -383,10 +531,10 @@ export function ProductsPageContent() {
                 variant="outline"
                 onClick={() => setModalOpen(false)}
               >
-                إلغاء
+                {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={saving}>
-                {saving ? "جاري الحفظ..." : editingId ? "تحديث" : "إضافة"}
+                {saving ? (locale === "ar" ? "جاري الحفظ..." : "Saving...") : editingId ? (locale === "ar" ? "تحديث" : "Update") : (locale === "ar" ? "إضافة" : "Add")}
               </Button>
             </DialogFooter>
           </form>
@@ -397,6 +545,9 @@ export function ProductsPageContent() {
         <DialogContent className="font-cairo sm:max-w-md">
           <DialogHeader>
             <DialogTitle>لينك الدفع جاهز</DialogTitle>
+            <DialogDescription>
+              {locale === "ar" ? "انسخ اللينك أو شاركه على واتساب" : "Copy the link or share it on WhatsApp"}
+            </DialogDescription>
           </DialogHeader>
           {generatedLink && (
             <div className="space-y-4">

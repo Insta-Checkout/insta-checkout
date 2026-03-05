@@ -13,8 +13,18 @@ async function getSellerId(firebaseUid: string): Promise<ObjectId | null> {
   return seller ? (seller._id as ObjectId) : null
 }
 
+function validateOptionalName(val: unknown, maxLen: number): string | null {
+  if (val == null || val === "") return null
+  const s = typeof val === "string" ? val.trim() : ""
+  if (!s) return null
+  if (s.length > maxLen) return null
+  return s
+}
+
 function validateProductBody(body: Record<string, unknown>): { ok: boolean; data?: Record<string, unknown>; errors?: string[] } {
   const name = typeof body.name === "string" ? body.name.trim() : ""
+  const nameAr = validateOptionalName(body.nameAr, 80)
+  const nameEn = validateOptionalName(body.nameEn, 80)
   const price = typeof body.price === "number" ? body.price : typeof body.price === "string" ? parseFloat(body.price) : NaN
   const description = typeof body.description === "string" ? body.description.trim() || null : null
   const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim() || null : null
@@ -36,7 +46,7 @@ function validateProductBody(body: Record<string, unknown>): { ok: boolean; data
   if (errors.length > 0) return { ok: false, errors }
   return {
     ok: true,
-    data: { name, price: Math.round(price), description, imageUrl, category },
+    data: { name, nameAr, nameEn, price: Math.round(price), description, imageUrl, category },
   }
 }
 
@@ -49,6 +59,7 @@ router.get("/products", async (req: Request, res: Response) => {
 
   const sellerId = await getSellerId(firebaseUid)
   if (!sellerId) {
+    console.warn(`[GET /sellers/me/products] 404 Seller not found for firebaseUid=${firebaseUid}`)
     res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
     return
   }
@@ -68,7 +79,11 @@ router.get("/products", async (req: Request, res: Response) => {
       match.status = statusFilter
     }
     if (q) {
-      match.name = { $regex: q, $options: "i" }
+      match.$or = [
+        { name: { $regex: q, $options: "i" } },
+        { nameAr: { $regex: q, $options: "i" } },
+        { nameEn: { $regex: q, $options: "i" } },
+      ]
     }
 
     const [items, totalResult] = await Promise.all([
@@ -85,6 +100,8 @@ router.get("/products", async (req: Request, res: Response) => {
       id: p._id,
       sellerId: p.sellerId,
       name: p.name,
+      nameAr: p.nameAr ?? null,
+      nameEn: p.nameEn ?? null,
       price: p.price,
       description: p.description ?? null,
       imageUrl: p.imageUrl ?? null,
@@ -113,6 +130,7 @@ router.post("/products", async (req: Request, res: Response) => {
 
   const sellerId = await getSellerId(firebaseUid)
   if (!sellerId) {
+    console.warn(`[POST /sellers/me/products] 404 Seller not found for firebaseUid=${firebaseUid}`)
     res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
     return
   }
@@ -123,7 +141,7 @@ router.post("/products", async (req: Request, res: Response) => {
     return
   }
 
-  const { name, price, description, imageUrl, category } = validation.data!
+  const { name, nameAr, nameEn, price, description, imageUrl, category } = validation.data!
 
   try {
     const db = await connectToMongo()
@@ -133,6 +151,8 @@ router.post("/products", async (req: Request, res: Response) => {
     const doc = {
       sellerId,
       name,
+      nameAr: nameAr ?? null,
+      nameEn: nameEn ?? null,
       price,
       description: description ?? null,
       imageUrl: imageUrl ?? null,
@@ -214,6 +234,8 @@ router.put("/products/:id", async (req: Request, res: Response) => {
   }
   if (body.category !== undefined) updates.category = typeof body.category === "string" ? body.category.trim() || null : null
   if (body.status === "active" || body.status === "archived") updates.status = body.status
+  if (body.nameAr !== undefined) updates.nameAr = validateOptionalName(body.nameAr, 80)
+  if (body.nameEn !== undefined) updates.nameEn = validateOptionalName(body.nameEn, 80)
 
   if (Object.keys(updates).length <= 1) {
     res.status(400).json({ error: "VALIDATION_ERROR", details: ["No valid fields to update"] })
@@ -239,6 +261,8 @@ router.put("/products/:id", async (req: Request, res: Response) => {
       id: result._id,
       sellerId: result.sellerId,
       name: result.name,
+      nameAr: result.nameAr ?? null,
+      nameEn: result.nameEn ?? null,
       price: result.price,
       description: result.description ?? null,
       imageUrl: result.imageUrl ?? null,

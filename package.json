@@ -20,6 +20,10 @@
     "build:backend": "npm run build --workspace=backend",
     "build:checkout": "npm run build --workspace=checkout",
     "build:landing": "npm run build --workspace=landing",
-    "lint": "npm run lint --workspaces"
+    "lint": "npm run lint --workspaces",
+    "firebase:deploy": "firebase deploy --only storage"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
   }
 }
