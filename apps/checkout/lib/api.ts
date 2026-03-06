@@ -14,3 +14,54 @@ export async function healthCheck(): Promise<{ status: string }> {
   if (!res.ok) throw new Error(`Health check failed: ${res.status}`)
   return res.json()
 }
+
+export interface CheckoutData {
+  paymentLinkId: string
+  token: string
+  status: string
+  product: { name: string; nameAr: string; nameEn: string; price: number; imageUrl?: string }
+  seller: {
+    businessName: string
+    category: string | null
+    instapayNumber: string
+    maskedFullName: string
+    logoUrl: string | null
+    whatsappNumber: string
+  }
+  expiresAt: string | null
+  locale: string
+}
+
+export async function fetchCheckoutData(token: string): Promise<
+  | { ok: true; data: CheckoutData }
+  | { ok: false; status: number; error: string; message: string; linkStatus?: string }
+> {
+  const res = await fetch(`${getBackendUrl()}/checkout/${token}`)
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) {
+    return {
+      ok: false,
+      status: res.status,
+      error: body.error ?? "UNKNOWN",
+      message: body.message ?? "",
+      linkStatus: body.status,
+    }
+  }
+  return { ok: true, data: body }
+}
+
+export async function confirmPayment(
+  token: string,
+  data: { buyerPhone: string; buyerName?: string; screenshot?: File }
+): Promise<{ status?: string; error?: string; message?: string }> {
+  const formData = new FormData()
+  formData.append("buyerPhone", data.buyerPhone)
+  if (data.buyerName) formData.append("buyerName", data.buyerName)
+  if (data.screenshot) formData.append("screenshot", data.screenshot)
+
+  const res = await fetch(`${getBackendUrl()}/checkout/${token}/confirm`, {
+    method: "POST",
+    body: formData,
+  })
+  return res.json()
+}

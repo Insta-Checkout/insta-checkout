@@ -17,3 +17,6 @@ _full_b64.txt
 
 # Build output
 apps/backend/dist/
+
+# Backend uploads
+apps/backend/uploads/

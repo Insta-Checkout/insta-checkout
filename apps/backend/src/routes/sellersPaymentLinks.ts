@@ -6,7 +6,9 @@ import crypto from "crypto"
 
 const router = Router()
 const DEFAULT_TTL_DAYS = 7
-const CHECKOUT_BASE_URL = process.env.CHECKOUT_BASE_URL ?? "https://checkout.instacheckouteg.com"
+const CHECKOUT_BASE_URL =
+  process.env.CHECKOUT_BASE_URL ??
+  (process.env.NODE_ENV === "production" ? "https://pay.instacheckout.co" : "http://localhost:3001")
 
 router.use(requireFirebaseAuth)
 
@@ -26,13 +28,11 @@ router.get("/payment-links", async (req: Request, res: Response) => {
     res.status(401).json({ error: "UNAUTHORIZED" })
     return
   }
-
   const sellerId = await getSellerId(firebaseUid)
   if (!sellerId) {
     res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
     return
   }
-
   const page = Math.max(1, parseInt((req.query.page as string) || "1", 10))
   const limit = Math.min(100, Math.max(1, parseInt((req.query.limit as string) || "20", 10)))
   const statusFilter = req.query.status as string | undefined
@@ -42,9 +42,8 @@ router.get("/payment-links", async (req: Request, res: Response) => {
     const db = await connectToMongo()
     const coll = db.collection("payment_links")
     const products = db.collection("products")
-
     const match: Record<string, unknown> = { sellerId }
-    if (statusFilter && ["active", "paid", "expired", "cancelled"].includes(statusFilter)) {
+    if (statusFilter && ["active", "preview", "paid", "confirmed", "expired", "cancelled"].includes(statusFilter)) {
       match.status = statusFilter
     }
 
@@ -83,6 +82,13 @@ router.get("/payment-links", async (req: Request, res: Response) => {
       status: i.status ?? "active",
       createdAt: i.createdAt,
       paidAt: i.paidAt ?? null,
+      confirmedAt: i.confirmedAt ?? null,
+      price: i.price ?? 0,
+      ...((i.status === "paid" || i.status === "confirmed") && {
+        buyerPhone: i.buyerPhone ?? null,
+        buyerName: i.buyerName ?? null,
+        screenshotUrl: i.screenshotUrl ?? null,
+      }),
     }))
 
     res.json({
@@ -131,6 +137,10 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
       return
     }
 
+    const seller = await db.collection("sellers").findOne({ _id: sellerId })
+    const onboardingComplete = seller?.onboardingComplete ?? !!seller?.instapayNumber
+    const linkStatus = onboardingComplete ? "active" : "preview"
+
     const token = generateToken()
     const now = new Date()
     const expiresAt = new Date(now.getTime() + DEFAULT_TTL_DAYS * 24 * 60 * 60 * 1000)
@@ -143,9 +153,10 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
       productName: product.name,
       productNameAr: product.nameAr ?? null,
       productNameEn: product.nameEn ?? null,
+      productImageUrl: product.imageUrl ?? null,
       price: product.price,
       checkoutUrl,
-      status: "active",
+      status: linkStatus,
       createdAt: now,
       expiresAt,
       paidAt: null,
@@ -157,13 +168,72 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
     res.status(201).json({
       paymentLinkId: result.insertedId,
       checkoutUrl,
-      status: "active",
+      status: linkStatus,
       createdAt: now,
       expiresAt,
     })
   } catch (err) {
     console.error("[POST /sellers/me/products/:id/payment-links]", err)
     res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to create payment link" })
+  }
+})
+
+router.patch("/payment-links/:id/status", async (req: Request, res: Response) => {
+  const firebaseUid = req.firebaseUid
+  if (!firebaseUid) {
+    res.status(401).json({ error: "UNAUTHORIZED" })
+    return
+  }
+
+  const sellerId = await getSellerId(firebaseUid)
+  if (!sellerId) {
+    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
+    return
+  }
+
+  let linkId: ObjectId
+  try {
+    linkId = new ObjectId(req.params.id)
+  } catch {
+    res.status(400).json({ error: "INVALID_ID", message: "Invalid payment link ID" })
+    return
+  }
+
+  const action = typeof req.body?.action === "string" ? req.body.action : null
+  if (action !== "confirm") {
+    res.status(400).json({ error: "VALIDATION_ERROR", message: "action must be 'confirm'" })
+    return
+  }
+
+  try {
+    const db = await connectToMongo()
+    const paymentLinks = db.collection("payment_links")
+
+    const link = await paymentLinks.findOne({ _id: linkId, sellerId })
+    if (!link) {
+      res.status(404).json({ error: "NOT_FOUND", message: "Payment link not found" })
+      return
+    }
+
+    const status = link.status ?? "active"
+    if (status !== "paid") {
+      res.status(409).json({
+        error: "INVALID_TRANSITION",
+        message: "Only paid links can be confirmed",
+      })
+      return
+    }
+
+    const now = new Date()
+    await paymentLinks.updateOne(
+      { _id: linkId, sellerId },
+      { $set: { status: "confirmed", confirmedAt: now, updatedAt: now } }
+    )
+
+    res.json({ success: true, status: "confirmed" })
+  } catch (err) {
+    console.error("[PATCH /sellers/me/payment-links/:id/status]", err)
+    res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to update payment link status" })
   }
 })
 

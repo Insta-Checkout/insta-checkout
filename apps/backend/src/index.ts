@@ -1,10 +1,22 @@
 import "dotenv/config"
+import path from "path"
+import { existsSync } from "fs"
+
+// Log env at startup to debug DB connection
+const envPath = path.join(process.cwd(), ".env")
+console.log("[startup] cwd:", process.cwd(), "| .env exists:", existsSync(envPath))
+console.log("[startup] MONGODB_URI set:", !!process.env.MONGODB_URI)
+const uri = process.env.MONGODB_URI ?? ""
+const dbFromUri = uri ? (uri.split("/").pop()?.split("?")[0] || "test") : "test"
+console.log("[startup] DB name from URI:", dbFromUri || process.env.MONGODB_DB_NAME || "test")
+
 import express from "express"
 import cors from "cors"
 import { connectToMongo } from "./db.js"
 import sellersRouter from "./routes/sellers.js"
 import sellersMeRouter from "./routes/sellersMe.js"
 import webhooksRouter from "./routes/webhooks.js"
+import checkoutRouter from "./routes/checkout.js"
 
 const app = express()
 const PORT = process.env.PORT ?? 4000
@@ -40,6 +52,9 @@ app.use(
 )
 app.use(express.json())
 
+// Static uploads (screenshots from checkout confirm)
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")))
+
 // Root info
 app.get("/", (_req, res) => {
   res.json({
@@ -60,6 +75,9 @@ app.get("/health", (_req, res) => {
 app.use("/sellers", sellersRouter)
 app.use("/sellers/me", sellersMeRouter)
 app.use("/webhooks", webhooksRouter)
+
+// Checkout API (public)
+app.use("/checkout", checkoutRouter)
 
 // MongoDB connection validation
 app.get("/api/health/db", async (_req, res) => {

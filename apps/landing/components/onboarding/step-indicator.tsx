@@ -11,7 +11,7 @@ interface StepIndicatorProps {
 
 export function StepIndicator({ currentStep }: StepIndicatorProps) {
   const { get } = useTranslations()
-  const steps = (get("onboard.steps") ?? ["Try the product", "Your info", "Create account"]) as string[]
+  const steps = (get("onboard.steps") ?? ["Your info", "Create account"]) as string[]
   return (
     <div className="flex items-center justify-center gap-0 w-full mb-8">
       {steps.map((label, index) => {

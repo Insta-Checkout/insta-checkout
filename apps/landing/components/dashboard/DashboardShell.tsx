@@ -5,10 +5,12 @@ import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 import { MobileSidebar } from "./MobileSidebar";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useLocale } from "@/lib/locale-provider";
 import { Spinner } from "@/components/ui/spinner";
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { loading } = useAuth();
+  const { dir } = useLocale();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   if (loading) {
@@ -20,7 +22,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen bg-[#FAFAF9]" dir="rtl">
+    <div className="flex h-screen bg-[#FAFAF9]" dir={dir}>
       <aside className="hidden sm:flex w-64 flex-col border-l border-slate-200 bg-white">
         <Sidebar />
       </aside>

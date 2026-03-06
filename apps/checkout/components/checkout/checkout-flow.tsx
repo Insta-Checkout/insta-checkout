@@ -2,8 +2,9 @@
 
 import { useState, useCallback } from "react"
 import { useTranslations } from "@/lib/locale-provider"
+import { confirmPayment } from "@/lib/api"
+import { toast } from "sonner"
 import { SellerHeader } from "./seller-header"
-import { LanguageSwitcher } from "../language-switcher"
 import { StepIndicator } from "./step-indicator"
 import { StepOne } from "./step-one"
 import { StepTwo } from "./step-two"
@@ -21,6 +22,8 @@ interface CheckoutFlowProps {
   instaPayAccount: string
   maskedName: string
   whatsappLink?: string
+  paymentLinkId?: string
+  token?: string
 }
 
 function getProductDisplayName(
@@ -45,6 +48,7 @@ export function CheckoutFlow({
   instaPayAccount,
   maskedName,
   whatsappLink,
+  token,
 }: CheckoutFlowProps) {
   const { t, locale } = useTranslations()
   const displayName = getProductDisplayName(productName, productNameAr, productNameEn, locale)
@@ -57,25 +61,40 @@ export function CheckoutFlow({
   }, [])
 
   const handleSubmitPayment = useCallback(
-    async (phoneNumber: string, _screenshot: File) => {
+    async (phoneNumber: string, screenshot: File) => {
+      if (!token) {
+        toast.error(t("checkout.errors.notFound"))
+        return
+      }
       setIsSubmitting(true)
 
-      // Simulate API call — in production this would POST to your backend
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      const egyptianPhone = phoneNumber.startsWith("01")
+        ? `20${phoneNumber.slice(1)}`
+        : phoneNumber.startsWith("20")
+          ? phoneNumber
+          : `20${phoneNumber}`
+
+      const res = await confirmPayment(token, {
+        buyerPhone: egyptianPhone,
+        screenshot,
+      })
 
       setIsSubmitting(false)
+
+      if (res.error) {
+        toast.error(res.message ?? t("checkout.errors.notFound"))
+        return
+      }
+
       setCurrentStep(3)
       window.scrollTo({ top: 0, behavior: "smooth" })
     },
-    [displayName, price, sellerName]
+    [token, t]
   )
 
   return (
     <div className="min-h-dvh bg-background">
       <div className="mx-auto max-w-md px-4 py-6">
-        <div className="flex justify-end mb-4">
-          <LanguageSwitcher />
-        </div>
         <SellerHeader
           businessName={sellerName}
           categoryTag={categoryTag}

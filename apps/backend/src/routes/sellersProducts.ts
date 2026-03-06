@@ -42,7 +42,6 @@ function validateProductBody(body: Record<string, unknown>): { ok: boolean; data
       errors.push("imageUrl must be a valid URL")
     }
   }
-
   if (errors.length > 0) return { ok: false, errors }
   return {
     ok: true,
@@ -56,14 +55,11 @@ router.get("/products", async (req: Request, res: Response) => {
     res.status(401).json({ error: "UNAUTHORIZED" })
     return
   }
-
   const sellerId = await getSellerId(firebaseUid)
   if (!sellerId) {
-    console.warn(`[GET /sellers/me/products] 404 Seller not found for firebaseUid=${firebaseUid}`)
     res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
     return
   }
-
   const page = Math.max(1, parseInt((req.query.page as string) || "1", 10))
   const limit = Math.min(100, Math.max(1, parseInt((req.query.limit as string) || "20", 10)))
   const statusFilter = req.query.status as string | undefined
@@ -73,7 +69,6 @@ router.get("/products", async (req: Request, res: Response) => {
   try {
     const db = await connectToMongo()
     const products = db.collection("products")
-
     const match: Record<string, unknown> = { sellerId }
     if (statusFilter && ["active", "archived"].includes(statusFilter)) {
       match.status = statusFilter
@@ -127,10 +122,8 @@ router.post("/products", async (req: Request, res: Response) => {
     res.status(401).json({ error: "UNAUTHORIZED" })
     return
   }
-
   const sellerId = await getSellerId(firebaseUid)
   if (!sellerId) {
-    console.warn(`[POST /sellers/me/products] 404 Seller not found for firebaseUid=${firebaseUid}`)
     res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
     return
   }
@@ -140,14 +133,11 @@ router.post("/products", async (req: Request, res: Response) => {
     res.status(400).json({ error: "VALIDATION_ERROR", details: validation.errors })
     return
   }
-
   const { name, nameAr, nameEn, price, description, imageUrl, category } = validation.data!
-
   try {
     const db = await connectToMongo()
     const products = db.collection("products")
     const now = new Date()
-
     const doc = {
       sellerId,
       name,
@@ -164,9 +154,7 @@ router.post("/products", async (req: Request, res: Response) => {
       createdAt: now,
       updatedAt: now,
     }
-
     const result = await products.insertOne(doc)
-
     res.status(201).json({
       id: result.insertedId,
       ...doc,
@@ -183,7 +171,6 @@ router.put("/products/:id", async (req: Request, res: Response) => {
     res.status(401).json({ error: "UNAUTHORIZED" })
     return
   }
-
   const sellerId = await getSellerId(firebaseUid)
   if (!sellerId) {
     res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
@@ -219,7 +206,9 @@ router.put("/products/:id", async (req: Request, res: Response) => {
     const p = parseFloat(body.price)
     if (!isNaN(p) && p > 0) updates.price = Math.round(p)
   }
-  if (body.description !== undefined) updates.description = typeof body.description === "string" ? body.description.trim() || null : null
+  if (body.description !== undefined) {
+    updates.description = typeof body.description === "string" ? body.description.trim() || null : null
+  }
   if (body.imageUrl !== undefined) {
     const url = typeof body.imageUrl === "string" ? body.imageUrl.trim() || null : null
     if (url) {
@@ -232,8 +221,12 @@ router.put("/products/:id", async (req: Request, res: Response) => {
     }
     updates.imageUrl = url
   }
-  if (body.category !== undefined) updates.category = typeof body.category === "string" ? body.category.trim() || null : null
-  if (body.status === "active" || body.status === "archived") updates.status = body.status
+  if (body.category !== undefined) {
+    updates.category = typeof body.category === "string" ? body.category.trim() || null : null
+  }
+  if (body.status === "active" || body.status === "archived") {
+    updates.status = body.status
+  }
   if (body.nameAr !== undefined) updates.nameAr = validateOptionalName(body.nameAr, 80)
   if (body.nameEn !== undefined) updates.nameEn = validateOptionalName(body.nameEn, 80)
 
@@ -245,19 +238,16 @@ router.put("/products/:id", async (req: Request, res: Response) => {
   try {
     const db = await connectToMongo()
     const products = db.collection("products")
-
     const result = await products.findOneAndUpdate(
       { _id: productId, sellerId },
       { $set: updates },
       { returnDocument: "after" }
     )
-
     if (!result) {
       res.status(404).json({ error: "NOT_FOUND", message: "Product not found" })
       return
-    }
-
-    res.json({
+  }
+  res.json({
       id: result._id,
       sellerId: result.sellerId,
       name: result.name,
@@ -283,7 +273,6 @@ router.delete("/products/:id", async (req: Request, res: Response) => {
     res.status(401).json({ error: "UNAUTHORIZED" })
     return
   }
-
   const sellerId = await getSellerId(firebaseUid)
   if (!sellerId) {
     res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
@@ -301,28 +290,27 @@ router.delete("/products/:id", async (req: Request, res: Response) => {
   try {
     const db = await connectToMongo()
     const products = db.collection("products")
-    const orders = db.collection("orders")
-
+    const paymentLinks = db.collection("payment_links")
     const product = await products.findOne({ _id: productId, sellerId })
     if (!product) {
       res.status(404).json({ error: "NOT_FOUND", message: "Product not found" })
       return
     }
-
-    const orderCount = await orders.countDocuments({ productId })
-    if (orderCount > 0) {
+    const paidOrConfirmedCount = await paymentLinks.countDocuments({
+      productId,
+      status: { $in: ["paid", "confirmed"] },
+    })
+    if (paidOrConfirmedCount > 0) {
       res.status(409).json({
-        error: "HAS_ORDERS",
-        message: "Cannot delete product with existing orders. Archive it instead.",
+        error: "HAS_PAYMENTS",
+        message: "Cannot delete product with paid or confirmed payment links. Archive it instead.",
       })
       return
     }
-
     await products.updateOne(
       { _id: productId, sellerId },
       { $set: { status: "archived", updatedAt: new Date() } }
     )
-
     res.json({ success: true, message: "Product archived" })
   } catch (err) {
     console.error("[DELETE /products/:id]", err)

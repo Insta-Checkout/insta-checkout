@@ -19,6 +19,7 @@ router.post("/", validateSeller, async (req, res) => {
       firebaseUid,
       email,
       socialLinks,
+      locale,
     } = req.body;
 
     const seller = await Seller.create({
@@ -30,6 +31,7 @@ router.post("/", validateSeller, async (req, res) => {
       firebaseUid,
       email,
       whatsappVerified: false,
+      locale: locale === "en" || locale === "ar" ? locale : "ar",
       socialLinks: {
         instagram: socialLinks?.instagram || "",
         facebook: socialLinks?.facebook || "",
@@ -51,6 +53,7 @@ router.post("/", validateSeller, async (req, res) => {
         maskedFullName: seller.maskedFullName,
         whatsappNumber: seller.whatsappNumber,
         whatsappVerified: seller.whatsappVerified,
+        locale: seller.locale,
         createdAt: seller.createdAt,
       },
       message: "Seller registered. WhatsApp verification sent.",

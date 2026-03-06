@@ -37,13 +37,13 @@ function getProductDisplayName(p: Product, locale: string): string {
   return p.nameEn || p.name;
 }
 
-function formatEgp(n: number): string {
+function formatEgp(n: number, egpShort: string, locale: string): string {
   return (
-    new Intl.NumberFormat("ar-EG", {
+    new Intl.NumberFormat(locale === "ar" ? "ar-EG" : "en-GB", {
       style: "decimal",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(n) + " ج.م"
+    }).format(n) + " " + egpShort
   );
 }
 
@@ -63,7 +63,14 @@ export function ProductsPageContent() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  const CATEGORIES = ["حلويات", "ملابس", "إلكترونيات", "خدمات", "أخرى"];
+  const egpShort = t("common.egpShort");
+  const productCategories = [
+    { value: "food", labelKey: "businessTypes.food" },
+    { value: "clothing", labelKey: "businessTypes.clothing" },
+    { value: "electronics", labelKey: "businessTypes.electronics" },
+    { value: "services", labelKey: "businessTypes.services" },
+    { value: "other", labelKey: "businessTypes.other" },
+  ];
   const [linkModalOpen, setLinkModalOpen] = useState(false);
   const [generatedLink, setGeneratedLink] = useState<{
     checkoutUrl: string;
@@ -96,7 +103,7 @@ export function ProductsPageContent() {
       const data = await res.json();
       setProducts(data.items);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "فشل تحميل المنتجات");
+      setError(e instanceof Error ? e.message : t("dashboard.products.loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -132,20 +139,20 @@ export function ProductsPageContent() {
     const file = e.target.files?.[0];
     if (!file || !auth.currentUser) return;
     if (!file.type.startsWith("image/")) {
-      toast.error("يرجى اختيار صورة");
+      toast.error(t("dashboard.products.chooseImage"));
       return;
     }
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("حجم الصورة يجب أن يكون أقل من 5 ميجابايت");
+      toast.error(t("dashboard.products.imageSize"));
       return;
     }
     setUploadingImage(true);
     try {
       const url = await uploadProductImage(file, auth.currentUser.uid, editingId);
       setFormImageUrl(url);
-      toast.success("تم رفع الصورة");
+      toast.success(t("dashboard.products.uploadSuccess"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "فشل رفع الصورة");
+      toast.error(err instanceof Error ? err.message : t("dashboard.products.uploadFailed"));
     } finally {
       setUploadingImage(false);
     }
@@ -157,11 +164,11 @@ export function ProductsPageContent() {
     const price = parseFloat(formPrice);
     const translation = formNameTranslation.trim() || null;
     if (!name || name.length < 2) {
-      toast.error(locale === "ar" ? "الاسم مطلوب (حرفين على الأقل)" : "Name is required (at least 2 characters)");
+      toast.error(t("dashboard.products.nameRequired"));
       return;
     }
     if (isNaN(price) || price <= 0) {
-      toast.error(locale === "ar" ? "السعر يجب أن يكون رقماً موجباً" : "Price must be a positive number");
+      toast.error(t("dashboard.products.priceRequired"));
       return;
     }
     const payload = {
@@ -186,10 +193,10 @@ export function ProductsPageContent() {
         );
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          const msg = err.message || err.details?.[0] || (locale === "ar" ? "فشل التحديث" : "Update failed");
+          const msg = err.message || err.details?.[0] || t("dashboard.products.updateFailed");
           throw new Error(msg);
         }
-        toast.success(locale === "ar" ? "تم تحديث المنتج" : "Product updated");
+        toast.success(t("dashboard.products.updateSuccess"));
       } else {
         const res = await fetchWithAuth(
           `${getBackendUrl()}/sellers/me/products`,
@@ -202,15 +209,15 @@ export function ProductsPageContent() {
         );
         if (!res.ok) {
           const err = await res.json().catch(() => ({}));
-          const msg = err.message || err.details?.[0] || (locale === "ar" ? "فشل الإنشاء" : "Create failed");
+          const msg = err.message || err.details?.[0] || t("dashboard.products.createFailed");
           throw new Error(msg);
         }
-        toast.success(locale === "ar" ? "تم إضافة المنتج" : "Product added");
+        toast.success(t("dashboard.products.addSuccess"));
       }
       setModalOpen(false);
       loadProducts();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "حدث خطأ");
+      toast.error(e instanceof Error ? e.message : t("dashboard.products.error"));
     } finally {
       setSaving(false);
     }
@@ -227,7 +234,7 @@ export function ProductsPageContent() {
       );
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.message || "فشل إنشاء اللينك");
+        throw new Error(err.message || t("dashboard.products.createLinkFailed"));
       }
       const data = await res.json();
       setGeneratedLink({
@@ -238,7 +245,7 @@ export function ProductsPageContent() {
       setLinkModalOpen(true);
       loadProducts();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "حدث خطأ");
+      toast.error(e instanceof Error ? e.message : t("dashboard.products.error"));
     } finally {
       setGeneratingId(null);
     }
@@ -247,13 +254,16 @@ export function ProductsPageContent() {
   const copyLink = () => {
     if (!generatedLink) return;
     navigator.clipboard.writeText(generatedLink.checkoutUrl);
-    toast.success("تم نسخ اللينك");
+    toast.success(t("dashboard.products.linkCopied"));
   };
 
   const shareWhatsApp = () => {
     if (!generatedLink) return;
     const text = encodeURIComponent(
-      `ده لينك الدفع الخاص بمنتج ${generatedLink.productName}: ${generatedLink.checkoutUrl}`
+      t("dashboard.products.whatsappShareTemplate", {
+        product: generatedLink.productName,
+        url: generatedLink.checkoutUrl,
+      })
     );
     window.open(
       `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "201000000000"}?text=${text}`,
@@ -262,7 +272,7 @@ export function ProductsPageContent() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("هل تريد أرشفة هذا المنتج؟")) return;
+    if (!confirm(t("dashboard.products.archiveConfirm"))) return;
     try {
       const res = await fetchWithAuth(
         `${getBackendUrl()}/sellers/me/products/${id}`,
@@ -271,24 +281,24 @@ export function ProductsPageContent() {
       );
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.message || "فشل الحذف");
+        throw new Error(err.message || t("dashboard.products.deleteFailed"));
       }
-      toast.success("تم أرشفة المنتج");
+      toast.success(t("dashboard.products.archiveSuccess"));
       loadProducts();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "حدث خطأ");
+      toast.error(e instanceof Error ? e.message : t("dashboard.products.error"));
     }
   };
 
   if (error) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-slate-900 font-cairo">المنتجات</h1>
+        <h1 className="text-2xl font-bold text-slate-900 font-cairo">{t("dashboard.products.title")}</h1>
         <Card>
           <CardContent className="py-8 text-center">
             <p className="text-slate-500 font-cairo">{error}</p>
             <Button variant="outline" className="mt-4" onClick={() => loadProducts()}>
-              إعادة المحاولة
+              {t("dashboard.products.retry")}
             </Button>
           </CardContent>
         </Card>
@@ -299,7 +309,7 @@ export function ProductsPageContent() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-slate-900 font-cairo">المنتجات</h1>
+        <h1 className="text-2xl font-bold text-slate-900 font-cairo">{t("dashboard.products.title")}</h1>
         <Button onClick={openCreate} className="gap-2 font-cairo">
           <Plus className="h-4 w-4" />
           {t("dashboard.products.addProduct")}
@@ -314,18 +324,16 @@ export function ProductsPageContent() {
         </div>
       ) : products.length === 0 ? (
         <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/30">
-          <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center sm:flex-row sm:text-right">
+          <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center sm:flex-row sm:items-start sm:justify-center sm:text-start">
             <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/15">
               <Package className="h-10 w-10 text-primary" />
             </div>
             <div className="space-y-2">
               <h2 className="text-xl font-bold text-slate-900 font-cairo">
-                {locale === "ar" ? "ابدأ بإضافة منتجك الأول" : "Add your first product"}
+                {t("dashboard.products.startWithFirst")}
               </h2>
               <p className="max-w-md text-slate-600 font-cairo">
-                {locale === "ar"
-                  ? "أضف منتجاتك مع السعر والوصف، ثم أنشئ لينكات دفع لشاركها مع عملائك على واتساب أو أي منصة."
-                  : "Add your products with price and description, then create payment links to share with customers on WhatsApp or any platform."}
+                {t("dashboard.products.startSubtitle")}
               </p>
               <Button onClick={openCreate} className="mt-2 gap-2 font-cairo">
                 <Plus className="h-4 w-4" />
@@ -356,13 +364,13 @@ export function ProductsPageContent() {
                       : "bg-slate-100 text-slate-600"
                   }`}
                 >
-                  {p.status === "active" ? "نشط" : "مؤرشف"}
+                  {p.status === "active" ? t("dashboard.products.active") : t("dashboard.products.archived")}
                 </span>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center gap-2 flex-wrap">
                   <p className="text-xl font-bold text-primary font-mono">
-                    {formatEgp(p.price)}
+                    {formatEgp(p.price, egpShort, locale)}
                   </p>
                   {p.category && (
                     <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
@@ -383,7 +391,7 @@ export function ProductsPageContent() {
                     onClick={() => openEdit(p)}
                   >
                     <Pencil className="h-3 w-3" />
-                    تعديل
+                    {t("dashboard.products.edit")}
                   </Button>
                   <Button
                     variant="outline"
@@ -392,7 +400,7 @@ export function ProductsPageContent() {
                     onClick={() => handleDelete(p.id)}
                   >
                     <Trash2 className="h-3 w-3" />
-                    أرشفة
+                    {t("dashboard.products.archive")}
                   </Button>
                   <Button
                     variant="outline"
@@ -402,11 +410,11 @@ export function ProductsPageContent() {
                     onClick={() => handleGenerateLink(p)}
                   >
                     {generatingId === p.id ? (
-                      "جاري..."
+                      t("common.loading")
                     ) : (
                       <>
                         <Link2 className="h-3 w-3" />
-                        لينك دفع
+                        {t("dashboard.products.paymentLink")}
                       </>
                     )}
                   </Button>
@@ -424,18 +432,18 @@ export function ProductsPageContent() {
               {editingId ? t("dashboard.products.editProduct") : t("dashboard.products.addProduct")}
             </DialogTitle>
             <DialogDescription>
-              {editingId ? (locale === "ar" ? "تعديل تفاصيل المنتج" : "Edit product details") : (locale === "ar" ? "أضف منتج جديد للكتالوج" : "Add a new product to your catalog")}
+              {editingId ? t("dashboard.products.editTitle") : t("dashboard.products.addTitle")}
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <Label htmlFor="image">{locale === "ar" ? "صورة المنتج (اختياري)" : "Product image (optional)"}</Label>
+              <Label htmlFor="image">{t("dashboard.products.imageLabel")}</Label>
               <div className="mt-1 flex items-center gap-3">
                 {formImageUrl ? (
                   <div className="relative">
                     <img
                       src={formImageUrl}
-                      alt="معاينة"
+                      alt={t("dashboard.products.preview")}
                       className="h-20 w-20 rounded-lg object-cover border border-slate-200"
                     />
                     <button
@@ -456,7 +464,7 @@ export function ProductsPageContent() {
                       disabled={uploadingImage}
                     />
                     {uploadingImage ? (
-                      <span className="text-xs text-slate-500">جاري الرفع...</span>
+                      <span className="text-xs text-slate-500">{t("dashboard.products.uploading")}</span>
                     ) : (
                       <ImagePlus className="h-8 w-8 text-slate-400" />
                     )}
@@ -487,7 +495,7 @@ export function ProductsPageContent() {
               />
             </div>
             <div>
-              <Label htmlFor="price">{locale === "ar" ? "السعر (ج.م)" : "Price (EGP)"}</Label>
+              <Label htmlFor="price">{t("dashboard.products.priceLabel")}</Label>
               <Input
                 id="price"
                 type="number"
@@ -500,28 +508,28 @@ export function ProductsPageContent() {
               />
             </div>
             <div>
-              <Label htmlFor="category">{locale === "ar" ? "الفئة (اختياري)" : "Category (optional)"}</Label>
+              <Label htmlFor="category">{t("dashboard.products.categoryLabel")}</Label>
               <select
                 id="category"
                 value={formCategory}
                 onChange={(e) => setFormCategory(e.target.value)}
                 className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 font-cairo"
               >
-                <option value="">اختر الفئة</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
+                <option value="">{t("dashboard.products.chooseCategory")}</option>
+                {productCategories.map(({ value, labelKey }) => (
+                  <option key={value} value={value}>
+                    {t(labelKey)}
                   </option>
                 ))}
               </select>
             </div>
             <div>
-              <Label htmlFor="desc">{locale === "ar" ? "الوصف (اختياري)" : "Description (optional)"}</Label>
+              <Label htmlFor="desc">{t("dashboard.products.descLabel")}</Label>
               <Input
                 id="desc"
                 value={formDescription}
                 onChange={(e) => setFormDescription(e.target.value)}
-                placeholder={locale === "ar" ? "وصف قصير" : "Short description"}
+                placeholder={t("dashboard.products.descPlaceholder")}
                 className="mt-1"
               />
             </div>
@@ -534,7 +542,7 @@ export function ProductsPageContent() {
                 {t("common.cancel")}
               </Button>
               <Button type="submit" disabled={saving}>
-                {saving ? (locale === "ar" ? "جاري الحفظ..." : "Saving...") : editingId ? (locale === "ar" ? "تحديث" : "Update") : (locale === "ar" ? "إضافة" : "Add")}
+                {saving ? t("dashboard.products.saving") : editingId ? t("dashboard.products.update") : t("dashboard.products.add")}
               </Button>
             </DialogFooter>
           </form>
@@ -544,15 +552,15 @@ export function ProductsPageContent() {
       <Dialog open={linkModalOpen} onOpenChange={setLinkModalOpen}>
         <DialogContent className="font-cairo sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>لينك الدفع جاهز</DialogTitle>
+            <DialogTitle>{t("dashboard.products.linkReady")}</DialogTitle>
             <DialogDescription>
-              {locale === "ar" ? "انسخ اللينك أو شاركه على واتساب" : "Copy the link or share it on WhatsApp"}
+              {t("dashboard.products.linkReadySubtitle")}
             </DialogDescription>
           </DialogHeader>
           {generatedLink && (
             <div className="space-y-4">
               <div>
-                <Label className="text-slate-500">اللينك</Label>
+                <Label className="text-slate-500">{t("dashboard.products.linkLabel")}</Label>
                 <Input
                   readOnly
                   value={generatedLink.checkoutUrl}
@@ -562,7 +570,7 @@ export function ProductsPageContent() {
               <div className="flex gap-2">
                 <Button onClick={copyLink} className="gap-2 font-cairo">
                   <Copy className="h-4 w-4" />
-                  نسخ
+                  {t("common.copy")}
                 </Button>
                 <Button
                   variant="outline"
@@ -570,7 +578,7 @@ export function ProductsPageContent() {
                   className="gap-2 font-cairo bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20"
                 >
                   <MessageCircle className="h-4 w-4" />
-                  مشاركة واتساب
+                  {t("dashboard.products.shareWhatsApp")}
                 </Button>
               </div>
             </div>

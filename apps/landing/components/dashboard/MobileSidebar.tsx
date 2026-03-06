@@ -1,11 +1,13 @@
 "use client";
 
 import { X } from "lucide-react";
+import { useTranslations } from "@/lib/locale-provider";
 import { Sidebar } from "./Sidebar";
 
 type Props = { open: boolean; onClose: () => void };
 
 export function MobileSidebar({ open, onClose }: Props) {
+  const { t } = useTranslations();
   if (!open) return null;
 
   return (
@@ -15,7 +17,7 @@ export function MobileSidebar({ open, onClose }: Props) {
         <button
           onClick={onClose}
           className="absolute top-4 left-4 p-2 text-slate-400 hover:text-slate-600"
-          aria-label="إغلاق"
+          aria-label={t("dashboard.aria.closeMenu")}
         >
           <X className="h-5 w-5" />
         </button>

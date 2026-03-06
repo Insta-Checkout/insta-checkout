@@ -2,19 +2,9 @@
 
 Use these commands to run InstaCheckout locally.
 
-## 1) Start backend dependencies (MongoDB)
+## 1) Configure backend
 
-Preferred on macOS (Homebrew):
-
-```bash
-brew services start mongodb/brew/mongodb-community@8.0
-```
-
-Alternative (Docker):
-
-```bash
-docker compose up -d mongodb
-```
+Ensure `apps/backend/.env` has `MONGODB_URI` set (typically to Atlas). No local MongoDB is required.
 
 ## 2) Start apps
 
@@ -23,14 +13,10 @@ Run each service in its own terminal:
 ```bash
 npx pnpm --filter landing dev
 npx pnpm --filter checkout dev
-MONGODB_URI=mongodb://localhost:27017/instacheckout npx pnpm --filter backend dev
+npx pnpm --filter backend dev
 ```
 
-One-command backend start (recommended):
-
-```bash
-brew services start mongodb/brew/mongodb-community@8.0 && MONGODB_URI=mongodb://localhost:27017/instacheckout npx pnpm --filter backend dev
-```
+The backend reads `MONGODB_URI` from `.env` and connects to Atlas.
 
 ## 3) Optional checks
 
@@ -41,15 +27,4 @@ curl http://localhost:4000/api/health/db
 
 ## 4) Stop services
 
-- Stop frontend/backend terminals with Ctrl+C.
-- Stop MongoDB service (Homebrew):
-
-```bash
-brew services stop mongodb/brew/mongodb-community@8.0
-```
-
-- Or stop MongoDB container (Docker):
-
-```bash
-docker compose down
-```
+Stop frontend/backend terminals with Ctrl+C.

@@ -1,12 +1,14 @@
 "use client";
 
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useTranslations } from "@/lib/locale-provider";
 import { UserMenu } from "./UserMenu";
 import { Menu } from "lucide-react";
 
 type Props = { onMenuToggle: () => void };
 
 export function TopBar({ onMenuToggle }: Props) {
+  const { t } = useTranslations();
   const { user } = useAuth();
 
   return (
@@ -14,7 +16,7 @@ export function TopBar({ onMenuToggle }: Props) {
       <button
         onClick={onMenuToggle}
         className="sm:hidden p-2 rounded-lg text-slate-500 hover:bg-slate-50"
-        aria-label="فتح القائمة"
+        aria-label={t("dashboard.aria.openMenu")}
       >
         <Menu className="h-5 w-5" />
       </button>
@@ -22,7 +24,7 @@ export function TopBar({ onMenuToggle }: Props) {
       <div className="flex-1" />
 
       <UserMenu
-        name={user?.displayName || "البائع"}
+        name={user?.displayName || t("dashboard.aria.seller")}
         email={user?.email || ""}
         photoURL={user?.photoURL}
       />

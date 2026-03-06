@@ -12,10 +12,6 @@ const NAV_ITEMS = [
   { labelKey: "dashboard.sidebar.links", href: "/dashboard/links", icon: Link2 },
 ];
 
-const LOCALE_LABELS: Record<string, string> = {
-  ar: "العربية",
-  en: "English",
-};
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -49,7 +45,7 @@ export function Sidebar() {
           >
             {LOCALES.map((l) => (
               <option key={l} value={l}>
-                {LOCALE_LABELS[l]}
+                {t(`dashboard.sidebar.locale${l === "ar" ? "Ar" : "En"}`)}
               </option>
             ))}
           </select>

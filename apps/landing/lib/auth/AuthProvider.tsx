@@ -26,7 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u);
       setLoading(false);
-      if (!u) router.replace("/onboard");
+      if (!u) router.replace("/");
     });
     return unsub;
   }, [router]);
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     await fetch("/api/session", { method: "DELETE" });
     await fbSignOut(auth);
-    router.replace("/onboard");
+    router.replace("/");
   };
 
   return (

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express"
+import type { Request, Response, NextFunction } from "express"
 import admin from "firebase-admin"
 
 declare global {
@@ -8,7 +8,6 @@ declare global {
     }
   }
 }
-
 let firebaseInitialized = false
 
 function initFirebase() {
@@ -33,12 +32,10 @@ export async function requireFirebaseAuth(
 ): Promise<void> {
   const authHeader = req.headers.authorization
   const token = authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null
-
   if (!token) {
     res.status(401).json({ error: "UNAUTHORIZED", message: "Authorization header with Bearer token required" })
     return
   }
-
   try {
     initFirebase()
     const decoded = await admin.auth().verifyIdToken(token)

@@ -67,24 +67,8 @@ export function getBusinessTypeOptions(
   });
 }
 
-/** Step 1: Live Demo — all optional with defaults */
+/** Step 1: Business info (business name, InstaPay, masked name, WhatsApp) */
 export function createStep1Schema(t: (key: string) => string) {
-  return z.object({
-    businessType: z
-      .enum(["Food & Desserts", "Clothing", "Electronics", "Services", "Other"], {
-        required_error: t("onboard.validation.businessType"),
-      })
-      .optional(),
-    productName: z.string().max(100).optional(),
-    price: z.number().positive().optional(),
-    businessName: z.string().max(100).optional(),
-    instapayNumber: z.string().optional(),
-    maskedFullName: z.string().optional(),
-  });
-}
-
-/** Step 2: Minimal Business Info */
-export function createStep2Schema(t: (key: string) => string) {
   return z.object({
     businessName: z
       .string()
@@ -106,18 +90,10 @@ export function createStep2Schema(t: (key: string) => string) {
   });
 }
 
-/** Step 3: Account registration — handled by Firebase */
-export const step3Schema = z.object({});
+/** Step 2: Account registration — handled by Firebase */
+export const step2Schema = z.object({});
 
-export type Step1Data = {
-  businessType: BusinessTypeValue;
-  productName: string;
-  price: number;
-  businessName?: string;
-  instapayNumber?: string;
-  maskedFullName?: string;
-};
-export type Step2Data = z.infer<ReturnType<typeof createStep2Schema>>;
-export type Step3Data = z.infer<typeof step3Schema>;
+export type Step1Data = z.infer<ReturnType<typeof createStep1Schema>>;
+export type Step2Data = z.infer<typeof step2Schema>;
 
-export type FullFormData = Step1Data & Step2Data;
+export type FullFormData = Step1Data;

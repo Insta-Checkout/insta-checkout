@@ -9,6 +9,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   type Locale,
   LOCALE_DIR,
@@ -30,6 +31,13 @@ function getLocaleFromCookie(): Locale {
   return DEFAULT_LOCALE;
 }
 
+function getLocaleFromUrl(searchParams: URLSearchParams | null): Locale | null {
+  if (!searchParams) return null;
+  const lang = searchParams.get("lang");
+  if (lang === "en" || lang === "ar") return lang;
+  return null;
+}
+
 function setLocaleCookie(locale: Locale) {
   document.cookie = `${COOKIE_NAME}=${locale};path=/;max-age=31536000`;
 }
@@ -46,13 +54,18 @@ interface LocaleContextValue {
 const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
+  const searchParams = useSearchParams();
+  const urlLocale = getLocaleFromUrl(searchParams);
+  const [locale, setLocaleState] = useState<Locale>(
+    urlLocale ?? getLocaleFromCookie()
+  );
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setLocaleState(getLocaleFromCookie());
+    const resolved = urlLocale ?? getLocaleFromCookie();
+    setLocaleState(resolved);
     setMounted(true);
-  }, []);
+  }, [urlLocale]);
 
   useEffect(() => {
     if (!mounted) return;

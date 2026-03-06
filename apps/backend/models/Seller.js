@@ -79,6 +79,11 @@ const sellerSchema = new mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    locale: {
+      type: String,
+      enum: { values: ["en", "ar"], message: "Locale must be en or ar" },
+      default: "ar",
+    },
   },
   {
     timestamps: true,

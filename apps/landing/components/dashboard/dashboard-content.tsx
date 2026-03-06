@@ -55,15 +55,23 @@ export function DashboardContent() {
           <p className="mt-6 text-sm text-muted-foreground">
             {t("dashboard.whatsappHint")}
           </p>
-          <a
-            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "201000000000"}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-base font-bold text-white hover:bg-[#20BD5A] transition-colors"
-          >
+          <div className="mt-4 flex flex-wrap gap-3 justify-center">
+            <Link
+              href="/dashboard/links"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-base font-medium text-foreground hover:bg-muted transition-colors"
+            >
+              {t("dashboard.links.title")}
+            </Link>
+            <a
+              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "201000000000"}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#25D366] px-6 py-3 text-base font-bold text-white hover:bg-[#20BD5A] transition-colors"
+            >
             <MessageCircle className="h-5 w-5" />
             {t("dashboard.openWhatsApp")}
           </a>
+          </div>
         </div>
       </div>
     </>

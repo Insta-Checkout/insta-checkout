@@ -35,7 +35,7 @@ export function OnboardPageHeader() {
         {t("onboard.page.title")}
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        {t("onboard.page.subtitle")}
+        {t("onboard.page.signupSubtitle")}
       </p>
     </div>
   );

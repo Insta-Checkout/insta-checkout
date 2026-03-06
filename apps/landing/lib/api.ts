@@ -26,3 +26,24 @@ export async function fetchWithAuth(
   if (token) headers.set("Authorization", `Bearer ${token}`)
   return fetch(url, { ...options, headers })
 }
+
+/** Fetch with Firebase auth token. Pass a function that returns the idToken. */
+export async function apiFetch(
+  path: string,
+  options: RequestInit & { getToken?: () => Promise<string | null> } = {}
+): Promise<Response> {
+  const { getToken, ...fetchOptions } = options
+  const headers = new Headers(fetchOptions.headers)
+
+  if (getToken) {
+    const token = await getToken()
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`)
+    }
+  }
+
+  return fetch(`${getBackendUrl()}${path}`, {
+    ...fetchOptions,
+    headers,
+  })
+}

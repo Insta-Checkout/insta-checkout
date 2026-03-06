@@ -44,6 +44,8 @@ export function LocalePersist() {
       });
 
       try {
+        const match = document.cookie.match(/(?:^|; )locale=([^;]*)/);
+        const cookieLocale = match?.[1];
         const res = await fetchWithAuth(
           `${getBackendUrl()}/sellers/me`,
           {},
@@ -52,25 +54,25 @@ export function LocalePersist() {
         if (res.ok) {
           const data = await res.json();
           const preferred = data.preferredLocale;
-          if (preferred === "ar" || preferred === "en") {
-            // Don't overwrite if user just changed locale (within last 2s)
+          // Prefer user's choice from landing page (cookie) over backend when they have a valid locale set.
+          // This ensures the language they picked before signing in carries through to the dashboard.
+          if (cookieLocale === "ar" || cookieLocale === "en") {
+            // Explicitly apply cookie locale so the dashboard re-renders in the correct language
+            setLocale(cookieLocale, { persist: false });
+            // Sync cookie to backend so it persists for future sessions
+            await fetchWithAuth(
+              `${getBackendUrl()}/sellers/me`,
+              {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ preferredLocale: cookieLocale }),
+              },
+              getToken
+            );
+          } else if (preferred === "ar" || preferred === "en") {
+            // No cookie set; use backend preference
             if (Date.now() - lastUserChangeAt.current > 2000) {
               setLocale(preferred, { persist: false });
-            }
-          } else {
-            // New seller: persist current cookie to backend so it sticks on next login
-            const match = document.cookie.match(/(?:^|; )locale=([^;]*)/);
-            const cookieLocale = match?.[1];
-            if (cookieLocale === "ar" || cookieLocale === "en") {
-              await fetchWithAuth(
-                `${getBackendUrl()}/sellers/me`,
-                {
-                  method: "PATCH",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ preferredLocale: cookieLocale }),
-                },
-                getToken
-              );
             }
           }
         }

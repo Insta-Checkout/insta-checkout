@@ -3,23 +3,23 @@ const mongoose = require("mongoose");
 const connectDB = require("../db");
 const Seller = require("../models/Seller");
 const Product = require("../models/Product");
-const Order = require("../models/Order");
 
 async function seed() {
   await connectDB();
 
   await Seller.deleteMany({});
   await Product.deleteMany({});
-  await Order.deleteMany({});
+  const paymentLinks = mongoose.connection.db.collection("payment_links");
+  await paymentLinks.deleteMany({});
 
   await Seller.syncIndexes();
   await Product.syncIndexes();
-  await Order.syncIndexes();
   console.log("Cleared existing data and synced indexes");
 
   const seller = await Seller.create({
     businessName: "Sweet Bites",
     category: "Food & Desserts",
+    locale: "ar",
     instapayNumber: "01012345678",
     maskedFullName: "أ*** م*** أ** م***",
     whatsappNumber: "201098765432",
@@ -40,37 +40,45 @@ async function seed() {
   });
   console.log("Created product:", product.name, product._id.toString());
 
-  const order = await Order.create({
+  const checkoutBase = process.env.CHECKOUT_BASE_URL || "http://localhost:3001";
+  const token = "seed-link-token-" + Date.now();
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const paymentLink = await paymentLinks.insertOne({
+    token,
     sellerId: seller._id,
     productId: product._id,
     productName: product.name,
     price: product.price,
+    checkoutUrl: `${checkoutBase.replace(/\/$/, "")}/l/${token}`,
+    status: "confirmed",
+    createdAt: now,
+    paidAt: now,
+    confirmedAt: now,
     buyerPhone: "201112345678",
+    buyerName: "Test Buyer",
     screenshotUrl: "https://example.com/screenshot.png",
-    status: "pending",
-    checkoutPageUrl: `https://pay.instacheckout.co/${seller._id}/${product._id}`,
+    expiresAt,
   });
-  console.log("Created order:", order._id.toString(), "status:", order.status);
+  console.log("Created payment link:", paymentLink.insertedId.toString(), "status: confirmed");
 
   const readBack = {
     seller: await Seller.findById(seller._id).lean(),
     product: await Product.findById(product._id).lean(),
-    order: await Order.findById(order._id).lean(),
+    paymentLink: await paymentLinks.findOne({ _id: paymentLink.insertedId }),
   };
   console.log("\nVerification — read back all documents:");
   console.log("Seller:", JSON.stringify(readBack.seller, null, 2));
   console.log("Product:", JSON.stringify(readBack.product, null, 2));
-  console.log("Order:", JSON.stringify(readBack.order, null, 2));
+  console.log("Payment link:", JSON.stringify(readBack.paymentLink, null, 2));
 
   const indexes = {
     sellers: await Seller.collection.getIndexes(),
     products: await Product.collection.getIndexes(),
-    orders: await Order.collection.getIndexes(),
   };
   console.log("\nIndexes:");
   console.log("sellers:", JSON.stringify(indexes.sellers, null, 2));
   console.log("products:", JSON.stringify(indexes.products, null, 2));
-  console.log("orders:", JSON.stringify(indexes.orders, null, 2));
 
   console.log("\nDuplicate WhatsApp test...");
   try {

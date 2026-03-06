@@ -48,16 +48,110 @@ router.get("/", async (req: Request, res: Response) => {
       res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
       return
     }
+    const onboardingComplete = seller.onboardingComplete ?? !!seller.instapayNumber
     res.json({
       id: seller._id,
       businessName: seller.businessName,
       preferredLocale: seller.preferredLocale ?? null,
       email: seller.email,
       whatsappVerified: seller.whatsappVerified,
+      category: seller.category ?? null,
+      instapayNumber: seller.instapayNumber ?? null,
+      maskedFullName: seller.maskedFullName ?? null,
+      onboardingComplete,
+      onboardingProgress: seller.onboardingProgress ?? {
+        category: !!seller.category,
+        instapayNumber: !!seller.instapayNumber,
+        maskedName: !!seller.maskedFullName,
+        logo: !!seller.logoUrl,
+        socialLinks: !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook || seller.socialLinks?.whatsapp),
+      },
     })
   } catch (err) {
     console.error("[GET /sellers/me]", err)
     res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to fetch profile" })
+  }
+})
+
+router.patch("/onboarding", async (req: Request, res: Response) => {
+  const firebaseUid = req.firebaseUid
+  if (!firebaseUid) {
+    res.status(401).json({ error: "UNAUTHORIZED" })
+    return
+  }
+  const body = req.body as Record<string, unknown>
+  const updates: Record<string, unknown> = {}
+  if (typeof body.category === "string" && body.category.trim()) {
+    updates.category = body.category.trim()
+  }
+  if (typeof body.instapayNumber === "string" && body.instapayNumber.trim()) {
+    updates.instapayNumber = body.instapayNumber.trim()
+  }
+  if (typeof body.maskedFullName === "string" && body.maskedFullName.trim()) {
+    const val = body.maskedFullName.trim()
+    if (val.includes("*")) updates.maskedFullName = val
+  }
+  if (typeof body.logoUrl === "string") {
+    updates.logoUrl = body.logoUrl.trim() || null
+  }
+  if (body.socialLinks && typeof body.socialLinks === "object") {
+    const sl = body.socialLinks as Record<string, string>
+    updates.socialLinks = {
+      instagram: typeof sl.instagram === "string" ? sl.instagram : "",
+      facebook: typeof sl.facebook === "string" ? sl.facebook : "",
+      whatsapp: typeof sl.whatsapp === "string" ? sl.whatsapp : "",
+    }
+  }
+  if (Object.keys(updates).length === 0) {
+    res.status(400).json({ error: "VALIDATION_ERROR", message: "No valid onboarding fields provided" })
+    return
+  }
+  try {
+    const db = await connectToMongo()
+    const seller = await db.collection("sellers").findOne({ firebaseUid })
+    if (!seller) {
+      res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
+      return
+    }
+    const now = new Date()
+    const merged = { ...seller, ...updates, updatedAt: now } as Record<string, unknown>
+    const requiredComplete = !!(merged.instapayNumber && merged.maskedFullName && merged.category)
+    updates.onboardingComplete = requiredComplete
+    updates.updatedAt = now
+
+    const result = await db.collection("sellers").findOneAndUpdate(
+      { firebaseUid },
+      { $set: updates },
+      { returnDocument: "after" }
+    )
+    if (!result) {
+      res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
+      return
+    }
+    if (requiredComplete) {
+      await db.collection("payment_links").updateMany(
+        { sellerId: result._id, status: "preview" },
+        { $set: { status: "active", updatedAt: now } }
+      )
+    }
+    const doc = result as Record<string, unknown>
+    res.json({
+      id: doc._id,
+      onboardingComplete: (doc.onboardingComplete as boolean) ?? requiredComplete,
+      onboardingProgress: {
+        category: !!doc.category,
+        instapayNumber: !!doc.instapayNumber,
+        maskedName: !!doc.maskedFullName,
+        logo: !!(doc.logoUrl as string | undefined),
+        socialLinks: (() => {
+          const sl = doc.socialLinks as { instagram?: string; facebook?: string; whatsapp?: string } | undefined
+          return !!(sl?.instagram || sl?.facebook || sl?.whatsapp)
+        })(),
+      },
+    })
+  } catch (err) {
+    console.error("[PATCH /sellers/me/onboarding]", err)
+    res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to update onboarding" })
   }
 })
 

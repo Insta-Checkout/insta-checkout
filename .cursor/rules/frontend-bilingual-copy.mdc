@@ -1,7 +1,7 @@
 ---
 description: Frontend copy must be bilingual (English + Arabic) and centralized
 globs: apps/landing/**/*.{tsx,ts}, apps/checkout/**/*.{tsx,ts}
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Frontend Bilingual Copy
@@ -18,7 +18,7 @@ Edit these files to change any user-facing text across both apps. Do **not** har
 
 ## Rules
 
-1. **Never hardcode user-facing text** in TSX/TS files. Use the `t()` or `get()` functions from `useTranslations()`.
+1. **Never hardcode user-facing text** in TSX/TS files — no Arabic strings, no English strings, no inline text. Always use the `t()` or `get()` functions from `useTranslations()`.
 2. **Every new string** must have an entry in both `en.json` and `ar.json` under the appropriate section (e.g. `landing`, `onboard`, `checkout`, `common`).
 3. **Match the vibe** — English translations should capture the same casual, friendly, direct tone as the Arabic (Egyptian dialect).
 4. **Use nested keys** for organization, e.g. `onboard.step2.businessName`, `checkout.step1.paymentMethod`.
@@ -44,6 +44,7 @@ function MyComponent() {
 }
 ```
 
-## Language Switcher
+## Language / Locale
 
-Both apps include a `LanguageSwitcher` component. Locale is persisted in a cookie and applies `dir` (rtl/ltr) and `lang` (ar/en) to the document.
+- **Landing app**: Includes a `LanguageSwitcher`. The seller chooses their language; it is persisted in a cookie and saved to their profile when they onboard.
+- **Checkout app**: The customer does **not** pick the language. The locale comes from the URL (`?lang=ar` or `?lang=en`) set by the seller when they share the payment link. No LanguageSwitcher is shown.

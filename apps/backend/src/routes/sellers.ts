@@ -10,7 +10,49 @@ interface ValidationError {
   message: string
 }
 
-function validateBody(body: Record<string, unknown>): ValidationError[] {
+function normalizePhone(phone: string): string {
+  const cleaned = phone.replace(/\D/g, "")
+  if (cleaned.startsWith("20") && cleaned.length === 12) return cleaned
+  if (cleaned.startsWith("0") && cleaned.length === 11) return "20" + cleaned.slice(1)
+  if (cleaned.length === 10) return "20" + cleaned
+  return phone
+}
+
+function validateMinimalBody(body: Record<string, unknown>): ValidationError[] {
+  const errors: ValidationError[] = []
+  const businessName = typeof body.businessName === "string" ? body.businessName.trim() : ""
+  if (!businessName) {
+    errors.push({ field: "businessName", message: "Business name is required" })
+  } else if (businessName.length < 2 || businessName.length > 100) {
+    errors.push({ field: "businessName", message: "Business name must be 2–100 characters" })
+  }
+
+  const phoneRaw = typeof body.phoneNumber === "string" ? body.phoneNumber.trim() : ""
+  if (!phoneRaw) {
+    errors.push({ field: "phoneNumber", message: "Phone number is required" })
+  } else {
+    const normalized = normalizePhone(phoneRaw)
+    if (!/^20[0-9]{10}$/.test(normalized)) {
+      errors.push({ field: "phoneNumber", message: "Must be a valid Egyptian phone number (01XXXXXXXXX)" })
+    }
+  }
+
+  const firebaseUid = typeof body.firebaseUid === "string" ? body.firebaseUid.trim() : ""
+  if (!firebaseUid) {
+    errors.push({ field: "firebaseUid", message: "Firebase UID is required" })
+  }
+
+  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : ""
+  if (!email) {
+    errors.push({ field: "email", message: "Email is required" })
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    errors.push({ field: "email", message: "Email must be a valid format" })
+  }
+
+  return errors
+}
+
+function validateFullBody(body: Record<string, unknown>): ValidationError[] {
   const errors: ValidationError[] = []
 
   const businessName = typeof body.businessName === "string" ? body.businessName.trim() : ""
@@ -54,38 +96,59 @@ function validateBody(body: Record<string, unknown>): ValidationError[] {
   return errors
 }
 
+function validateBody(body: Record<string, unknown>): ValidationError[] {
+  const hasMinimal = body.businessName != null && body.phoneNumber != null && body.firebaseUid != null && body.email != null
+  const hasFull = body.instapayNumber != null && body.maskedFullName != null && body.whatsappNumber != null
+
+  if (hasMinimal && !hasFull) {
+    return validateMinimalBody(body)
+  }
+  return validateFullBody(body)
+}
+
 router.get("/health", (_req: Request, res: Response) => {
   res.json({ status: "ok", collection: "sellers" })
 })
 
 router.post("/", async (req: Request, res: Response) => {
   const start = Date.now()
-  console.log("[POST /sellers] Request received")
   const body = req.body as Record<string, unknown>
+  console.log("[POST /sellers] Request received", {
+    businessName: body.businessName,
+    phoneNumber: body.phoneNumber,
+    email: body.email,
+    firebaseUid: body.firebaseUid,
+  })
 
   const errors = validateBody(body)
   if (errors.length > 0) {
+    console.log("[POST /sellers] Validation failed", errors)
     res.status(400).json({ success: false, error: "VALIDATION_ERROR", details: errors })
     return
   }
 
   const businessName = (body.businessName as string).trim()
   const category = typeof body.category === "string" ? (body.category as string).trim() || null : null
-  const instapayNumber = (body.instapayNumber as string).trim()
-  const maskedFullName = (body.maskedFullName as string).trim()
-  const whatsappNumber = (body.whatsappNumber as string).trim()
   const firebaseUid = (body.firebaseUid as string).trim()
   const email = (body.email as string).trim().toLowerCase()
   const socialLinks = (body.socialLinks as Record<string, string> | undefined) ?? {}
+
+  const isMinimalSignup = body.phoneNumber != null && body.instapayNumber == null
+  const whatsappNumber = isMinimalSignup
+    ? normalizePhone((body.phoneNumber as string).trim())
+    : (body.whatsappNumber as string).trim()
+  const instapayNumber = isMinimalSignup ? null : (body.instapayNumber as string).trim()
+  const maskedFullName = isMinimalSignup ? null : (body.maskedFullName as string).trim()
+  const onboardingComplete = !isMinimalSignup
 
   try {
     const db = await connectToMongo()
     const dbName = db.databaseName
     const sellers = db.collection("sellers")
+    console.log("[POST /sellers] Using db:", dbName, "collection: sellers")
 
-    // Indexes created separately (createIndex blocks for minutes on Atlas)
     const now = new Date()
-    const doc = {
+    const doc: Record<string, unknown> = {
       businessName,
       category,
       instapayNumber,
@@ -103,16 +166,20 @@ router.post("/", async (req: Request, res: Response) => {
       lastActiveAt: now,
       createdAt: now,
       updatedAt: now,
+      onboardingComplete,
     }
 
+    console.log("[POST /sellers] Inserting doc:", { email, whatsappNumber, businessName, firebaseUid })
     const result = await sellers.insertOne(doc)
-    console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, firebaseUid=${firebaseUid}, db=${dbName}`)
+    console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, whatsappNumber=${whatsappNumber}, db=${dbName}`)
 
-    try {
-      const { code } = await createVerification(result.insertedId as ObjectId, whatsappNumber)
-      sendOtpViaWhatsApp(whatsappNumber, code)
-    } catch (vErr) {
-      console.warn("[POST /sellers] Verification OTP send failed:", vErr)
+    if (!isMinimalSignup) {
+      try {
+        const { code } = await createVerification(result.insertedId as ObjectId, whatsappNumber)
+        sendOtpViaWhatsApp(whatsappNumber, code)
+      } catch (vErr) {
+        console.warn("[POST /sellers] Verification OTP send failed:", vErr)
+      }
     }
 
     res.status(201).json({
@@ -125,15 +192,22 @@ router.post("/", async (req: Request, res: Response) => {
         maskedFullName,
         whatsappNumber,
         whatsappVerified: false,
+        onboardingComplete,
         createdAt: now,
       },
       message: "Seller registered successfully.",
     })
   } catch (err) {
     const mongoErr = err as { code?: number; keyPattern?: Record<string, number> }
+    console.log("[POST /sellers] Error caught", {
+      code: mongoErr.code,
+      keyPattern: mongoErr.keyPattern,
+      message: (err as Error).message,
+    })
 
     if (mongoErr.code === 11000) {
       const key = mongoErr.keyPattern ? Object.keys(mongoErr.keyPattern)[0] : ""
+      console.log("[POST /sellers] Duplicate key", key)
       if (key === "email" || key === "firebaseUid") {
         res.status(409).json({
           success: false,

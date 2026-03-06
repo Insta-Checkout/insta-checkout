@@ -42,6 +42,11 @@ function validateSeller(req, res, next) {
     errors.push({ field: "email", message: "Email must be a valid format" });
   }
 
+  const locale = typeof body.locale === "string" ? body.locale.trim() : null;
+  if (locale && locale !== "en" && locale !== "ar") {
+    errors.push({ field: "locale", message: "Locale must be en or ar" });
+  }
+
   if (body.socialLinks) {
     const { instagram, facebook } = body.socialLinks;
     if (instagram && typeof instagram === "string" && instagram.trim()) {
@@ -70,6 +75,7 @@ function validateSeller(req, res, next) {
 
   req.body.businessName = businessName;
   req.body.category = category || null;
+  req.body.locale = locale === "en" || locale === "ar" ? locale : "ar";
   req.body.instapayNumber = instapayNumber;
   req.body.maskedFullName = maskedFullName;
   req.body.whatsappNumber = whatsappNumber;

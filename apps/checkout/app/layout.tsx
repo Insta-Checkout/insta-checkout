@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { Suspense } from 'react'
 import { Cairo } from 'next/font/google'
 import { Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
@@ -31,12 +32,14 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body className={`${_cairo.variable} ${_geistMono.variable} font-sans antialiased`}>
-        <LocaleProvider>
-          {children}
-          <Toaster position="top-center" richColors />
-          <Analytics />
-          <FirebaseAnalytics />
-        </LocaleProvider>
+        <Suspense fallback={null}>
+          <LocaleProvider>
+            {children}
+            <Toaster position="top-center" richColors />
+            <Analytics />
+            <FirebaseAnalytics />
+          </LocaleProvider>
+        </Suspense>
       </body>
     </html>
   )

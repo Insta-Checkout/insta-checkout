@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { LogOut, ChevronDown } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/lib/auth/AuthProvider";
+import { useTranslations } from "@/lib/locale-provider";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -13,6 +14,7 @@ type Props = {
 };
 
 export function UserMenu({ name, email, photoURL }: Props) {
+  const { t } = useTranslations();
   const { signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -32,7 +34,7 @@ export function UserMenu({ name, email, photoURL }: Props) {
     .map((n) => n[0])
     .join("")
     .slice(0, 2)
-    .toUpperCase() || "ب";
+    .toUpperCase() || "?";
 
   return (
     <div className="relative" ref={ref}>
@@ -65,7 +67,7 @@ export function UserMenu({ name, email, photoURL }: Props) {
             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 font-cairo"
           >
             <LogOut className="h-4 w-4" />
-            تسجيل الخروج
+            {t("dashboard.userMenu.logout")}
           </button>
         </div>
       )}
