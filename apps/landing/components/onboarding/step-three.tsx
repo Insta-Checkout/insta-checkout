@@ -98,12 +98,24 @@ export function StepThree({ onBack, onSubmit }: StepThreeProps) {
       await onSubmit(user.uid, user.email || data.email);
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
-      console.error("[Firebase email sign-up]", code, err);
       if (code === "auth/email-already-in-use") {
-        toast.error(t("onboard.errors.emailInUse"));
+        toast.info(t("onboard.errors.emailInUseSignIn"));
+        try {
+          const user = await signInWithEmail(data.email, data.password);
+          toast.success(t("onboard.errors.signInSuccess"));
+          await onSubmit(user.uid, user.email || data.email);
+        } catch (signInErr: unknown) {
+          const signInCode = (signInErr as { code?: string })?.code;
+          if (signInCode === "auth/invalid-credential" || signInCode === "auth/wrong-password") {
+            toast.error(t("onboard.errors.invalidCredentials"));
+          } else {
+            throw signInErr;
+          }
+        }
       } else if (code === "auth/operation-not-allowed") {
         toast.error(t("onboard.errors.emailNotEnabled"));
       } else {
+        console.error("[Firebase email sign-up]", code, err);
         toast.error(t("onboard.errors.generic"));
       }
     } finally {

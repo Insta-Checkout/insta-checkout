@@ -8,6 +8,8 @@ const checkoutData = {
   sellerName: "حلويات سارة",
   categoryTag: "حلويات ومخبوزات",
   productName: "كيكة شوكولاتة",
+  productNameAr: "كيكة شوكولاتة",
+  productNameEn: "Chocolate cake",
   productImage: "/images/chocolate-cake.jpg",
   price: "300",
   instaPayAccount: "sarah.sweets@instapay",
@@ -21,6 +23,8 @@ export default function CheckoutPage() {
       sellerName={checkoutData.sellerName}
       categoryTag={checkoutData.categoryTag}
       productName={checkoutData.productName}
+      productNameAr={checkoutData.productNameAr}
+      productNameEn={checkoutData.productNameEn}
       productImage={checkoutData.productImage}
       price={checkoutData.price}
       instaPayAccount={checkoutData.instaPayAccount}

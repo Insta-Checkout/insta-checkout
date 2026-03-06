@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      pull-requests: read
+      pull-requests: write
     steps:
       - name: Wait for Railway deployment and get backend URL
         id: railway
@@ -70,6 +70,7 @@ jobs:
             core.warning('Railway deployment URL not found in PR comments after waiting.');
 
       - name: Set Vercel env and redeploy
+        id: vercel
         if: steps.railway.outputs.backend_url != ''
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -79,6 +80,7 @@ jobs:
         run: |
           set -e
           PROJECT_IDS="${{ vars.VERCEL_PROJECT_IDS || 'insta-checkout-landing' }}"
+          DEPLOY_LINKS=""
           for PROJECT in ${PROJECT_IDS//,/ }; do
             PROJECT=$(echo "$PROJECT" | xargs)
             [ -z "$PROJECT" ] && continue
@@ -115,5 +117,59 @@ jobs:
                   \"repo\": \"$REPO_NAME\"
                 }
               }")
+            PREVIEW_URL=$(echo "$DEPLOY_BODY" | jq -r '.url // empty')
+            if [ -n "$PREVIEW_URL" ]; then
+              FULL_URL="https://${PREVIEW_URL}"
+              DEPLOY_LINKS="${DEPLOY_LINKS}${PROJECT}::${FULL_URL}"$'\n'
+            fi
             echo "$DEPLOY_BODY" | jq -r '.url // .error.message // .' || echo "$DEPLOY_BODY"
           done
+          echo "deploy_links<<EOF" >> $GITHUB_OUTPUT
+          echo -e "$DEPLOY_LINKS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Comment deployment links on PR
+        if: steps.railway.outputs.backend_url != '' && steps.vercel.outputs.deploy_links != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const deployLinks = `${{ steps.vercel.outputs.deploy_links }}`.trim();
+            if (!deployLinks) return;
+
+            const rows = deployLinks.split('\n').filter(Boolean).map(line => {
+              const [project, url] = line.split('::');
+              return `| ${project} | [Preview](${url}) |`;
+            }).join('\n');
+
+            const body = `## Vercel preview (with Railway backend)
+
+            Backend: \`${{ steps.railway.outputs.backend_url }}\`
+
+            | Project | Link |
+            | :--- | :--- |
+            ${rows}
+            `;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+            });
+            const marker = 'Vercel preview (with Railway backend)';
+            const existing = comments.find(c => c.user?.type === 'Bot' && c.body?.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.pull_request.number,
+                body,
+              });
+            }

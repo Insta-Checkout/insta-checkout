@@ -3,6 +3,7 @@ import { Cairo, Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { FirebaseAnalytics } from '@/components/firebase-analytics'
 import { LocaleProvider } from '@/lib/locale-provider'
+import { LocalePersist } from '@/components/locale-persist'
 import './globals.css'
 
 const cairo = Cairo({
@@ -47,9 +48,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="ar" dir="rtl" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${cairo.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <LocaleProvider>
+          <LocalePersist />
           {children}
           <Analytics />
           <FirebaseAnalytics />

@@ -14,6 +14,8 @@ interface CheckoutFlowProps {
   sellerLogo?: string
   categoryTag?: string
   productName: string
+  productNameAr?: string | null
+  productNameEn?: string | null
   productImage?: string
   price: string
   instaPayAccount: string
@@ -21,18 +23,31 @@ interface CheckoutFlowProps {
   whatsappLink?: string
 }
 
+function getProductDisplayName(
+  productName: string,
+  productNameAr?: string | null,
+  productNameEn?: string | null,
+  locale: string = "ar"
+): string {
+  if (locale === "ar") return productNameAr || productName
+  return productNameEn || productName
+}
+
 export function CheckoutFlow({
   sellerName,
   sellerLogo,
   categoryTag,
   productName,
+  productNameAr,
+  productNameEn,
   productImage,
   price,
   instaPayAccount,
   maskedName,
   whatsappLink,
 }: CheckoutFlowProps) {
-  const { t } = useTranslations()
+  const { t, locale } = useTranslations()
+  const displayName = getProductDisplayName(productName, productNameAr, productNameEn, locale)
   const [currentStep, setCurrentStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -52,7 +67,7 @@ export function CheckoutFlow({
       setCurrentStep(3)
       window.scrollTo({ top: 0, behavior: "smooth" })
     },
-    [productName, price, sellerName]
+    [displayName, price, sellerName]
   )
 
   return (
@@ -72,7 +87,7 @@ export function CheckoutFlow({
         <main className="mt-2">
           {currentStep === 1 && (
             <StepOne
-              productName={productName}
+              productName={displayName}
               productImage={productImage}
               price={price}
               instaPayAccount={instaPayAccount}
@@ -90,7 +105,7 @@ export function CheckoutFlow({
 
           {currentStep === 3 && (
             <StepThree
-              productName={productName}
+              productName={displayName}
               price={price}
               sellerName={sellerName}
               whatsappLink={whatsappLink}

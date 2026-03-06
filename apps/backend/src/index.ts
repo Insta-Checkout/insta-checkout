@@ -3,6 +3,8 @@ import express from "express"
 import cors from "cors"
 import { connectToMongo } from "./db.js"
 import sellersRouter from "./routes/sellers.js"
+import sellersMeRouter from "./routes/sellersMe.js"
+import webhooksRouter from "./routes/webhooks.js"
 
 const app = express()
 const PORT = process.env.PORT ?? 4000
@@ -56,6 +58,8 @@ app.get("/health", (_req, res) => {
 
 // Sellers API
 app.use("/sellers", sellersRouter)
+app.use("/sellers/me", sellersMeRouter)
+app.use("/webhooks", webhooksRouter)
 
 // MongoDB connection validation
 app.get("/api/health/db", async (_req, res) => {

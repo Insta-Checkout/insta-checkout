@@ -19,6 +19,7 @@ import {
   DEFAULT_LOCALE,
   LOCALES,
 } from "@insta-checkout/i18n";
+import { getLocalePersist } from "./locale-persist";
 
 const COOKIE_NAME = "locale";
 
@@ -36,7 +37,7 @@ function setLocaleCookie(locale: Locale) {
 
 interface LocaleContextValue {
   locale: Locale;
-  setLocale: (locale: Locale) => void;
+  setLocale: (locale: Locale, options?: { persist?: boolean }) => void;
   dir: "ltr" | "rtl";
   t: (key: string, vars?: Record<string, string>) => string;
   /** Get raw value (string, array, or object) for nested structures like arrays */
@@ -61,9 +62,12 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     html.dir = LOCALE_DIR[locale];
   }, [locale, mounted]);
 
-  const setLocale = useCallback((newLocale: Locale) => {
+  const setLocale = useCallback((newLocale: Locale, options?: { persist?: boolean }) => {
     setLocaleState(newLocale);
     setLocaleCookie(newLocale);
+    if (options?.persist !== false) {
+      getLocalePersist()?.(newLocale);
+    }
   }, []);
 
   const t = useCallback(

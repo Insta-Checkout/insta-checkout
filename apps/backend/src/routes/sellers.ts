@@ -1,5 +1,7 @@
 import { Router, Request, Response } from "express"
 import { connectToMongo } from "../db.js"
+import { createVerification, sendOtpViaWhatsApp } from "../services/verification.js"
+import { ObjectId } from "mongodb"
 
 const router = Router()
 
@@ -78,6 +80,7 @@ router.post("/", async (req: Request, res: Response) => {
 
   try {
     const db = await connectToMongo()
+    const dbName = db.databaseName
     const sellers = db.collection("sellers")
 
     // Indexes created separately (createIndex blocks for minutes on Atlas)
@@ -103,7 +106,14 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
     const result = await sellers.insertOne(doc)
-    console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, firebaseUid=${firebaseUid}`)
+    console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, firebaseUid=${firebaseUid}, db=${dbName}`)
+
+    try {
+      const { code } = await createVerification(result.insertedId as ObjectId, whatsappNumber)
+      sendOtpViaWhatsApp(whatsappNumber, code)
+    } catch (vErr) {
+      console.warn("[POST /sellers] Verification OTP send failed:", vErr)
+    }
 
     res.status(201).json({
       success: true,

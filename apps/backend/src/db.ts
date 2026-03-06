@@ -13,7 +13,11 @@ export async function connectToMongo(): Promise<Db> {
     await client.connect()
   }
 
-  return client.db()
+  const dbName = process.env.MONGODB_DB_NAME || (() => {
+    const match = uri.match(/\/([^/?]+)(?:\?|$)/)
+    return match ? match[1] : "test"
+  })()
+  return client.db(dbName)
 }
 
 export async function closeMongoConnection(): Promise<void> {
