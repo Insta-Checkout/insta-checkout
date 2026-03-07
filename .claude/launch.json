@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "landing",
+      "runtimeExecutable": "/usr/local/lib/node_modules/corepack/shims/pnpm",
+      "runtimeArgs": ["dev:landing"],
+      "port": 3000
+    },
+    {
+      "name": "checkout",
+      "runtimeExecutable": "/usr/local/lib/node_modules/corepack/shims/pnpm",
+      "runtimeArgs": ["dev:checkout"],
+      "port": 3001
+    },
+    {
+      "name": "backend",
+      "runtimeExecutable": "/usr/local/lib/node_modules/corepack/shims/pnpm",
+      "runtimeArgs": ["dev:backend"],
+      "port": 4000
+    }
+  ]
+}
