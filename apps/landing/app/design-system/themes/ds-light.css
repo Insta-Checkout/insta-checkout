@@ -1,0 +1,27 @@
+/* Design System — Light Mode
+ * White-dominant, orange accents (CTAs + decorative), light footer
+ * Source: Notion Design System Light Mode
+ */
+
+.ds-theme-light {
+  --r-bg: #FAFAFA;
+  --r-bg-alt: #F3EEFA;
+  --r-bg-elevated: #FFFFFF;
+  --r-text: #1E0A3C;
+  --r-text-muted: #6B5B7B;
+  --r-primary: #F97316;
+  --r-primary-hover: #EA580C;
+  --r-secondary: #7C3AED;
+  /* Orange for decorative accents (icons, badges, step numbers) — not purple */
+  --r-icon: #F97316;
+  --r-icon-secondary: #FB923C;
+  --r-icon-bg: #FFEDD5;
+  --r-cta: #F97316;
+  --r-cta-hover: #EA580C;
+  --r-on-primary: #FFFFFF;
+  --r-border: #E4D8F0;
+  --r-glass: #FFFFFF;
+  --r-glass-border: #E4D8F0;
+  /* Light footer — only Hero and Final CTA use dark purple blocks */
+  --r-footer-bg: #F3EEFA;
+}
