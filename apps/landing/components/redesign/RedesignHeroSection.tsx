@@ -28,7 +28,7 @@ function WhatsAppChat({ t }: { t: (k: string) => string }) {
     <div className="flex flex-col gap-2 p-3">
       <div className="flex items-center gap-2 border-b border-[var(--r-border)] pb-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--r-cta)]">
-          <MessageCircle className="h-4 w-4 text-white" />
+          <MessageCircle className="h-4 w-4 text-[var(--r-on-primary)]" />
         </div>
         <div>
           <p className="text-xs font-bold text-[var(--r-text)]">
@@ -65,7 +65,7 @@ function CheckoutPreview({ t }: { t: (k: string) => string }) {
   return (
     <div className="flex flex-col items-center gap-3 p-4">
       <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[var(--r-primary)]">
-        <Smartphone className="h-5 w-5 text-[var(--r-bg)]" />
+        <Smartphone className="h-5 w-5 text-[var(--r-on-primary)]" />
       </div>
       <p className="text-xs font-bold text-[var(--r-text)]">Sweet Treats</p>
       <div className="w-full rounded-lg bg-[var(--r-glass)] p-3 backdrop-blur-sm">

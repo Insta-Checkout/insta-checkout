@@ -7,10 +7,9 @@ import { useState } from "react"
 
 const SYSTEMS = [
   { id: "hub", path: "/design-system", label: "All Systems" },
-  { id: "1", path: "/design-system/1", label: "DS 1", desc: "Sky blue + orange" },
-  { id: "2", path: "/design-system/2", label: "DS 2", desc: "Purple + orange" },
-  { id: "3", path: "/design-system/3", label: "DS 3", desc: "Purple glass" },
-  { id: "4", path: "/design-system/4", label: "DS 4", desc: "Teal glass" },
+  { id: "2", path: "/design-system/2", label: "DS 2", desc: "Purple + orange (dark)" },
+  { id: "light", path: "/design-system/light", label: "Light Mode", desc: "White + orange" },
+  { id: "light-purple", path: "/design-system/light-purple", label: "Light Purple", desc: "White + purple" },
 ] as const
 
 export function DesignSystemSwitcher() {

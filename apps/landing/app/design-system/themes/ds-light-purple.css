@@ -1,0 +1,24 @@
+/* Design System — Light Purple
+ * White-dominant, purple accents (icons, CTAs, badges)
+ */
+
+.ds-theme-light-purple {
+  --r-bg: #FAFAFA;
+  --r-bg-alt: #F3EEFA;
+  --r-bg-elevated: #FFFFFF;
+  --r-text: #1E0A3C;
+  --r-text-muted: #6B5B7B;
+  --r-primary: #7C3AED;
+  --r-primary-hover: #6D28D9;
+  --r-secondary: #8B5CF6;
+  --r-icon: #7C3AED;
+  --r-icon-secondary: #8B5CF6;
+  --r-icon-bg: #EDE9FE;
+  --r-cta: #7C3AED;
+  --r-cta-hover: #6D28D9;
+  --r-on-primary: #FFFFFF;
+  --r-border: #E4D8F0;
+  --r-glass: #FFFFFF;
+  --r-glass-border: #E4D8F0;
+  --r-footer-bg: #F3EEFA;
+}

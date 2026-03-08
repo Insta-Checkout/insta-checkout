@@ -65,7 +65,7 @@ export function RedesignFooter() {
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2.5">
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--r-primary)] to-[var(--r-secondary)]">
-                <Zap className="h-5 w-5 text-[var(--r-bg)]" />
+                <Zap className="h-5 w-5 text-[var(--r-on-primary)]" />
               </div>
               <span className="text-lg font-bold text-[var(--footer-foreground)]">
                 InstaPay Checkout

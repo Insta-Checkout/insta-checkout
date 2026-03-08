@@ -1,5 +1,13 @@
 /* Shared theme tokens for design system pages */
 
+/* Fallbacks for themes that don't define these */
+[class^="ds-theme-"] {
+  --r-on-primary: #FFFFFF;
+  --r-icon: var(--r-primary);
+  --r-icon-secondary: var(--r-secondary);
+  --r-icon-bg: color-mix(in srgb, var(--r-icon) 20%, transparent);
+}
+
 [class^="ds-theme-"] {
   --background: var(--r-bg);
   --foreground: var(--r-text);

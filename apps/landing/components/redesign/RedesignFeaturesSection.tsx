@@ -70,10 +70,10 @@ export function RedesignFeaturesSection() {
               <motion.div
                 key={i}
                 variants={cardVariants}
-                className="group rounded-2xl border border-[var(--r-glass-border)] bg-[var(--r-glass)]/50 p-6 backdrop-blur-xl transition-all duration-200 hover:border-[var(--r-cta)]/30 hover:bg-[var(--r-glass)]/80 cursor-default"
+                className="group rounded-2xl border border-[var(--r-glass-border)] bg-[var(--r-glass)]/50 p-6 backdrop-blur-xl transition-all duration-200 hover:border-[var(--r-icon)]/30 hover:bg-[var(--r-glass)]/80 cursor-default"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--r-cta)]/20 transition-colors duration-200 group-hover:bg-[var(--r-cta)]/30">
-                  <Icon className="h-6 w-6 text-[var(--r-cta)]" />
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--r-icon-bg)] transition-colors duration-200 group-hover:bg-[var(--r-icon)]/20">
+                  <Icon className="h-6 w-6 text-[var(--r-icon)]" />
                 </div>
                 <h3 className="mt-4 text-base font-bold text-[var(--r-text)]">
                   {item.title}

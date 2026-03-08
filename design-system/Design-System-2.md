@@ -50,7 +50,10 @@
 | Primary Hover    | `#EA580C` | Darker orange — hover/active states         |
 | Secondary        | `#FB923C` | Light orange/coral — secondary accents      |
 | Text             | `#FFFFFF` | White — headings, body text                 |
-| Text Muted       | `#D4B5F0` | Light lavender — captions, labels, hints    |
+| Text Muted       | `rgba(255,255,255,0.72)` | Muted white — captions, labels, descriptions |
+| On Primary        | `#FFFFFF` | Icons/text on primary/CTA backgrounds      |
+| Icon              | `#6D28D9` | Decorative icons (darker purple)           |
+| Icon Secondary    | `#7C3AED` | Gradient end for icon badges               |
 | Border           | `rgba(255, 255, 255, 0.15)` | Subtle white borders          |
 | Glass            | `rgba(255, 255, 255, 0.08)` | Glass/frosted overlays        |
 | Success          | `#10B981` | Emerald — confirmations, checkmarks         |

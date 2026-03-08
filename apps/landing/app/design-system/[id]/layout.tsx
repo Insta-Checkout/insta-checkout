@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 
-const VALID_IDS = ["1", "2", "3", "4"] as const
+const VALID_IDS = ["2", "light", "light-purple"] as const
 
 export default async function DesignSystemIdLayout({
   children,
@@ -14,5 +14,9 @@ export default async function DesignSystemIdLayout({
     notFound()
   }
   const themeClass = `ds-theme-${id}`
-  return <div className={themeClass}>{children}</div>
+  return (
+    <div className={`${themeClass} min-h-screen bg-[var(--r-bg)]`}>
+      {children}
+    </div>
+  )
 }

@@ -53,10 +53,10 @@ export function RedesignPainPointsSection() {
             <motion.div
               key={i}
               variants={cardVariants}
-              className="flex min-w-[260px] flex-col rounded-2xl border border-[var(--r-glass-border)] bg-[var(--r-glass)]/50 p-6 backdrop-blur-xl transition-all duration-200 hover:border-[var(--r-primary)]/30 hover:bg-[var(--r-glass)]/80 md:min-w-0 cursor-default"
+              className="flex min-w-[260px] flex-col rounded-2xl border border-[var(--r-glass-border)] bg-[var(--r-glass)]/50 p-6 backdrop-blur-xl transition-all duration-200 hover:border-[var(--r-icon)]/30 hover:bg-[var(--r-glass)]/80 md:min-w-0 cursor-default"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--r-primary)]/20">
-                <Icon className="h-6 w-6 text-[var(--r-primary)]" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[var(--r-icon-bg)]">
+                <Icon className="h-6 w-6 text-[var(--r-icon)]" />
               </div>
               <h3 className="mt-4 text-base font-bold leading-relaxed text-[var(--r-text)]">
                 {items[i]?.title ?? ""}

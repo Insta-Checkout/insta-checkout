@@ -44,7 +44,7 @@ export function RedesignSocialProofSection() {
               className="min-w-[280px] rounded-2xl border border-[var(--r-glass-border)] bg-[var(--r-glass)]/50 p-6 backdrop-blur-xl md:min-w-0"
             >
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--r-primary)] to-[var(--r-secondary)] font-bold text-[var(--r-bg)]">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--r-icon)] to-[var(--r-icon-secondary)] font-bold text-[var(--r-on-primary)]">
                   {testimonial.initials}
                 </div>
                 <div>
