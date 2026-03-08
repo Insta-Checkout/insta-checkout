@@ -74,6 +74,24 @@
       ],
       "cta": "There's an easier way"
     },
+    "demo": {
+      "title": "Try it now — see your payment page",
+      "subtitle": "Pick your business type and see how the checkout will look to your customers",
+      "cta": "I like it — sign up and start!",
+      "businessType": "Business type",
+      "productName": "Product name",
+      "productPlaceholder": "Product name",
+      "price": "Price",
+      "previewBusinessName": "Your business name",
+      "previewProductDefault": "Product name",
+      "businessTypeOptions": [
+        { "value": "Food & Desserts", "label": "Food & Desserts", "defaultProduct": "Chocolate cake", "defaultPrice": 300 },
+        { "value": "Clothing", "label": "Clothing", "defaultProduct": "Denim jeans", "defaultPrice": 450 },
+        { "value": "Electronics", "label": "Electronics", "defaultProduct": "Phone case", "defaultPrice": 150 },
+        { "value": "Services", "label": "Services", "defaultProduct": "Photo session", "defaultPrice": 500 },
+        { "value": "Other", "label": "Other", "defaultProduct": "Sample product", "defaultPrice": 200 }
+      ]
+    },
     "howItWorks": {
       "title": "How it works",
       "subtitle": "3 steps — and you're getting paid",
@@ -170,10 +188,359 @@
         "No \"Powered by\" badge"
       ],
       "ctaFree": "Start free",
-      "ctaPro": "Try 14 days free"
+      "ctaPro": "Try 14 days free",
+      "proPrice": "Coming soon"
     },
     "finalCta": {
       "title": "Ready to get paid the easy way?",
+      "subtitle": "Sign up in 2 minutes and send your first payment link to a customer today.",
+      "cta": "Get started — free",
+      "noCard": "No credit card required"
+    },
+    "footer": {
+      "tagline": "The easiest way to accept InstaPay",
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "about": "About us",
+      "contact": "Contact us",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "copyright": "© 2026 InstaPay Checkout. All rights reserved."
+    }
+  },
+  "landingV1": {
+    "meta": {
+      "title": "Insta Checkout — The easiest way to accept InstaPay",
+      "description": "Sign up free and start getting paid with instant InstaPay payment links. Full dashboard for sellers on Instagram and WhatsApp."
+    },
+    "nav": {
+      "features": "Features",
+      "howItWorks": "How it works",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "cta": "Register free",
+      "login": "Login",
+      "dashboard": "Dashboard",
+      "logout": "Log out"
+    },
+    "hero": {
+      "headline": "Turn every conversation into a sale — in seconds",
+      "subheadline": "Sign up, create your products, and send InstaPay payment links to your customers from your dashboard. No complexity.",
+      "cta": "Start for Free",
+      "trust": "Completely free · No credit card · Ready in 2 minutes"
+    },
+    "heroMockup": {
+      "dashboard": "Dashboard",
+      "productLabel": "Sample product",
+      "linkLabel": "Payment link",
+      "checkout": "Checkout page",
+      "payButton": "Pay with InstaPay"
+    },
+    "painPoints": {
+      "title": "Still selling like this?",
+      "items": [
+        {
+          "title": "Transfer to this number and send me a screenshot",
+          "description": "The most repeated DM line — and every time it costs you time and effort."
+        },
+        {
+          "title": "Tracking every order manually",
+          "description": "In Notes or on paper — and nothing is clear."
+        },
+        {
+          "title": "Not sure who paid and who didn't",
+          "description": "The customer says \"I transferred\" — but you're not sure."
+        },
+        {
+          "title": "Customers drop off because payment is complicated",
+          "description": "Every extra step = a customer you might lose."
+        }
+      ],
+      "cta": "There's an easier way 👇"
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "subtitle": "3 steps — and start getting paid",
+      "stepNumbers": ["1", "2", "3"],
+      "steps": [
+        {
+          "title": "Sign up in 2 minutes",
+          "description": "Enter your business name and InstaPay number — that's it."
+        },
+        {
+          "title": "Create a product and get a link",
+          "description": "From your dashboard, add the product name and price — and get a payment link in a second."
+        },
+        {
+          "title": "Send the link and get paid",
+          "description": "Send the link to your customer on WhatsApp or Instagram. The customer transfers via InstaPay and confirms — and you see everything in your dashboard."
+        }
+      ]
+    },
+    "features": {
+      "title": "Everything you need — in one place",
+      "items": [
+        {
+          "title": "Instant payment links",
+          "description": "Create a link for any product or service in a second — and send it to your customer anywhere."
+        },
+        {
+          "title": "Payment page with your brand",
+          "description": "Your business name on the checkout page — the customer feels like they're buying directly from you."
+        },
+        {
+          "title": "Full dashboard",
+          "description": "See all orders, who paid, who hasn't, and the total — all in one place."
+        },
+        {
+          "title": "Payment confirmation from dashboard",
+          "description": "The customer sends payment confirmation — and you confirm or reject from your dashboard."
+        },
+        {
+          "title": "Auto catalog",
+          "description": "Every product you create a link for gets saved — and over time the catalog builds itself."
+        },
+        {
+          "title": "Trust from the first moment",
+          "description": "The customer sees the recipient name on InstaPay before transferring — they know they're sending to the right person."
+        }
+      ]
+    },
+    "trust": {
+      "title": "Why sellers trust Insta Checkout",
+      "cards": [
+        {
+          "title": "Built on InstaPay",
+          "description": "Funds go directly to your account — we are not in the middle of the transfer."
+        },
+        {
+          "title": "Designed for the Egyptian market",
+          "description": "Arabic-first, mobile-first — built for how you actually work."
+        },
+        {
+          "title": "Completely free — no surprises",
+          "description": "No hidden fees, no credit card. Sign up and start."
+        }
+      ],
+      "marketContext": [
+        { "value": "16M+", "label": "InstaPay users in Egypt" },
+        { "value": "1.1B+", "label": "transactions" },
+        { "value": "77.6%", "label": "financial inclusion by 2025" }
+      ]
+    },
+    "pricing": {
+      "title": "Start free — no limits",
+      "free": "Free",
+      "pro": "Pro",
+      "currentPlan": "Current Plan",
+      "comingSoon": "Coming Soon",
+      "perMonth": "EGP / month",
+      "freePrice": "0",
+      "proPrice": "199",
+      "freeFeatures": [
+        "Unlimited payment links",
+        "Unlimited orders",
+        "Payment page with your brand",
+        "Full dashboard",
+        "Order tracking",
+        "Instant notifications"
+      ],
+      "proFeatures": [
+        "Everything in Free",
+        "Full product catalog",
+        "Custom store page",
+        "Advanced reports and analytics",
+        "No \"Powered by Insta Checkout\" badge",
+        "Priority support"
+      ],
+      "ctaFree": "Start free",
+      "ctaPro": "Join waitlist",
+      "noCard": "No credit card required"
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "items": [
+        {
+          "question": "Does Insta Checkout take a commission from every transfer?",
+          "answer": "No. Funds go directly to your InstaPay account. We are not in the transfer flow and take no commission."
+        },
+        {
+          "question": "Do I need to download an app?",
+          "answer": "No. Insta Checkout works from the browser on mobile or desktop. Nothing to download."
+        },
+        {
+          "question": "Is the service really free?",
+          "answer": "Yes. The free plan includes all core features — unlimited payment links, unlimited orders, and a full dashboard. No hidden fees."
+        },
+        {
+          "question": "How do you verify the customer actually paid?",
+          "answer": "The customer uploads a screenshot of the InstaPay transfer confirmation. You review and confirm or reject from your dashboard — same as what you do now, but organized."
+        },
+        {
+          "question": "Is my data and my customers' data secure?",
+          "answer": "Yes. All data is encrypted and links are unique per order. No one can access your account data except you."
+        },
+        {
+          "question": "I'm a small seller — is this for me?",
+          "answer": "Yes, this was built for you. Whether you sell desserts on Instagram or clothes on WhatsApp — Insta Checkout is designed for sellers who sell on social media."
+        }
+      ]
+    },
+    "finalCta": {
+      "headline": "Ready to organize your business and get paid faster?",
+      "subtitle": "Sign up in 2 minutes and send your first payment link to a customer today.",
+      "cta": "Start Now — Free",
+      "noCard": "No credit card required"
+    },
+    "footer": {
+      "tagline": "The simplest way to accept InstaPay",
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "about": "About us",
+      "contact": "Contact us",
+      "privacy": "Privacy Policy",
+      "terms": "Terms & Conditions",
+      "copyright": "© 2026 Insta Checkout. All rights reserved."
+    }
+  },
+  "landingV4": {
+    "nav": {
+      "logo": "InstaPay Checkout",
+      "features": "Features",
+      "howItWorks": "How it works",
+      "pricing": "Pricing",
+      "cta": "Get started — free",
+      "login": "Login",
+      "dashboard": "Dashboard",
+      "logout": "Log out"
+    },
+    "hero": {
+      "headline": "Accept InstaPay in minutes",
+      "subheadline": "A seller dashboard and payment link platform that makes it dead simple for any Egyptian seller to accept InstaPay payments — starting as a quick utility and evolving into a lightweight commerce platform.",
+      "cta": "Start free",
+      "trust": "100% free · No credit card · Ready in 2 minutes"
+    },
+    "painPoints": {
+      "title": "Still selling the old way?",
+      "items": [
+        {
+          "title": "Bank setup is a maze",
+          "description": "Complex paperwork, unclear requirements, and long waits just to accept payments."
+        },
+        {
+          "title": "No dashboard to track anything",
+          "description": "Everything in your head or phone notes — easy to forget who paid and who didn't."
+        },
+        {
+          "title": "Manual tracking kills momentum",
+          "description": "Asking every customer: did you transfer? No quick way to verify or follow up."
+        }
+      ],
+      "cta": "There's an easier way"
+    },
+    "howItWorks": {
+      "title": "How it works",
+      "subtitle": "3 steps — and you're getting paid",
+      "stepNumbers": ["1", "2", "3"],
+      "steps": [
+        {
+          "title": "Sign up in 2 minutes",
+          "description": "Enter your business name and InstaPay account — that's it."
+        },
+        {
+          "title": "Create a payment link",
+          "description": "Send the product name and price to the bot on WhatsApp — you get a link in a second."
+        },
+        {
+          "title": "Customer pays, you track",
+          "description": "Customer opens the link, transfers via InstaPay, and confirms. You get an instant notification."
+        }
+      ]
+    },
+    "features": {
+      "title": "Everything you need in one place",
+      "items": [
+        {
+          "title": "Instant payment links",
+          "description": "Create a link for any product or service in a second from WhatsApp."
+        },
+        {
+          "title": "Payment page with your brand",
+          "description": "Your business name, your colors — customers feel like they're buying directly from you."
+        },
+        {
+          "title": "Instant notifications",
+          "description": "The moment a customer pays, you get a WhatsApp notification with details and screenshot."
+        },
+        {
+          "title": "Order tracking",
+          "description": "All orders in one place — who paid, who hasn't, and the total."
+        },
+        {
+          "title": "Auto catalog",
+          "description": "Every product you create a link for is saved automatically — over time you build a full catalog."
+        },
+        {
+          "title": "Payment verification",
+          "description": "Customer sees the masked recipient name on InstaPay before transferring — trust from the first moment."
+        }
+      ]
+    },
+    "socialProof": {
+      "title": "Sellers like you are getting paid faster",
+      "testimonials": [
+        {
+          "initials": "S M",
+          "name": "Sarah M.",
+          "type": "Sells desserts on Instagram",
+          "quote": "I used to spend half an hour tracking every order. Now it's all automatic."
+        },
+        {
+          "initials": "A R",
+          "name": "Ahmed R.",
+          "type": "Mobile store",
+          "quote": "My customers pay faster because the link is simple and direct."
+        },
+        {
+          "initials": "N A",
+          "name": "Nour A.",
+          "type": "Vintage clothing",
+          "quote": "Best part is there's no app — everything's on WhatsApp."
+        }
+      ],
+      "stats": [
+        { "value": "500+", "label": "sellers" },
+        { "value": "10,000+", "label": "payment links" },
+        { "value": "2 min", "label": "to get started" }
+      ]
+    },
+    "pricing": {
+      "title": "Start free — scale when you're ready",
+      "free": "Free",
+      "pro": "Pro",
+      "popular": "Most popular",
+      "perMonth": "EGP / month",
+      "freeFeatures": [
+        "Unlimited payment links",
+        "Payment page with your brand",
+        "WhatsApp notifications",
+        "Order tracking"
+      ],
+      "proFeatures": [
+        "All free features",
+        "Full product catalog",
+        "Custom store page",
+        "Reports and analytics",
+        "No \"Powered by\" badge"
+      ],
+      "ctaFree": "Start free",
+      "ctaPro": "Try 14 days free",
+      "proPrice": "Coming soon"
+    },
+    "finalCta": {
+      "headline": "Ready to get paid the easy way?",
       "subtitle": "Sign up in 2 minutes and send your first payment link to a customer today.",
       "cta": "Get started — free",
       "noCard": "No credit card required"
