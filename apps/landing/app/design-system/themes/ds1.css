@@ -1,0 +1,19 @@
+/* Design System 1 — Social Proof-Focused (Light)
+ * Sky blue trust + warm CTA
+ */
+
+.ds-theme-1 {
+  --r-bg: #F0F9FF;
+  --r-bg-elevated: #FFFFFF;
+  --r-text: #0C4A6E;
+  --r-text-muted: #0369A1;
+  --r-primary: #0EA5E9;
+  --r-primary-hover: #0284C7;
+  --r-secondary: #38BDF8;
+  --r-cta: #F97316;
+  --r-cta-hover: #EA580C;
+  --r-border: rgba(14, 165, 233, 0.2);
+  --r-glass: rgba(255, 255, 255, 0.8);
+  --r-glass-border: rgba(14, 165, 233, 0.25);
+  --r-footer-bg: #0C4A6E;
+}

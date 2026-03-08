@@ -1,0 +1,19 @@
+/* Design System 2 — InstaPay Brand (Dark Purple + Orange)
+ * Deep purple, white text, orange accents
+ */
+
+.ds-theme-2 {
+  --r-bg: #2D0A4E;
+  --r-bg-elevated: #3B0F64;
+  --r-text: #FFFFFF;
+  --r-text-muted: #D4B5F0;
+  --r-primary: #F97316;
+  --r-primary-hover: #EA580C;
+  --r-secondary: #FB923C;
+  --r-cta: #F97316;
+  --r-cta-hover: #EA580C;
+  --r-border: rgba(255, 255, 255, 0.15);
+  --r-glass: rgba(255, 255, 255, 0.08);
+  --r-glass-border: rgba(255, 255, 255, 0.15);
+  --r-footer-bg: #1A0533;
+}

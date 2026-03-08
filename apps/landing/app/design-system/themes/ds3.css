@@ -1,0 +1,19 @@
+/* Design System 3 — Purple Glassmorphism (Dark)
+ * Same as former /redesign
+ */
+
+.ds-theme-3 {
+  --r-bg: #0F172A;
+  --r-bg-elevated: #1E293B;
+  --r-text: #F8FAFC;
+  --r-text-muted: #94A3B8;
+  --r-primary: #8B5CF6;
+  --r-primary-hover: #7C3AED;
+  --r-secondary: #A78BFA;
+  --r-cta: #8B5CF6;
+  --r-cta-hover: #7C3AED;
+  --r-border: rgba(255, 255, 255, 0.12);
+  --r-glass: rgba(255, 255, 255, 0.06);
+  --r-glass-border: rgba(255, 255, 255, 0.15);
+  --r-footer-bg: #020617;
+}

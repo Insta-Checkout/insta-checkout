@@ -1,0 +1,19 @@
+/* Design System 4 — Teal Glassmorphism (Dark)
+ * Same as former /dark, matches main landing
+ */
+
+.ds-theme-4 {
+  --r-bg: #0F172A;
+  --r-bg-elevated: #1E293B;
+  --r-text: #F8FAFC;
+  --r-text-muted: #94A3B8;
+  --r-primary: #0D9488;
+  --r-primary-hover: #0F766E;
+  --r-secondary: #14B8A6;
+  --r-cta: #0D9488;
+  --r-cta-hover: #0F766E;
+  --r-border: rgba(255, 255, 255, 0.12);
+  --r-glass: rgba(255, 255, 255, 0.06);
+  --r-glass-border: rgba(255, 255, 255, 0.15);
+  --r-footer-bg: #020617;
+}

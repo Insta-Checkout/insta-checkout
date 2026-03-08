@@ -11,7 +11,7 @@ import { RedesignFooter } from "@/components/redesign/RedesignFooter"
 
 export const dynamic = "force-dynamic"
 
-export default function DarkPage() {
+export default function DesignSystemPage() {
   return (
     <>
       <RedesignNavbar />
