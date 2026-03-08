@@ -5,7 +5,8 @@
       "name": "landing",
       "runtimeExecutable": "/usr/local/lib/node_modules/corepack/shims/pnpm",
       "runtimeArgs": ["dev:landing"],
-      "port": 3000
+      "port": 3000,
+      "autoPort": true
     },
     {
       "name": "checkout",
