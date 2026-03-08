@@ -24,3 +24,7 @@ apps/backend/uploads/
 # Claude Code worktrees
 .claude/worktrees/
 
+# Python
+__pycache__/
+*.pyc
+
