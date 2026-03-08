@@ -21,7 +21,7 @@ export function FeaturesSection() {
           transition={{ duration: 0.5 }}
           className="mb-14"
         >
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#F97316]">
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#7C3AED]">
             {t("landing.features.label")}
           </p>
           <h2 className="text-3xl font-black text-[#1E0A3C] text-balance leading-tight md:text-5xl">

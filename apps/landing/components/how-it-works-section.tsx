@@ -23,7 +23,7 @@ export function HowItWorksSection() {
           transition={{ duration: 0.5 }}
           className="mb-16 text-center"
         >
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#F97316]">
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#7C3AED]">
             {t("landing.nav.howItWorks")}
           </p>
           <h2 className="text-3xl font-black text-[#1E0A3C] text-balance leading-tight md:text-5xl">
@@ -57,8 +57,8 @@ export function HowItWorksSection() {
 
                 {/* Step badge */}
                 <div className="relative mb-6 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#F97316] to-[#FBBF24] shadow-md shadow-[#F97316]/20">
-                    <Icon className="h-5 w-5 text-white" />
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EDE9FE] shadow-md shadow-[#7C3AED]/10">
+                    <Icon className="h-5 w-5 text-[#7C3AED]" />
                   </div>
                   <span className="text-xs font-bold uppercase tracking-widest text-[#7C3AED]">
                     {stepPrefix} {stepNumbers[i]}
@@ -86,7 +86,7 @@ export function HowItWorksSection() {
         >
           <a
             href="/onboard"
-            className="inline-flex cursor-pointer items-center justify-center rounded-2xl bg-[#F97316] px-8 py-4 text-base font-bold text-white transition-all hover:bg-[#EA580C] hover:shadow-lg hover:shadow-[#F97316]/25"
+            className="inline-flex cursor-pointer items-center justify-center rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EA580C] px-8 py-4 text-base font-bold text-white transition-all hover:from-[#6D28D9] hover:to-[#C2410C] hover:shadow-lg hover:shadow-[#7C3AED]/25"
           >
             {t("landing.hero.cta")}
           </a>

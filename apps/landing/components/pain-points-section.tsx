@@ -32,7 +32,7 @@ export function PainPointsSection() {
           transition={{ duration: 0.5 }}
           className="mb-14"
         >
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#F97316]">{t("landing.painPoints.label")}</p>
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#7C3AED]">{t("landing.painPoints.label")}</p>
           <h2 className="text-3xl font-black text-[#1E0A3C] text-balance leading-tight md:text-5xl">
             {t("landing.painPoints.title")}
           </h2>
@@ -53,7 +53,7 @@ export function PainPointsSection() {
               variants={itemVariants}
               className="group relative overflow-hidden rounded-2xl border border-[#E4D8F0] bg-white p-6 shadow-[0_2px_8px_rgba(45,10,78,0.06)] transition-all hover:shadow-[0_4px_20px_rgba(45,10,78,0.1)] hover:-translate-y-0.5"
             >
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#FFF7ED] text-[#F97316]">
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#EDE9FE] text-[#7C3AED]">
                 <Icon className="h-5 w-5" />
               </div>
 
@@ -65,7 +65,7 @@ export function PainPointsSection() {
               </p>
 
               {/* Subtle accent border on hover */}
-              <div className="absolute bottom-0 start-0 h-0.5 w-0 bg-gradient-to-r from-[#F97316] to-[#FBBF24] transition-all duration-300 group-hover:w-full rtl:bg-gradient-to-l" />
+              <div className="absolute bottom-0 start-0 h-0.5 w-0 bg-gradient-to-r from-[#7C3AED] to-[#8B5CF6] transition-all duration-300 group-hover:w-full rtl:bg-gradient-to-l" />
             </motion.div>
             )
           })}

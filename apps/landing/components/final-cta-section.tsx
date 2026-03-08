@@ -33,7 +33,7 @@ export function FinalCtaSection() {
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <a
               href="/onboard"
-              className="group inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-[#F97316] px-8 py-4 text-base font-bold text-white transition-all hover:bg-[#EA580C] hover:shadow-xl hover:shadow-[#F97316]/25"
+              className="group inline-flex cursor-pointer items-center gap-2 rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EA580C] px-8 py-4 text-base font-bold text-white transition-all hover:from-[#6D28D9] hover:to-[#C2410C] hover:shadow-xl hover:shadow-[#7C3AED]/25"
             >
               {t("landing.finalCta.cta")}
               <ArrowIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />

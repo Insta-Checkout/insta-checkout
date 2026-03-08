@@ -10,7 +10,7 @@ function DashboardPreview() {
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-[#F97316] flex items-center justify-center">
+          <div className="h-7 w-7 rounded-lg bg-[#7C3AED] flex items-center justify-center">
             <BarChart3 className="h-3.5 w-3.5 text-white" />
           </div>
           <span className="text-xs font-semibold text-white/90">Sweet Treats</span>
@@ -63,7 +63,7 @@ function DashboardPreview() {
       </div>
 
       {/* Create link button */}
-      <button className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#F97316] py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#EA580C]">
+      <button className="mt-3 flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-[#7C3AED] py-2.5 text-xs font-bold text-white transition-colors hover:bg-[#6D28D9]">
         <Link2 className="h-3 w-3" />
         أنشئ لينك دفع جديد
       </button>
@@ -93,7 +93,7 @@ export function HeroSection() {
       <div className="pointer-events-none absolute inset-0">
         {/* Radial gradient glow */}
         <div className="absolute top-1/4 start-1/4 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7C3AED]/20 blur-[120px]" />
-        <div className="absolute bottom-1/4 end-1/4 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-[#F97316]/10 blur-[120px]" />
+        <div className="absolute bottom-1/4 end-1/4 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-[#8B5CF6]/10 blur-[120px]" />
         {/* Grid lines */}
         <div
           className="absolute inset-0 opacity-[0.04]"
@@ -118,10 +118,10 @@ export function HeroSection() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.4 }}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#F97316]/30 bg-[#F97316]/10 px-4 py-1.5"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#7C3AED]/30 bg-[#7C3AED]/10 px-4 py-1.5"
           >
-            <span className="h-1.5 w-1.5 rounded-full bg-[#F97316]" />
-            <span className="text-sm font-semibold text-[#FB923C]">{t("landing.hero.badge")}</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-[#7C3AED]" />
+            <span className="text-sm font-semibold text-[#A78BFA]">{t("landing.hero.badge")}</span>
           </motion.div>
 
           {/* Main headline */}
@@ -134,7 +134,7 @@ export function HeroSection() {
                   <>
                     {parts[0].trim()}
                     <br />
-                    <span className="bg-gradient-to-r from-[#F97316] to-[#FBBF24] bg-clip-text text-transparent">
+                    <span className="bg-gradient-to-r from-[#A78BFA] to-[#C4B5FD] bg-clip-text text-transparent">
                       {parts[1].trim()}
                     </span>
                   </>
@@ -153,7 +153,7 @@ export function HeroSection() {
           <div className="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
             <a
               href="/onboard"
-              className="group inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-[#F97316] px-7 py-4 text-base font-bold text-white transition-all hover:bg-[#EA580C] hover:shadow-lg hover:shadow-[#F97316]/25"
+              className="group inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EA580C] px-7 py-4 text-base font-bold text-white transition-all hover:from-[#6D28D9] hover:to-[#C2410C] hover:shadow-lg hover:shadow-[#7C3AED]/25"
             >
               {t("landing.hero.cta")}
               <ArrowIcon className="h-4 w-4 transition-transform group-hover:translate-x-0.5 rtl:group-hover:-translate-x-0.5" />
@@ -203,7 +203,7 @@ export function HeroSection() {
             className="absolute -start-4 top-1/4 hidden rounded-xl border border-white/10 bg-white/8 px-4 py-3 backdrop-blur-sm lg:block"
           >
             <p className="text-[10px] text-white/50">لينك دفع جاهز</p>
-            <p className="mt-0.5 font-mono text-xs font-bold text-[#F97316]">pay.co/sweet-treats</p>
+            <p className="mt-0.5 font-mono text-xs font-bold text-[#A78BFA]">pay.co/sweet-treats</p>
           </motion.div>
         </motion.div>
       </div>

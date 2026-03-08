@@ -35,7 +35,7 @@ export function DemoSection() {
           transition={{ duration: 0.5 }}
           className="text-center mb-10"
         >
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#F97316]">
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#7C3AED]">
             {t("landing.nav.howItWorks")}
           </p>
           <h2 className="text-2xl font-black text-[#1E0A3C] text-balance md:text-4xl">
@@ -65,7 +65,7 @@ export function DemoSection() {
         >
           <a
             href={ctaHref}
-            className="inline-flex items-center justify-center h-12 w-full max-w-[400px] rounded-2xl bg-[#F97316] text-base font-bold text-white transition-all hover:bg-[#EA580C] shadow-lg shadow-[#F97316]/20 cursor-pointer"
+            className="inline-flex items-center justify-center h-12 w-full max-w-[400px] rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EA580C] text-base font-bold text-white transition-all hover:from-[#6D28D9] hover:to-[#C2410C] shadow-lg shadow-[#7C3AED]/20 cursor-pointer"
           >
             {t("landing.demo.cta")}
           </a>

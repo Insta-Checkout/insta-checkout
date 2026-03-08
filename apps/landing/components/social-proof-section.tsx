@@ -34,7 +34,7 @@ export function SocialProofSection() {
           transition={{ duration: 0.5 }}
           className="mb-14 text-center"
         >
-          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#FB923C]">
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#C4B5FD]">
             {t("landing.socialProof.label")}
           </p>
           <h2 className="text-3xl font-black text-white text-balance leading-tight md:text-5xl">
