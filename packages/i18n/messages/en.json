@@ -40,7 +40,8 @@
       "headline": "Create an InstaPay payment link — in seconds",
       "subheadline": "Create an InstaPay payment link in two seconds and send it to your customer on WhatsApp. No website, no app, no hassle.",
       "cta": "Start free",
-      "trust": "100% free · No credit card · Ready in 2 minutes"
+      "trust": "100% free · No credit card · Ready in 2 minutes",
+      "badge": "Built for the Egyptian market"
     },
     "heroMockup": {
       "botName": "InstaPay Bot",
@@ -72,7 +73,8 @@
           "description": "The more steps, the more people bounce."
         }
       ],
-      "cta": "There's an easier way"
+      "cta": "There's an easier way",
+      "label": "The Problem"
     },
     "demo": {
       "title": "Try it now — see your payment page",
@@ -85,17 +87,47 @@
       "previewBusinessName": "Your business name",
       "previewProductDefault": "Product name",
       "businessTypeOptions": [
-        { "value": "Food & Desserts", "label": "Food & Desserts", "defaultProduct": "Chocolate cake", "defaultPrice": 300 },
-        { "value": "Clothing", "label": "Clothing", "defaultProduct": "Denim jeans", "defaultPrice": 450 },
-        { "value": "Electronics", "label": "Electronics", "defaultProduct": "Phone case", "defaultPrice": 150 },
-        { "value": "Services", "label": "Services", "defaultProduct": "Photo session", "defaultPrice": 500 },
-        { "value": "Other", "label": "Other", "defaultProduct": "Sample product", "defaultPrice": 200 }
-      ]
+        {
+          "value": "Food & Desserts",
+          "label": "Food & Desserts",
+          "defaultProduct": "Chocolate cake",
+          "defaultPrice": 300
+        },
+        {
+          "value": "Clothing",
+          "label": "Clothing",
+          "defaultProduct": "Denim jeans",
+          "defaultPrice": 450
+        },
+        {
+          "value": "Electronics",
+          "label": "Electronics",
+          "defaultProduct": "Phone case",
+          "defaultPrice": 150
+        },
+        {
+          "value": "Services",
+          "label": "Services",
+          "defaultProduct": "Photo session",
+          "defaultPrice": 500
+        },
+        {
+          "value": "Other",
+          "label": "Other",
+          "defaultProduct": "Sample product",
+          "defaultPrice": 200
+        }
+      ],
+      "noCard": "Free · ready in 2 minutes"
     },
     "howItWorks": {
       "title": "How it works",
       "subtitle": "3 steps — and you're getting paid",
-      "stepNumbers": ["1", "2", "3"],
+      "stepNumbers": [
+        "1",
+        "2",
+        "3"
+      ],
       "steps": [
         {
           "title": "Sign up in 2 minutes",
@@ -109,7 +141,8 @@
           "title": "Customer pays, you track",
           "description": "Customer opens the link, transfers via InstaPay, and confirms. You get an instant notification."
         }
-      ]
+      ],
+      "stepPrefix": "Step"
     },
     "features": {
       "title": "Everything you need in one place",
@@ -138,7 +171,8 @@
           "title": "Payment verification",
           "description": "Customer sees the masked recipient name on InstaPay before transferring — trust from the first moment."
         }
-      ]
+      ],
+      "label": "Features"
     },
     "socialProof": {
       "title": "Sellers like you are getting paid faster",
@@ -163,10 +197,26 @@
         }
       ],
       "stats": [
-        { "value": "500+", "label": "sellers" },
-        { "value": "10,000+", "label": "payment links" },
-        { "value": "2 min", "label": "to get started" }
-      ]
+        {
+          "value": "500+",
+          "label": "sellers"
+        },
+        {
+          "value": "10,000+",
+          "label": "payment links"
+        },
+        {
+          "value": "2 min",
+          "label": "to get started"
+        }
+      ],
+      "label": "Trust",
+      "trust0Title": "Built on InstaPay",
+      "trust0Desc": "Money goes directly to your account — we are not in the middle of the transfer.",
+      "trust1Title": "Designed for the Egyptian market",
+      "trust1Desc": "Arabic first, mobile first — built for the way you actually work.",
+      "trust2Title": "Completely free",
+      "trust2Desc": "No hidden fees, no credit card. Sign up and start."
     },
     "pricing": {
       "title": "Start free — scale when you're ready",
@@ -189,7 +239,10 @@
       ],
       "ctaFree": "Start free",
       "ctaPro": "Try 14 days free",
-      "proPrice": "Coming soon"
+      "proPrice": "Coming soon",
+      "subtitle": "Free forever — no fees, no complexity.",
+      "label": "Pricing",
+      "currentPlan": "Current plan"
     },
     "finalCta": {
       "title": "Ready to get paid the easy way?",
@@ -198,15 +251,19 @@
       "noCard": "No credit card required"
     },
     "footer": {
-      "tagline": "The easiest way to accept InstaPay",
+      "tagline": "The easiest way to collect InstaPay payments — all from one dashboard.",
       "product": "Product",
       "company": "Company",
       "legal": "Legal",
-      "about": "About us",
+      "about": "About",
       "contact": "Contact us",
-      "privacy": "Privacy Policy",
-      "terms": "Terms & Conditions",
-      "copyright": "© 2026 InstaPay Checkout. All rights reserved."
+      "privacy": "Privacy policy",
+      "terms": "Terms & conditions",
+      "copyright": "© 2026 Insta Checkout. All rights reserved.",
+      "madeWith": "Built with ❤️ for the Egyptian market",
+      "groupProduct": "Product",
+      "groupCompany": "Company",
+      "groupLegal": "Legal"
     }
   },
   "landingV1": {
@@ -262,7 +319,11 @@
     "howItWorks": {
       "title": "How it works",
       "subtitle": "3 steps — and start getting paid",
-      "stepNumbers": ["1", "2", "3"],
+      "stepNumbers": [
+        "1",
+        "2",
+        "3"
+      ],
       "steps": [
         {
           "title": "Sign up in 2 minutes",
@@ -324,9 +385,18 @@
         }
       ],
       "marketContext": [
-        { "value": "16M+", "label": "InstaPay users in Egypt" },
-        { "value": "1.1B+", "label": "transactions" },
-        { "value": "77.6%", "label": "financial inclusion by 2025" }
+        {
+          "value": "16M+",
+          "label": "InstaPay users in Egypt"
+        },
+        {
+          "value": "1.1B+",
+          "label": "transactions"
+        },
+        {
+          "value": "77.6%",
+          "label": "financial inclusion by 2025"
+        }
       ]
     },
     "pricing": {
@@ -443,7 +513,11 @@
     "howItWorks": {
       "title": "How it works",
       "subtitle": "3 steps — and you're getting paid",
-      "stepNumbers": ["1", "2", "3"],
+      "stepNumbers": [
+        "1",
+        "2",
+        "3"
+      ],
       "steps": [
         {
           "title": "Sign up in 2 minutes",
@@ -511,9 +585,18 @@
         }
       ],
       "stats": [
-        { "value": "500+", "label": "sellers" },
-        { "value": "10,000+", "label": "payment links" },
-        { "value": "2 min", "label": "to get started" }
+        {
+          "value": "500+",
+          "label": "sellers"
+        },
+        {
+          "value": "10,000+",
+          "label": "payment links"
+        },
+        {
+          "value": "2 min",
+          "label": "to get started"
+        }
       ]
     },
     "pricing": {
@@ -567,7 +650,10 @@
       "subtitle": "2 simple steps and you're accepting payments online",
       "signupSubtitle": "Sign up in seconds — complete the rest from inside"
     },
-    "steps": ["Your info", "Create account"],
+    "steps": [
+      "Your info",
+      "Create account"
+    ],
     "step1": {
       "businessName": "Business name *",
       "instapayNumber": "InstaPay account number *",
@@ -663,7 +749,11 @@
       "title": "Checkout - InstaPay Payment",
       "description": "Complete your InstaPay payment securely. Verify, pay, and confirm your transaction."
     },
-    "steps": ["Order details", "Confirm payment", "Complete"],
+    "steps": [
+      "Order details",
+      "Confirm payment",
+      "Complete"
+    ],
     "step1": {
       "paymentRequest": "Payment request",
       "paymentMethod": "How to pay with InstaPay",
@@ -753,14 +843,13 @@
       "failed": "Failed",
       "expired": "Expired",
       "latest": "Latest orders",
-      "copySuccess": "Link copied",
+      "copySuccess": "Copied",
       "copyFailed": "Failed to copy",
       "confirmSuccess": "Order confirmed",
       "confirmFailed": "Failed to confirm",
       "rejectSuccess": "Order rejected",
       "rejectFailed": "Failed to reject",
       "loadFailed": "Failed to load orders",
-      "copySuccess": "Copied",
       "rejectReasonPrompt": "Reject — optional reason:"
     },
     "home": {
@@ -806,8 +895,20 @@
       "instapayPlaceholder": "The number customers will transfer to",
       "maskedPlaceholder": "e.g. A*** M*** A** M***",
       "maskedHint": "The name shown to the customer in the InstaPay app before they confirm",
-      "categoryValues": ["Food & Desserts", "Clothing", "Services", "Electronics", "Other"],
-      "categoryLabels": ["Food & Desserts", "Clothing", "Services", "Electronics", "Other"]
+      "categoryValues": [
+        "Food & Desserts",
+        "Clothing",
+        "Services",
+        "Electronics",
+        "Other"
+      ],
+      "categoryLabels": [
+        "Food & Desserts",
+        "Clothing",
+        "Services",
+        "Electronics",
+        "Other"
+      ]
     },
     "links": {
       "title": "Payment Links",
