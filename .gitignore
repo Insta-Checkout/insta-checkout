@@ -20,3 +20,7 @@ apps/backend/dist/
 
 # Backend uploads
 apps/backend/uploads/
+
+# Claude Code worktrees
+.claude/worktrees/
+
