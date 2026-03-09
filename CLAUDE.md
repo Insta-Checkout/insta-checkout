@@ -11,3 +11,6 @@
 
 ## Dev Server Management
 - At the start of each new conversation, always close any active dev server sessions using `preview_stop` before starting a new one. This ensures clean state and prevents port conflicts.
+
+## Pulling Main
+- At the start of each new session, always pull main (`git pull origin main`) to ensure you have the latest changes before starting any work. This prevents conflicts and keeps your work in sync with the team.
