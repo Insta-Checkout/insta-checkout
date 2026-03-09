@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Cairo, Inter, JetBrains_Mono, Outfit } from 'next/font/google'
+import { Cairo, Inter, JetBrains_Mono, Outfit, Plus_Jakarta_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { FirebaseAnalytics } from '@/components/firebase-analytics'
 import { LocaleProvider } from '@/lib/locale-provider'
@@ -22,6 +22,12 @@ const outfit = Outfit({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700', '800', '900'],
   variable: '--font-outfit',
+})
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-plus-jakarta',
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -55,7 +61,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body className={`${cairo.variable} ${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body className={`${cairo.variable} ${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} ${plusJakarta.variable} font-sans antialiased`}>
         <LocaleProvider>
           <LocalePersist />
           {children}

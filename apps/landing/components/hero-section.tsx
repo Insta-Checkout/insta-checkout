@@ -89,21 +89,10 @@ export function HeroSection() {
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#2D0A4E]">
-      {/* Background texture */}
-      <div className="pointer-events-none absolute inset-0">
-        {/* Radial gradient glow */}
-        <div className="absolute top-1/4 start-1/4 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7C3AED]/20 blur-[120px]" />
-        <div className="absolute bottom-1/4 end-1/4 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-[#8B5CF6]/10 blur-[120px]" />
-        {/* Grid lines */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px)",
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
+      {/* Ambient gradient orbs */}
+      <div className="pointer-events-none absolute -top-40 -right-40 h-80 w-80 rounded-full bg-[#F97316]/20 blur-[100px]" />
+      <div className="pointer-events-none absolute top-1/2 -left-40 h-64 w-64 rounded-full bg-[#F97316]/15 blur-[80px]" />
+      <div className="pointer-events-none absolute -bottom-20 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[#F97316]/10 blur-[90px]" />
 
       <div className="relative mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 pb-20 pt-32 lg:flex-row lg:gap-16 lg:px-8 lg:pt-24">
         {/* Left: Text */}
@@ -125,14 +114,14 @@ export function HeroSection() {
           </motion.div>
 
           {/* Main headline */}
-          <h1 className="text-4xl font-black leading-[1.1] text-white text-balance lg:text-6xl xl:text-7xl">
+          <h1 className="text-4xl font-bold leading-tight text-white text-balance lg:text-[3.5rem] lg:leading-[1.15]" style={{ fontFamily: "var(--font-plus-jakarta), system-ui, sans-serif" }}>
             {(() => {
               const headline = t("landing.hero.headline")
               const parts = headline.split("—")
               if (parts.length > 1) {
                 return (
                   <>
-                    {parts[0].trim()}
+                    <span className="font-black text-white">{parts[0].trim()}</span>
                     <br />
                     <span className="bg-gradient-to-r from-[#A78BFA] to-[#C4B5FD] bg-clip-text text-transparent">
                       {parts[1].trim()}
