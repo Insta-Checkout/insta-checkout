@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Cairo, Inter, JetBrains_Mono } from 'next/font/google'
+import { Cairo, Inter, JetBrains_Mono, Outfit } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { FirebaseAnalytics } from '@/components/firebase-analytics'
 import { LocaleProvider } from '@/lib/locale-provider'
@@ -16,6 +16,12 @@ const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
+})
+
+const outfit = Outfit({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+  variable: '--font-outfit',
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -40,7 +46,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0D9488',
+  themeColor: '#2D0A4E',
   width: 'device-width',
   initialScale: 1,
   userScalable: true,
@@ -49,7 +55,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning data-scroll-behavior="smooth">
-      <body className={`${cairo.variable} ${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body className={`${cairo.variable} ${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <LocaleProvider>
           <LocalePersist />
           {children}

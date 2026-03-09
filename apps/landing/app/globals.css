@@ -4,38 +4,58 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #FAFAF9;
-  --foreground: #0F172A;
+  /* Page surfaces */
+  --background: #FAFAFA;
+  --background-alt: #F3EEFA;
+  --foreground: #1E0A3C;
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #1E0A3C;
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #0D9488;
+  --popover-foreground: #1E0A3C;
+
+  /* Brand: Orange CTAs */
+  --primary: #F97316;
   --primary-foreground: #FFFFFF;
-  --primary-hover: #0F766E;
-  --secondary: #F8FAFC;
-  --secondary-foreground: #0F172A;
-  --muted: #F8FAFC;
-  --muted-foreground: #64748B;
-  --accent: #ECFDF5;
-  --accent-foreground: #10B981;
-  --destructive: #EF4444;
-  --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #0D9488;
+  --primary-hover: #EA580C;
+
+  /* Brand: Violet accents */
+  --accent: #7C3AED;
+  --accent-foreground: #FFFFFF;
+
+  /* Dark hero / CTA blocks */
+  --hero-bg: #2D0A4E;
+  --hero-foreground: #FFFFFF;
+
+  /* Neutral surfaces */
+  --secondary: #F3EEFA;
+  --secondary-foreground: #1E0A3C;
+  --muted: #F3EEFA;
+  --muted-foreground: #6B5B7B;
+  --border: #E4D8F0;
+  --input: #E4D8F0;
+  --ring: #7C3AED;
+
+  /* Status */
   --success: #10B981;
   --warning: #F59E0B;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+
+  /* Footer */
+  --footer-bg: #F3EEFA;
+  --footer-foreground: #1E0A3C;
+  --footer-muted: #6B5B7B;
+
   --radius: 0.75rem;
-  --footer-bg: #0F172A;
-  --footer-foreground: #FFFFFF;
-  --footer-muted: #94A3B8;
 }
 
 @theme inline {
-  --font-sans: 'Cairo', 'Inter', sans-serif;
+  --font-sans: 'Cairo', 'Outfit', 'Inter', sans-serif;
+  --font-display: 'Outfit', 'Cairo', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+
   --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -44,12 +64,14 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--primary-hover);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-hero-bg: var(--hero-bg);
+  --color-hero-foreground: var(--hero-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -60,6 +82,7 @@
   --color-footer-bg: var(--footer-bg);
   --color-footer-foreground: var(--footer-foreground);
   --color-footer-muted: var(--footer-muted);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

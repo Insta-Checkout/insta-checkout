@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, CreditCard, LogOut } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
+import { Menu, X, LogOut, Zap } from "lucide-react"
+import { AnimatePresence, motion } from "framer-motion"
 import { onAuthStateChanged } from "firebase/auth"
 import { useTranslations } from "@/lib/locale-provider"
 import { LanguageSwitcher } from "./language-switcher"
@@ -15,11 +15,14 @@ export function Navbar() {
   const [user, setUser] = useState<typeof auth.currentUser>(null)
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      if (u?.email) console.log("[Navbar] Logged in as:", u.email)
-      setUser(u)
-    })
+    const unsub = onAuthStateChanged(auth, (u) => setUser(u))
     return () => unsub()
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40)
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
   const navLinks = [
@@ -28,94 +31,98 @@ export function Navbar() {
     { label: t("landing.nav.pricing"), href: "#pricing" },
   ]
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 10)
-    window.addEventListener("scroll", onScroll)
-    return () => window.removeEventListener("scroll", onScroll)
-  }, [])
-
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-card/80 backdrop-blur-lg shadow-sm"
-          : "bg-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
+    <header className="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pt-4">
+      <motion.nav
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className={`flex w-full max-w-6xl items-center justify-between rounded-2xl px-5 py-3 transition-all duration-300 ${
+          scrolled
+            ? "bg-white/90 shadow-lg shadow-[#2D0A4E]/10 backdrop-blur-xl border border-[#E4D8F0]"
+            : "bg-white/10 backdrop-blur-md border border-white/20"
+        }`}
+      >
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <CreditCard className="h-5 w-5 text-primary-foreground" />
+        <a href="#" className="flex items-center gap-2.5 cursor-pointer">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F97316]">
+            <Zap className="h-4 w-4 text-white" />
           </div>
-          <span className="text-lg font-bold text-foreground">
-            InstaPay Checkout
+          <span className={`text-base font-bold tracking-tight transition-colors ${scrolled ? "text-[#1E0A3C]" : "text-white"}`}>
+            Insta Checkout
           </span>
         </a>
 
         {/* Desktop Nav */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-7 md:flex">
           {navLinks.map((link) => (
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+              className={`text-sm font-medium transition-colors cursor-pointer ${
+                scrolled
+                  ? "text-[#64748B] hover:text-[#1E0A3C]"
+                  : "text-white/75 hover:text-white"
+              }`}
             >
               {link.label}
             </a>
           ))}
         </div>
 
-        {/* Desktop CTA */}
+        {/* Desktop Right */}
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
           {user ? (
             <>
               <a
                 href="/dashboard"
-                className="rounded-lg border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+                className="rounded-xl border border-[#F97316] px-4 py-2 text-sm font-semibold text-[#F97316] transition-colors hover:bg-[#F97316] hover:text-white cursor-pointer"
               >
                 {t("landing.nav.dashboard")}
               </a>
               <button
                 onClick={() => signOutUser().then(() => (window.location.href = "/"))}
-                className="flex items-center gap-2 rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                className="flex items-center gap-1.5 rounded-xl border border-[#E4D8F0] px-3 py-2 text-sm font-medium text-[#64748B] transition-colors hover:bg-[#F3EEFA] cursor-pointer"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3.5 w-3.5" />
                 {t("landing.nav.logout")}
               </button>
             </>
           ) : (
             <a
-              href="/login"
-              className="rounded-lg border border-primary px-5 py-2.5 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              href="/onboard"
+              className="rounded-xl bg-[#F97316] px-5 py-2 text-sm font-bold text-white transition-all hover:bg-[#EA580C] hover:shadow-md cursor-pointer"
             >
-              {t("landing.nav.login")}
+              {t("landing.nav.cta")}
             </a>
           )}
         </div>
 
         {/* Mobile Hamburger */}
         <button
-          className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground md:hidden"
+          className={`flex h-9 w-9 items-center justify-center rounded-xl md:hidden cursor-pointer ${
+            scrolled ? "text-[#1E0A3C]" : "text-white"
+          }`}
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? t("common.closeMenu") : t("common.openMenu")}
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
-      </nav>
+      </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-t border-border bg-card md:hidden"
+            initial={{ opacity: 0, y: -10, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -10, scale: 0.98 }}
+            transition={{ duration: 0.2 }}
+            className="absolute top-20 inset-x-4 rounded-2xl border border-[#E4D8F0] bg-white shadow-xl shadow-[#2D0A4E]/10"
           >
-            <div className="flex flex-col gap-1 px-4 py-4">
-              <div className="mb-2 flex justify-center md:hidden">
+            <div className="flex flex-col gap-1 p-4">
+              <div className="mb-3 flex justify-center">
                 <LanguageSwitcher />
               </div>
               {navLinks.map((link) => (
@@ -123,7 +130,7 @@ export function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="rounded-lg px-4 py-3 text-base font-medium text-foreground transition-colors hover:bg-secondary"
+                  className="rounded-xl px-4 py-3 text-base font-medium text-[#1E0A3C] transition-colors hover:bg-[#F3EEFA] cursor-pointer"
                 >
                   {link.label}
                 </a>
@@ -133,7 +140,7 @@ export function Navbar() {
                   <a
                     href="/dashboard"
                     onClick={() => setMobileOpen(false)}
-                    className="mt-2 rounded-lg bg-primary px-4 py-3 text-center text-base font-semibold text-primary-foreground"
+                    className="mt-2 rounded-xl bg-[#F97316] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
                   >
                     {t("landing.nav.dashboard")}
                   </a>
@@ -142,7 +149,7 @@ export function Navbar() {
                       setMobileOpen(false)
                       signOutUser().then(() => (window.location.href = "/"))
                     }}
-                    className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-border px-4 py-3 text-base font-medium text-muted-foreground hover:bg-secondary"
+                    className="mt-1 flex items-center justify-center gap-2 rounded-xl border border-[#E4D8F0] px-4 py-3 text-base font-medium text-[#64748B] hover:bg-[#F3EEFA] cursor-pointer"
                   >
                     <LogOut className="h-4 w-4" />
                     {t("landing.nav.logout")}
@@ -150,11 +157,11 @@ export function Navbar() {
                 </>
               ) : (
                 <a
-                  href="/login"
+                  href="/onboard"
                   onClick={() => setMobileOpen(false)}
-                  className="mt-2 rounded-lg bg-primary px-4 py-3 text-center text-base font-semibold text-primary-foreground"
+                  className="mt-2 rounded-xl bg-[#F97316] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
                 >
-                  {t("landing.nav.login")}
+                  {t("landing.nav.cta")}
                 </a>
               )}
             </div>
