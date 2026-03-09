@@ -32,8 +32,26 @@ jobs:
       contents: read
       pull-requests: write
     steps:
+      - name: Check if backend files changed
+        id: changes
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.payload.pull_request.number,
+              per_page: 100,
+            });
+            const backendChanged = files.some(f => f.filename.startsWith('apps/backend/'));
+            core.setOutput('backend_changed', backendChanged ? 'true' : 'false');
+            if (!backendChanged) {
+              core.info('No backend files changed — skipping Railway URL lookup.');
+            }
+
       - name: Wait for Railway deployment and get backend URL
         id: railway
+        if: steps.changes.outputs.backend_changed == 'true'
         uses: actions/github-script@v7
         with:
           script: |
@@ -71,7 +89,7 @@ jobs:
 
       - name: Set Vercel env and redeploy
         id: vercel
-        if: steps.railway.outputs.backend_url != ''
+        if: steps.changes.outputs.backend_changed == 'true' && steps.railway.outputs.backend_url != ''
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
@@ -129,7 +147,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Comment deployment links on PR
-        if: steps.railway.outputs.backend_url != '' && steps.vercel.outputs.deploy_links != ''
+        if: steps.changes.outputs.backend_changed == 'true' && steps.railway.outputs.backend_url != '' && steps.vercel.outputs.deploy_links != ''
         uses: actions/github-script@v7
         with:
           script: |
