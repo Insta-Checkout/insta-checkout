@@ -1,105 +1,96 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { MessageCircle, Link2, Banknote } from "lucide-react"
+import { UserPlus, Link2, Send } from "lucide-react"
 import { useTranslations } from "@/lib/locale-provider"
 
-const STEP_ICONS = [MessageCircle, Link2, Banknote]
+const STEP_ICONS = [UserPlus, Link2, Send]
 
 export function HowItWorksSection() {
   const { t, get } = useTranslations()
   const steps = (get("landing.howItWorks.steps") ?? []) as Array<{ title: string; description: string }>
-  const stepNumbers = (get("landing.howItWorks.stepNumbers") ?? ["1", "2", "3"]) as string[]
+  const stepNumbers = (get("landing.howItWorks.stepNumbers") ?? ["١", "٢", "٣"]) as string[]
+  const stepPrefix = t("landing.howItWorks.stepPrefix")
 
   return (
-    <section id="how-it-works" className="bg-secondary px-4 py-16 lg:px-8 lg:py-24">
+    <section id="how-it-works" className="bg-[#F3EEFA] px-4 py-20 lg:px-8 lg:py-28">
       <div className="mx-auto max-w-7xl">
+        {/* Section header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center"
+          className="mb-16 text-center"
         >
-          <h2 className="text-2xl font-semibold text-foreground text-balance md:text-[2.5rem] md:leading-tight">
+          <p className="mb-3 text-sm font-bold uppercase tracking-widest text-[#7C3AED]">
+            {t("landing.nav.howItWorks")}
+          </p>
+          <h2 className="text-3xl font-black text-[#1E0A3C] text-balance leading-tight md:text-5xl">
             {t("landing.howItWorks.title")}
           </h2>
-          <p className="mt-3 text-base text-muted-foreground">
+          <p className="mx-auto mt-4 max-w-lg text-base text-[#64748B]">
             {t("landing.howItWorks.subtitle")}
           </p>
         </motion.div>
 
-        {/* Desktop Timeline */}
-        <div className="mt-14 hidden lg:block">
-          <div className="relative flex items-start justify-between">
-            {/* Dashed connector line */}
-            <div className="absolute top-6 right-[calc(16.67%)] left-[calc(16.67%)] border-t-2 border-dashed border-primary/30" />
-
-            {steps.map((step, i) => {
-              const StepIcon = STEP_ICONS[i];
-              return (
+        {/* Steps */}
+        <div className="relative grid gap-6 lg:grid-cols-3 lg:gap-8">
+          {steps.slice(0, 3).map((step, i) => {
+            const Icon = STEP_ICONS[i]
+            return (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.2, duration: 0.5 }}
-                className="relative flex w-1/3 flex-col items-center px-6 text-center"
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+                className="relative overflow-hidden rounded-2xl bg-white p-7 shadow-[0_2px_8px_rgba(45,10,78,0.08)]"
               >
-                <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-primary font-mono text-lg font-bold text-primary-foreground shadow-lg">
+                {/* Giant background number */}
+                <div
+                  className="pointer-events-none absolute -top-4 -end-2 select-none font-black text-[120px] leading-none text-[#7C3AED]/5"
+                  aria-hidden
+                >
                   {stepNumbers[i]}
                 </div>
-                <div className="mt-5 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                  <StepIcon className="h-6 w-6 text-primary" />
+
+                {/* Step badge */}
+                <div className="relative mb-6 flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#EDE9FE] shadow-md shadow-[#7C3AED]/10">
+                    <Icon className="h-5 w-5 text-[#7C3AED]" />
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#7C3AED]">
+                    {stepPrefix} {stepNumbers[i]}
+                  </span>
                 </div>
-                <h3 className="mt-4 text-lg font-bold text-foreground">
+
+                <h3 className="relative text-xl font-black text-[#1E0A3C] leading-tight">
                   {step.title}
                 </h3>
-                <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+                <p className="relative mt-3 text-sm leading-relaxed text-[#64748B]">
                   {step.description}
                 </p>
               </motion.div>
-            );
-            })}
-          </div>
+            )
+          })}
         </div>
 
-        {/* Mobile Vertical Timeline */}
-        <div className="mt-10 lg:hidden">
-          <div className="relative flex flex-col gap-8 pr-8">
-            {/* Vertical dashed line */}
-            <div className="absolute top-0 right-[23px] h-full w-0 border-r-2 border-dashed border-primary/30" />
-
-            {steps.map((step, i) => {
-              const StepIcon = STEP_ICONS[i];
-              return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.4 }}
-                className="relative flex gap-4"
-              >
-                <div className="absolute -right-8 flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary font-mono text-lg font-bold text-primary-foreground shadow-lg">
-                  {stepNumbers[i]}
-                </div>
-                <div className="mr-8">
-                  <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                    <StepIcon className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="text-base font-bold text-foreground">
-                    {step.title}
-                  </h3>
-                  <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    {step.description}
-                  </p>
-                </div>
-              </motion.div>
-            );
-            })}
-          </div>
-        </div>
+        {/* Bottom CTA nudge */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="mt-12 text-center"
+        >
+          <a
+            href="/onboard"
+            className="inline-flex cursor-pointer items-center justify-center rounded-2xl bg-gradient-to-r from-[#7C3AED] to-[#EA580C] px-8 py-4 text-base font-bold text-white transition-all hover:from-[#6D28D9] hover:to-[#C2410C] hover:shadow-lg hover:shadow-[#7C3AED]/25"
+          >
+            {t("landing.hero.cta")}
+          </a>
+        </motion.div>
       </div>
     </section>
   )
