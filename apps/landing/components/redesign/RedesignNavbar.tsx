@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, Zap, LogOut } from "lucide-react"
+import { Menu, X, Zap, LogOut, Globe } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { onAuthStateChanged } from "firebase/auth"
 import { useTranslations } from "@/lib/locale-provider"
@@ -9,9 +9,10 @@ import { LanguageSwitcher } from "@/components/language-switcher"
 import { auth, signOutUser } from "@/lib/firebase"
 
 export function RedesignNavbar() {
-  const { t } = useTranslations()
+  const { t, locale, setLocale, locales } = useTranslations()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileLangOpen, setMobileLangOpen] = useState(false)
   const [user, setUser] = useState<typeof auth.currentUser>(null)
 
   useEffect(() => {
@@ -92,13 +93,51 @@ export function RedesignNavbar() {
           )}
         </div>
 
-        <button
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-[var(--r-text)] md:hidden cursor-pointer transition-colors hover:bg-[var(--r-glass)]"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? t("common.closeMenu") : t("common.openMenu")}
-        >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile pill: Globe + Burger */}
+        <div className="flex items-center gap-0.5 rounded-xl border border-[var(--r-glass-border)] bg-[var(--r-glass)] px-1 py-1 md:hidden">
+          <div className="relative">
+            <button
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--r-text-muted)] cursor-pointer transition-colors hover:bg-[var(--r-bg-elevated)] hover:text-[var(--r-text)]"
+              onClick={() => setMobileLangOpen(!mobileLangOpen)}
+              aria-label="Select language"
+            >
+              <Globe className="h-5 w-5" />
+            </button>
+            <AnimatePresence>
+              {mobileLangOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-11 z-50 min-w-[120px] rounded-xl border border-[var(--r-glass-border)] bg-[var(--r-bg-elevated)] p-1 shadow-xl"
+                >
+                  {locales.map((loc) => (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => { setLocale(loc); setMobileLangOpen(false) }}
+                      className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                        locale === loc
+                          ? "bg-[var(--r-primary)] text-[var(--r-on-primary)]"
+                          : "text-[var(--r-text-muted)] hover:text-[var(--r-text)] hover:bg-[var(--r-glass)]"
+                      }`}
+                    >
+                      {loc === "ar" ? "العربية" : "English"}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <button
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-[var(--r-text)] cursor-pointer transition-colors hover:bg-[var(--r-bg-elevated)]"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? t("common.closeMenu") : t("common.openMenu")}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </nav>
 
       <AnimatePresence>
@@ -111,9 +150,6 @@ export function RedesignNavbar() {
             className="overflow-hidden border-t border-[var(--r-border)] bg-[var(--r-bg-elevated)]/95 backdrop-blur-xl md:hidden"
           >
             <div className="flex flex-col gap-1 px-4 py-4">
-              <div className="mb-2 flex justify-center md:hidden">
-                <LanguageSwitcher />
-              </div>
               {navLinks.map((link) => (
                 <a
                   key={link.href}
