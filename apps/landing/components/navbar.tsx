@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, LogOut, Zap } from "lucide-react"
+import { Menu, X, LogOut, Zap, Globe } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { onAuthStateChanged } from "firebase/auth"
 import { useTranslations } from "@/lib/locale-provider"
@@ -9,9 +9,10 @@ import { LanguageSwitcher } from "./language-switcher"
 import { auth, signOutUser } from "@/lib/firebase"
 
 export function Navbar() {
-  const { t } = useTranslations()
+  const { t, locale, setLocale, locales } = useTranslations()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileLangOpen, setMobileLangOpen] = useState(false)
   const [user, setUser] = useState<typeof auth.currentUser>(null)
 
   useEffect(() => {
@@ -99,16 +100,57 @@ export function Navbar() {
           )}
         </div>
 
-        {/* Mobile Hamburger */}
-        <button
-          className={`flex h-9 w-9 items-center justify-center rounded-xl md:hidden cursor-pointer ${
-            scrolled ? "text-[#1E0A3C]" : "text-white"
-          }`}
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? t("common.closeMenu") : t("common.openMenu")}
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        {/* Mobile pill: Globe + Burger */}
+        <div className={`flex items-center gap-0.5 rounded-xl border px-1 py-1 md:hidden ${
+          scrolled ? "border-[#E4D8F0] bg-white/80" : "border-white/20 bg-white/10"
+        }`}>
+          <div className="relative">
+            <button
+              className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer transition-colors ${
+                scrolled ? "text-[#64748B] hover:bg-[#F3EEFA] hover:text-[#1E0A3C]" : "text-white/75 hover:bg-white/10 hover:text-white"
+              }`}
+              onClick={() => setMobileLangOpen(!mobileLangOpen)}
+              aria-label="Select language"
+            >
+              <Globe className="h-4 w-4" />
+            </button>
+            <AnimatePresence>
+              {mobileLangOpen && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.95, y: -4 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: -4 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-10 z-50 min-w-[120px] rounded-xl border border-[#E4D8F0] bg-white p-1 shadow-xl shadow-[#2D0A4E]/10"
+                >
+                  {locales.map((loc) => (
+                    <button
+                      key={loc}
+                      type="button"
+                      onClick={() => { setLocale(loc); setMobileLangOpen(false) }}
+                      className={`flex w-full items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                        locale === loc
+                          ? "bg-[#F97316] text-white"
+                          : "text-[#64748B] hover:text-[#1E0A3C] hover:bg-[#F3EEFA]"
+                      }`}
+                    >
+                      {loc === "ar" ? "العربية" : "English"}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <button
+            className={`flex h-8 w-8 items-center justify-center rounded-lg cursor-pointer transition-colors ${
+              scrolled ? "text-[#1E0A3C] hover:bg-[#F3EEFA]" : "text-white hover:bg-white/10"
+            }`}
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label={mobileOpen ? t("common.closeMenu") : t("common.openMenu")}
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </motion.nav>
 
       {/* Mobile Drawer */}
@@ -122,9 +164,6 @@ export function Navbar() {
             className="absolute top-20 inset-x-4 rounded-2xl border border-[#E4D8F0] bg-white shadow-xl shadow-[#2D0A4E]/10"
           >
             <div className="flex flex-col gap-1 p-4">
-              <div className="mb-3 flex justify-center">
-                <LanguageSwitcher />
-              </div>
               {navLinks.map((link) => (
                 <a
                   key={link.href}
