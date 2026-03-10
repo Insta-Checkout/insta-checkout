@@ -57,16 +57,18 @@ function KpiCard({
   icon: React.ElementType;
 }) {
   return (
-    <Card className="font-cairo">
+    <Card className="font-cairo border-[#E4D8F0] shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium text-slate-500">{label}</CardTitle>
-        <Icon className="h-4 w-4 text-slate-400" />
+        <CardTitle className="text-sm font-medium text-[#6B5B7B]">{label}</CardTitle>
+        <div className="w-8 h-8 bg-[#EDE9FE] rounded-full flex items-center justify-center">
+          <Icon className="h-4 w-4 text-[#7C3AED]" />
+        </div>
       </CardHeader>
       <CardContent>
         {loading ? (
           <Skeleton className="h-8 w-24" />
         ) : (
-          <span className="text-2xl font-bold text-slate-900 font-mono">{value}</span>
+          <span className="text-2xl font-bold text-[#1E0A3C] font-mono">{value}</span>
         )}
       </CardContent>
     </Card>
@@ -184,13 +186,13 @@ export function DashboardHomeContent() {
   if (error) {
     return (
       <div className="space-y-6">
-        <h1 className="text-2xl font-bold text-slate-900 font-cairo">{t("dashboard.home.title")}</h1>
-        <Card>
+        <h1 className="text-2xl font-bold text-[#1E0A3C] font-cairo">{t("dashboard.home.title")}</h1>
+        <Card className="border-[#E4D8F0]">
           <CardContent className="py-8 text-center">
-            <p className="text-slate-500 font-cairo">{error}</p>
+            <p className="text-[#6B5B7B] font-cairo">{error}</p>
             <Button
               variant="outline"
-              className="mt-4"
+              className="mt-4 border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA]"
               onClick={() => window.location.reload()}
             >
               {t("dashboard.home.retry")}
@@ -231,16 +233,16 @@ export function DashboardHomeContent() {
       )}
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-slate-900 font-cairo">{t("dashboard.home.title")}</h1>
+        <h1 className="text-2xl font-bold text-[#1E0A3C] font-cairo">{t("dashboard.home.title")}</h1>
         <div className="flex flex-wrap gap-2">
           <Link href="/dashboard/products">
-            <Button className="gap-2 font-cairo">
+            <Button className="gap-2 font-cairo bg-[#7C3AED] hover:bg-[#6D28D9] text-white cursor-pointer">
               <Package className="h-4 w-4" />
               {t("dashboard.home.addProduct")}
             </Button>
           </Link>
           <Link href="/dashboard/links">
-            <Button variant="outline" className="gap-2 font-cairo">
+            <Button variant="outline" className="gap-2 font-cairo border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA] cursor-pointer">
               <Link2 className="h-4 w-4" />
               {t("dashboard.home.createLink")}
             </Button>
@@ -250,7 +252,7 @@ export function DashboardHomeContent() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Button variant="outline" className="gap-2 font-cairo bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20">
+            <Button variant="outline" className="gap-2 font-cairo bg-[#25D366]/10 text-[#25D366] hover:bg-[#25D366]/20 border-[#25D366]/20 cursor-pointer">
               <MessageCircle className="h-4 w-4" />
               {t("dashboard.home.shareWhatsApp")}
             </Button>
@@ -286,10 +288,10 @@ export function DashboardHomeContent() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="border-[#E4D8F0] shadow-sm">
           <CardHeader>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <CardTitle className="font-cairo">{t("dashboard.home.revenueOverTime")}</CardTitle>
+              <CardTitle className="font-cairo text-[#1E0A3C]">{t("dashboard.home.revenueOverTime")}</CardTitle>
               <div className="flex flex-wrap items-center gap-2">
                 <select
                   value={datePreset}
@@ -304,7 +306,7 @@ export function DashboardHomeContent() {
                       setCustomTo(now.toISOString().slice(0, 10));
                     }
                   }}
-                  className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-cairo"
+                  className="rounded-lg border border-[#E4D8F0] bg-white px-3 py-1.5 text-sm font-cairo text-[#1E0A3C]"
                 >
                   <option value="7d">{t("dashboard.home.datePreset7d")}</option>
                   <option value="30d">{t("dashboard.home.datePreset30d")}</option>
@@ -317,14 +319,14 @@ export function DashboardHomeContent() {
                       type="date"
                       value={customFrom}
                       onChange={(e) => setCustomFrom(e.target.value)}
-                      className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm font-cairo"
+                      className="rounded-lg border border-[#E4D8F0] bg-white px-2 py-1.5 text-sm font-cairo"
                     />
-                    <span className="text-slate-400">—</span>
+                    <span className="text-[#6B5B7B]">—</span>
                     <input
                       type="date"
                       value={customTo}
                       onChange={(e) => setCustomTo(e.target.value)}
-                      className="rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm font-cairo"
+                      className="rounded-lg border border-[#E4D8F0] bg-white px-2 py-1.5 text-sm font-cairo"
                     />
                   </>
                 )}
@@ -347,21 +349,21 @@ export function DashboardHomeContent() {
                   <Area
                     type="monotone"
                     dataKey="revenue"
-                    stroke="#0D9488"
-                    fill="#0D9488"
-                    fillOpacity={0.2}
+                    stroke="#7C3AED"
+                    fill="#7C3AED"
+                    fillOpacity={0.15}
                   />
                 </AreaChart>
               </ResponsiveContainer>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="mb-4 rounded-full bg-primary/10 p-4">
-                  <TrendingUp className="h-8 w-8 text-primary" />
+                <div className="mb-4 rounded-full bg-[#EDE9FE] p-4">
+                  <TrendingUp className="h-8 w-8 text-[#7C3AED]" />
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-slate-900 font-cairo">
+                <h3 className="mb-2 text-lg font-semibold text-[#1E0A3C] font-cairo">
                   {t("dashboard.home.noRevenueData")}
                 </h3>
-                <p className="max-w-sm text-sm text-slate-500 font-cairo">
+                <p className="max-w-sm text-sm text-[#6B5B7B] font-cairo">
                   {t("dashboard.home.noRevenueSubtitle")}
                 </p>
               </div>
@@ -369,9 +371,9 @@ export function DashboardHomeContent() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-[#E4D8F0] shadow-sm">
           <CardHeader>
-            <CardTitle className="font-cairo">{t("dashboard.home.latestConfirmed")}</CardTitle>
+            <CardTitle className="font-cairo text-[#1E0A3C]">{t("dashboard.home.latestConfirmed")}</CardTitle>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -382,17 +384,17 @@ export function DashboardHomeContent() {
               </div>
             ) : confirmedPayments.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="mb-4 rounded-full bg-slate-100 p-3">
-                  <Package className="h-6 w-6 text-slate-400" />
+                <div className="mb-4 rounded-full bg-[#EDE9FE] p-3">
+                  <Package className="h-6 w-6 text-[#7C3AED]" />
                 </div>
-                <h3 className="mb-1 text-base font-semibold text-slate-900 font-cairo">
+                <h3 className="mb-1 text-base font-semibold text-[#1E0A3C] font-cairo">
                   {t("dashboard.home.startJourney")}
                 </h3>
-                <p className="mb-4 max-w-xs text-xs text-slate-500 font-cairo">
+                <p className="mb-4 max-w-xs text-xs text-[#6B5B7B] font-cairo">
                   {t("dashboard.home.startJourneySubtitle")}
                 </p>
                 <Link href="/dashboard/products">
-                  <Button variant="outline" size="sm" className="gap-2 font-cairo">
+                  <Button variant="outline" size="sm" className="gap-2 font-cairo border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA] cursor-pointer">
                     <Package className="h-3 w-3" />
                     {t("dashboard.home.addNewProduct")}
                   </Button>
@@ -403,18 +405,18 @@ export function DashboardHomeContent() {
                 {confirmedPayments.map((p) => (
                   <div
                     key={p.id}
-                    className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2"
+                    className="flex items-center justify-between rounded-lg border border-[#E4D8F0] px-3 py-2.5 bg-white hover:bg-[#F3EEFA] transition-colors"
                   >
                     <div>
-                      <p className="font-medium text-slate-900 font-cairo">
+                      <p className="font-medium text-[#1E0A3C] font-cairo">
                         {p.productName}
                       </p>
-                      <p className="text-sm text-slate-500 font-cairo">
+                      <p className="text-sm text-[#6B5B7B] font-cairo">
                         {formatEgp(p.price, egpShort, locale)} ·{" "}
                         {statusLabels[p.status] ?? p.status}
                       </p>
                     </div>
-                    <span className="text-xs text-slate-400 font-cairo">
+                    <span className="text-xs text-[#6B5B7B] font-cairo">
                       {new Date(p.confirmedAt ?? p.createdAt).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-GB")}
                     </span>
                   </div>

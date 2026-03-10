@@ -13,10 +13,10 @@ export function MobileSidebar({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 sm:hidden">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} aria-hidden />
-      <aside className="absolute top-0 right-0 bottom-0 w-64 bg-white shadow-xl">
+      <aside className="absolute top-0 right-0 bottom-0 w-64 bg-white shadow-xl border-l border-[#E4D8F0]">
         <button
           onClick={onClose}
-          className="absolute top-4 left-4 p-2 text-slate-400 hover:text-slate-600"
+          className="absolute top-4 left-4 p-2 text-[#6B5B7B] hover:text-[#1E0A3C] hover:bg-[#F3EEFA] rounded-lg cursor-pointer transition-colors"
           aria-label={t("dashboard.aria.closeMenu")}
         >
           <X className="h-5 w-5" />
