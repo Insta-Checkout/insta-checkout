@@ -1,9 +1,9 @@
 "use client";
 
+import { Menu } from "lucide-react";
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { useTranslations } from "@/lib/locale-provider";
 import { UserMenu } from "./UserMenu";
-import { Menu } from "lucide-react";
 
 type Props = { onMenuToggle: () => void };
 

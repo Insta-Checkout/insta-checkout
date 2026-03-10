@@ -3,6 +3,7 @@ import { ObjectId } from "mongodb"
 import multer from "multer"
 import path from "path"
 import fs from "fs"
+import { writeFile } from "fs/promises"
 import crypto from "crypto"
 import { connectToMongo } from "../db.js"
 
@@ -178,7 +179,7 @@ router.post(
         const ext = path.extname(file.originalname) || ".png"
         const filename = `${generateToken()}${ext}`
         const filepath = path.join(UPLOADS_DIR, filename)
-        fs.writeFileSync(filepath, file.buffer)
+        await writeFile(filepath, file.buffer)
         screenshotUrl = `${API_BASE_URL}/uploads/${filename}`
       }
 

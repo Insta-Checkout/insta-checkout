@@ -46,7 +46,7 @@ export function Navbar() {
       >
         {/* Logo */}
         <a href="#" className="flex items-center gap-2.5 cursor-pointer">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F97316]">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#7C3AED]">
             <Zap className="h-4 w-4 text-white" />
           </div>
           <span className={`text-base font-bold tracking-tight transition-colors ${scrolled ? "text-[#1E0A3C]" : "text-white"}`}>
@@ -78,7 +78,7 @@ export function Navbar() {
             <>
               <a
                 href="/dashboard"
-                className="rounded-xl border border-[#F97316] px-4 py-2 text-sm font-semibold text-[#F97316] transition-colors hover:bg-[#F97316] hover:text-white cursor-pointer"
+                className="rounded-xl border border-[#7C3AED] px-4 py-2 text-sm font-semibold text-[#7C3AED] transition-colors hover:bg-[#7C3AED] hover:text-white cursor-pointer"
               >
                 {t("landing.nav.dashboard")}
               </a>
@@ -93,7 +93,7 @@ export function Navbar() {
           ) : (
             <a
               href="/onboard"
-              className="rounded-xl bg-[#F97316] px-5 py-2 text-sm font-bold text-white transition-all hover:bg-[#EA580C] hover:shadow-md cursor-pointer"
+              className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-bold text-white transition-all hover:bg-[#6D28D9] hover:shadow-md cursor-pointer"
             >
               {t("landing.nav.cta")}
             </a>
@@ -179,7 +179,7 @@ export function Navbar() {
                   <a
                     href="/dashboard"
                     onClick={() => setMobileOpen(false)}
-                    className="mt-2 rounded-xl bg-[#F97316] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
+                    className="mt-2 rounded-xl bg-[#7C3AED] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
                   >
                     {t("landing.nav.dashboard")}
                   </a>
@@ -198,7 +198,7 @@ export function Navbar() {
                 <a
                   href="/onboard"
                   onClick={() => setMobileOpen(false)}
-                  className="mt-2 rounded-xl bg-[#F97316] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
+                  className="mt-2 rounded-xl bg-[#7C3AED] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
                 >
                   {t("landing.nav.cta")}
                 </a>

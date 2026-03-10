@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useTranslations } from "@/lib/locale-provider"
 import { ArrowLeft, ArrowRight } from "lucide-react"
+import { useTranslations } from "@/lib/locale-provider"
 
 export function FinalCtaSection() {
   const { t, locale } = useTranslations()
@@ -15,6 +15,8 @@ export function FinalCtaSection() {
       <div className="pointer-events-none absolute -top-24 -end-24 h-64 w-64 rounded-full bg-white/5" />
       <div className="pointer-events-none absolute -bottom-16 -start-16 h-48 w-48 rounded-full bg-white/5" />
       <div className="pointer-events-none absolute top-1/2 start-1/2 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7C3AED]/30 blur-[80px]" />
+      <div className="pointer-events-none absolute -top-20 -start-20 h-72 w-72 rounded-full bg-[#F97316]/15 blur-[90px]" />
+      <div className="pointer-events-none absolute -bottom-24 -end-24 h-56 w-56 rounded-full bg-[#F97316]/10 blur-[80px]" />
 
       <div className="relative mx-auto max-w-3xl text-center">
         <motion.div

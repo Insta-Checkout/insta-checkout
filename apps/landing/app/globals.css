@@ -13,13 +13,13 @@
   --popover: #FFFFFF;
   --popover-foreground: #1E0A3C;
 
-  /* Brand: Orange CTAs */
-  --primary: #F97316;
+  /* Brand: Purple CTAs & accents */
+  --primary: #7C3AED;
   --primary-foreground: #FFFFFF;
-  --primary-hover: #EA580C;
+  --primary-hover: #6D28D9;
 
-  /* Brand: Violet accents */
-  --accent: #7C3AED;
+  /* Brand: Lighter purple */
+  --accent: #8B5CF6;
   --accent-foreground: #FFFFFF;
 
   /* Dark hero / CTA blocks */

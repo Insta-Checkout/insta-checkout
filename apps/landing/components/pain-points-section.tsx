@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useTranslations } from "@/lib/locale-provider"
 import { ArrowLeft, ArrowRight, MessageSquare, FileText, HelpCircle, TrendingDown } from "lucide-react"
+import { useTranslations } from "@/lib/locale-provider"
 
 const ICONS = [MessageSquare, FileText, HelpCircle, TrendingDown]
 
