@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { auth } from "@/lib/firebase";
-import { getBackendUrl, fetchWithAuth } from "@/lib/api";
-import { useTranslations } from "@/lib/locale-provider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Package, Link2, MessageCircle, TrendingUp } from "lucide-react";
-import { OnboardingChecklist } from "./OnboardingChecklist";
 import {
   AreaChart,
   Area,
@@ -19,6 +12,13 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { auth } from "@/lib/firebase";
+import { getBackendUrl, fetchWithAuth } from "@/lib/api";
+import { useTranslations } from "@/lib/locale-provider";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { OnboardingChecklist } from "./OnboardingChecklist";
 
 type Analytics = {
   totalRevenue: number;

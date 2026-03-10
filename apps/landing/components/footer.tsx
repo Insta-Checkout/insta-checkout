@@ -38,7 +38,7 @@ export function Footer() {
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <a href="#" className="inline-flex items-center gap-2.5 cursor-pointer">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#F97316]">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#7C3AED]">
                 <Zap className="h-4 w-4 text-white" />
               </div>
               <span className="text-base font-bold text-[#1E0A3C]">Insta Checkout</span>
@@ -52,7 +52,7 @@ export function Footer() {
               <a
                 href="#"
                 aria-label="Instagram"
-                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#E4D8F0] bg-white text-[#64748B] transition-colors hover:bg-[#F97316] hover:text-white hover:border-[#F97316]"
+                className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl border border-[#E4D8F0] bg-white text-[#64748B] transition-colors hover:bg-[#7C3AED] hover:text-white hover:border-[#7C3AED]"
               >
                 <Instagram className="h-4 w-4" />
               </a>

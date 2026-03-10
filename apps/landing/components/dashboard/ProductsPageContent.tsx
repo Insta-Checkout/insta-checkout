@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Package, Plus, Pencil, Trash2, Link2, Copy, MessageCircle, ImagePlus } from "lucide-react";
+import { toast } from "sonner";
 import { auth, uploadProductImage } from "@/lib/firebase";
 import { getBackendUrl, fetchWithAuth } from "@/lib/api";
 import { useTranslations } from "@/lib/locale-provider";
@@ -17,8 +19,6 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Package, Plus, Pencil, Trash2, Link2, Copy, MessageCircle, ImagePlus } from "lucide-react";
-import { toast } from "sonner";
 
 type Product = {
   id: string;
