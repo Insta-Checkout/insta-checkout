@@ -50,7 +50,8 @@ router.get("/", async (req: Request, res: Response) => {
     }
     const instapayInfo = seller.instapayInfo ?? { method: null, mobile: null, bankName: null, bankAccountNumber: null, ipaAddress: null }
     const hasInstapayInfo = !!(instapayInfo.method)
-    const onboardingComplete = seller.onboardingComplete ?? (hasInstapayInfo && !!seller.maskedFullName && !!seller.category)
+    const hasSocialLinks = !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook)
+    const onboardingComplete = seller.onboardingComplete ?? (hasInstapayInfo && !!seller.maskedFullName && !!seller.category && hasSocialLinks)
     res.json({
       id: seller._id,
       fullName: seller.fullName ?? null,
@@ -158,7 +159,9 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
     const merged = { ...seller, ...updates, updatedAt: now } as Record<string, unknown>
     const mergedInstapayInfo = merged.instapayInfo as { method?: string } | undefined
     const hasInstapayInfo = !!(mergedInstapayInfo?.method)
-    const requiredComplete = !!(hasInstapayInfo && merged.maskedFullName && merged.category)
+    const mergedSocialLinks = merged.socialLinks as { instagram?: string; facebook?: string } | undefined
+    const hasSocialLinks = !!(mergedSocialLinks?.instagram || mergedSocialLinks?.facebook)
+    const requiredComplete = !!(hasInstapayInfo && merged.maskedFullName && merged.category && hasSocialLinks)
     updates.onboardingComplete = requiredComplete
     updates.updatedAt = now
 

@@ -1,14 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { auth } from "@/lib/firebase";
+import { useEffect, useRef, useState } from "react";
+import { auth, uploadSellerLogo } from "@/lib/firebase";
 import { getBackendUrl, fetchWithAuth } from "@/lib/api";
 import { useTranslations } from "@/lib/locale-provider";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, Circle, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import {
+  CheckCircle,
+  Circle,
+  Loader2,
+  ChevronDown,
+  ChevronUp,
+  ImagePlus,
+  X,
+  Instagram,
+  Facebook,
+} from "lucide-react";
 import { toast } from "sonner";
 
 type OnboardingProgress = {
@@ -23,6 +33,9 @@ type OnboardingProgress = {
 type SellerProfile = {
   id: string;
   businessName: string;
+  category?: string | null;
+  logoUrl?: string | null;
+  socialLinks?: { instagram?: string; facebook?: string; whatsapp?: string };
   onboardingComplete: boolean;
   onboardingProgress: OnboardingProgress;
 };
@@ -30,13 +43,16 @@ type SellerProfile = {
 type InstapayMethod = "mobile" | "bank" | "ipa" | "";
 
 export function OnboardingChecklist() {
-  const { t, get } = useTranslations();
+  const { t, get, locale } = useTranslations();
   const [profile, setProfile] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
   const [saving, setSaving] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     category: "",
+    logoUrl: "" as string | null,
+    instagram: "",
+    facebook: "",
     instapayMethod: "" as InstapayMethod,
     instapayMobile: "",
     instapayBankName: "",
@@ -44,6 +60,10 @@ export function OnboardingChecklist() {
     instapayIpa: "",
     maskedFullName: "",
   });
+
+  // Logo upload state
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   const getToken = () =>
     auth.currentUser ? auth.currentUser.getIdToken() : Promise.resolve(null);
@@ -55,8 +75,12 @@ export function OnboardingChecklist() {
       const data = await res.json();
       setProfile(data);
       const instapayInfo = data.instapayInfo ?? {};
+      const socialLinks = data.socialLinks ?? {};
       setFormData({
         category: data.category ?? "",
+        logoUrl: data.logoUrl ?? null,
+        instagram: socialLinks.instagram ?? "",
+        facebook: socialLinks.facebook ?? "",
         instapayMethod: (instapayInfo.method ?? "") as InstapayMethod,
         instapayMobile: instapayInfo.mobile ?? data.instapayNumber ?? "",
         instapayBankName: instapayInfo.bankName ?? "",
@@ -109,6 +133,18 @@ export function OnboardingChecklist() {
     }
   };
 
+  const saveBusinessInfo = async () => {
+    await saveStep("category", {
+      category: formData.category,
+      logoUrl: formData.logoUrl || null,
+      socialLinks: {
+        instagram: formData.instagram.trim(),
+        facebook: formData.facebook.trim(),
+        whatsapp: "",
+      },
+    });
+  };
+
   const saveInstapayInfo = async () => {
     const method = formData.instapayMethod;
     if (!method) return;
@@ -127,12 +163,44 @@ export function OnboardingChecklist() {
     });
   };
 
+  const handleLogoUpload = async (file: File) => {
+    if (!auth.currentUser) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error(
+        locale === "ar"
+          ? "الرجاء اختيار ملف صورة صالح"
+          : "Please choose a valid image file"
+      );
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(
+        locale === "ar"
+          ? "حجم الصورة كبير جداً. الحد الأقصى 5 ميغابايت"
+          : "Image is too large. Maximum size is 5 MB"
+      );
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const url = await uploadSellerLogo(file, auth.currentUser.uid);
+      setFormData((p) => ({ ...p, logoUrl: url }));
+    } catch {
+      toast.error(
+        locale === "ar" ? "فشل رفع الصورة" : "Failed to upload image"
+      );
+    } finally {
+      setUploadingLogo(false);
+    }
+  };
+
   if (loading || !profile || profile.onboardingComplete) return null;
 
   const progress = profile.onboardingProgress;
   const instapayDone = progress?.instapayInfo || progress?.instapayNumber;
+  const businessInfoDone = progress?.category && progress?.socialLinks;
   const requiredDone =
-    (progress?.category ? 1 : 0) +
+    (businessInfoDone ? 1 : 0) +
     (instapayDone && progress?.maskedName ? 1 : 0);
   const requiredTotal = 2;
   const pct = Math.round((requiredDone / requiredTotal) * 100);
@@ -142,9 +210,15 @@ export function OnboardingChecklist() {
   const bankNames = get<string[]>("dashboard.onboarding.bankNames") ?? [];
 
   const steps = [
-    { key: "category", labelKey: "dashboard.onboarding.businessType", done: progress?.category, required: true },
+    { key: "category", labelKey: "dashboard.onboarding.businessType", done: businessInfoDone, required: true },
     { key: "instapayInfo", labelKey: "dashboard.onboarding.instapayInfo", done: instapayDone && progress?.maskedName, required: true },
   ];
+
+  const isBusinessInfoValid = () => {
+    if (!formData.category) return false;
+    if (!formData.instagram.trim() && !formData.facebook.trim()) return false;
+    return true;
+  };
 
   const isInstapayFormValid = () => {
     if (!formData.instapayMethod) return false;
@@ -208,29 +282,118 @@ export function OnboardingChecklist() {
               {isExpanded && !step.done && (
                 <div className="border-t border-border px-4 py-3 space-y-3">
                   {step.key === "category" && (
-                    <div className="space-y-2">
-                      <Label className="font-cairo">{t("dashboard.onboarding.businessType")}</Label>
-                      <select
-                        value={formData.category}
-                        onChange={(e) =>
-                          setFormData((p) => ({
-                            ...p,
-                            category: e.target.value,
-                          }))
-                        }
-                        className="w-full h-10 rounded-lg border border-input px-3 font-cairo"
-                      >
-                        <option value="">{t("dashboard.onboarding.choose")}</option>
-                        {categoryValues.map((val, i) => (
-                          <option key={val} value={val}>
-                            {categoryLabels[i] ?? val}
-                          </option>
-                        ))}
-                      </select>
+                    <div className="space-y-4">
+                      {/* Business category */}
+                      <div className="space-y-2">
+                        <Label className="font-cairo">{t("dashboard.onboarding.businessType")}</Label>
+                        <select
+                          value={formData.category}
+                          onChange={(e) =>
+                            setFormData((p) => ({
+                              ...p,
+                              category: e.target.value,
+                            }))
+                          }
+                          className="w-full h-10 rounded-lg border border-input px-3 font-cairo"
+                        >
+                          <option value="">{t("dashboard.onboarding.choose")}</option>
+                          {categoryValues.map((val, i) => (
+                            <option key={val} value={val}>
+                              {categoryLabels[i] ?? val}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Business logo (optional) */}
+                      <div className="space-y-2">
+                        <Label className="font-cairo">{t("dashboard.onboarding.businessLogo")}</Label>
+                        {formData.logoUrl ? (
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={formData.logoUrl}
+                              alt="Logo"
+                              className="h-16 w-16 rounded-lg object-cover border border-border"
+                            />
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setFormData((p) => ({ ...p, logoUrl: null }))}
+                              className="text-destructive hover:text-destructive gap-1 font-cairo"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                              {t("dashboard.onboarding.removeLogo")}
+                            </Button>
+                          </div>
+                        ) : (
+                          <div>
+                            <input
+                              ref={logoInputRef}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleLogoUpload(file);
+                              }}
+                            />
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => logoInputRef.current?.click()}
+                              disabled={uploadingLogo}
+                              className="gap-2 font-cairo"
+                            >
+                              {uploadingLogo ? (
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <ImagePlus className="h-4 w-4" />
+                              )}
+                              {t("dashboard.onboarding.uploadLogo")}
+                            </Button>
+                            <p className="mt-1 text-xs text-muted-foreground font-cairo">
+                              {t("dashboard.onboarding.logoHint")}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Social media links */}
+                      <div className="space-y-2 border-t border-border pt-3">
+                        <Label className="font-cairo">{t("dashboard.onboarding.socialLinksLabel")}</Label>
+                        <p className="text-xs text-muted-foreground font-cairo">
+                          {t("dashboard.onboarding.socialLinksHint")}
+                        </p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Instagram className="h-4 w-4 text-muted-foreground shrink-0" />
+                            <Input
+                              value={formData.instagram}
+                              onChange={(e) => setFormData((p) => ({ ...p, instagram: e.target.value }))}
+                              placeholder={t("dashboard.onboarding.instagramPlaceholder")}
+                              className="font-cairo"
+                              dir="ltr"
+                            />
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Facebook className="h-4 w-4 text-muted-foreground shrink-0" />
+                            <Input
+                              value={formData.facebook}
+                              onChange={(e) => setFormData((p) => ({ ...p, facebook: e.target.value }))}
+                              placeholder={t("dashboard.onboarding.facebookPlaceholder")}
+                              className="font-cairo"
+                              dir="ltr"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
                       <Button
                         size="sm"
-                        onClick={() => saveStep("category", formData.category)}
-                        disabled={!formData.category || saving === "category"}
+                        onClick={saveBusinessInfo}
+                        disabled={!isBusinessInfoValid() || saving === "category" || uploadingLogo}
                         className="gap-2 font-cairo"
                       >
                         {saving === "category" ? (

@@ -27,6 +27,7 @@ function validateProductBody(body: Record<string, unknown>): { ok: boolean; data
   const nameEn = validateOptionalName(body.nameEn, 80)
   const price = typeof body.price === "number" ? body.price : typeof body.price === "string" ? parseFloat(body.price) : NaN
   const description = typeof body.description === "string" ? body.description.trim() || null : null
+  const descriptionFormat = body.descriptionFormat === "markdown" ? "markdown" : "text"
   const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim() || null : null
   const category = typeof body.category === "string" ? body.category.trim() || null : null
 
@@ -45,7 +46,7 @@ function validateProductBody(body: Record<string, unknown>): { ok: boolean; data
   if (errors.length > 0) return { ok: false, errors }
   return {
     ok: true,
-    data: { name, nameAr, nameEn, price: Math.round(price), description, imageUrl, category },
+    data: { name, nameAr, nameEn, price: Math.round(price), description, descriptionFormat, imageUrl, category },
   }
 }
 
@@ -133,7 +134,7 @@ router.post("/products", async (req: Request, res: Response) => {
     res.status(400).json({ error: "VALIDATION_ERROR", details: validation.errors })
     return
   }
-  const { name, nameAr, nameEn, price, description, imageUrl, category } = validation.data!
+  const { name, nameAr, nameEn, price, description, descriptionFormat, imageUrl, category } = validation.data!
   try {
     const db = await connectToMongo()
     const products = db.collection("products")
@@ -145,6 +146,7 @@ router.post("/products", async (req: Request, res: Response) => {
       nameEn: nameEn ?? null,
       price,
       description: description ?? null,
+      descriptionFormat: descriptionFormat ?? "text",
       imageUrl: imageUrl ?? null,
       category: category ?? null,
       status: "active",
@@ -208,6 +210,9 @@ router.put("/products/:id", async (req: Request, res: Response) => {
   }
   if (body.description !== undefined) {
     updates.description = typeof body.description === "string" ? body.description.trim() || null : null
+  }
+  if (body.descriptionFormat !== undefined) {
+    updates.descriptionFormat = body.descriptionFormat === "markdown" ? "markdown" : "text"
   }
   if (body.imageUrl !== undefined) {
     const url = typeof body.imageUrl === "string" ? body.imageUrl.trim() || null : null
