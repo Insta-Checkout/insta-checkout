@@ -1,8 +1,8 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useTranslations } from "@/lib/locale-provider"
 import { Building2, ArrowUpRight, Shield } from "lucide-react"
+import { useTranslations } from "@/lib/locale-provider"
 
 const TRUST_ICONS = [Building2, ArrowUpRight, Shield]
 
@@ -19,10 +19,12 @@ export function SocialProofSection() {
   const displayTrust = trust.length > 0 ? trust : defaultTrust
 
   return (
-    <section className="overflow-hidden bg-[#2D0A4E] px-4 py-20 lg:px-8 lg:py-28">
+    <section className="relative overflow-hidden bg-[#2D0A4E] px-4 py-20 lg:px-8 lg:py-28">
       {/* Background glow */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute top-1/2 start-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7C3AED]/20 blur-[100px]" />
+        <div className="absolute -top-32 -end-32 h-72 w-72 rounded-full bg-[#F97316]/15 blur-[90px]" />
+        <div className="absolute -bottom-24 -start-24 h-56 w-56 rounded-full bg-[#F97316]/10 blur-[80px]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl">

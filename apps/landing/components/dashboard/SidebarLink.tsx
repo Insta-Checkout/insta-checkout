@@ -18,8 +18,8 @@ export function SidebarLink({ href, icon: Icon, label, active }: Props) {
       className={cn(
         "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors font-cairo",
         active
-          ? "bg-teal-50 text-[#0D9488]"
-          : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+          ? "bg-[#EDE9FE] text-[#7C3AED] font-semibold"
+          : "text-[#6B5B7B] hover:bg-[#F3EEFA] hover:text-[#1E0A3C]"
       )}
     >
       <Icon className="h-5 w-5 shrink-0" />

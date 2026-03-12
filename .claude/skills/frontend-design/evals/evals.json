@@ -1,0 +1,23 @@
+{
+  "skill_name": "frontend-design",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Build a hero section for the Insta Checkout landing page with a headline, subheadline, and two CTA buttons (primary and secondary)",
+      "expected_output": "A hero section using deep purple background (#2D0A4E), white text, Outfit font for heading, gradient CTA button (purple-to-orange), solid purple secondary button, subtle orange ambient orbs, and proper accessibility attributes",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Create a pricing card component with a plan name, price, feature list, and CTA button for Insta Checkout",
+      "expected_output": "A card using bg-white, border-[#E4D8F0], shadow-sm, Outfit heading, Plus Jakarta Sans body, Lucide icons (not emojis), cursor-pointer on interactive elements, proper focus states, and a gradient or solid purple CTA button",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Build a 'How It Works' section with 3 numbered steps, each with an icon, title, and description",
+      "expected_output": "A section with bg-[#F3EEFA] background, icon badges using bg-[#EDE9FE] with purple icons from Lucide React, numbered step badges, proper heading hierarchy, responsive grid layout, and smooth entrance animations with motion-safe prefix",
+      "files": []
+    }
+  ]
+}

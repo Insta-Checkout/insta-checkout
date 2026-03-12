@@ -20,10 +20,15 @@ export function Sidebar() {
   return (
     <nav className="flex flex-col h-full py-6">
       <div className="px-6 mb-8">
-        <h2 className="text-lg font-bold text-[#0D9488] font-cairo">Insta Checkout</h2>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex items-center justify-center">
+            <span className="text-white text-xs font-bold">IC</span>
+          </div>
+          <h2 className="text-base font-bold text-[#1E0A3C] font-cairo">Insta Checkout</h2>
+        </div>
       </div>
 
-      <div className="flex-1 space-y-1 px-3">
+      <div className="flex-1 space-y-0.5 px-3">
         {NAV_ITEMS.map((item) => (
           <SidebarLink
             key={item.href}
@@ -35,13 +40,13 @@ export function Sidebar() {
         ))}
       </div>
 
-      <div className="px-3 pt-4 border-t border-slate-200 space-y-1">
+      <div className="px-3 pt-4 border-t border-[#E4D8F0] space-y-0.5">
         <div className="flex items-center gap-2 px-3 py-2">
-          <Languages className="h-4 w-4 text-slate-400" />
+          <Languages className="h-4 w-4 text-[#6B5B7B]" />
           <select
             value={locale}
             onChange={(e) => setLocale(e.target.value as "ar" | "en")}
-            className="flex-1 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-sm font-cairo"
+            className="flex-1 rounded-lg border border-[#E4D8F0] bg-white px-2 py-1.5 text-sm font-cairo text-[#1E0A3C]"
           >
             {LOCALES.map((l) => (
               <option key={l} value={l}>

@@ -40,31 +40,31 @@ export function UserMenu({ name, email, photoURL }: Props) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-slate-50 transition-colors"
+        className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F3EEFA] transition-colors cursor-pointer"
       >
         <Avatar className="h-8 w-8">
           <AvatarImage src={photoURL ?? undefined} alt={name} />
-          <AvatarFallback className="bg-teal-100 text-teal-800 text-xs font-cairo">
+          <AvatarFallback className="bg-[#EDE9FE] text-[#7C3AED] text-xs font-cairo font-semibold">
             {initials}
           </AvatarFallback>
         </Avatar>
-        <span className="hidden sm:inline font-medium text-slate-700 font-cairo max-w-[120px] truncate">
+        <span className="hidden sm:inline font-medium text-[#1E0A3C] font-cairo max-w-[120px] truncate">
           {name}
         </span>
         <ChevronDown
-          className={cn("h-4 w-4 text-slate-500 transition-transform", open && "rotate-180")}
+          className={cn("h-4 w-4 text-[#6B5B7B] transition-transform", open && "rotate-180")}
         />
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full mt-1 w-56 rounded-lg border border-slate-200 bg-white py-1 shadow-lg z-50">
-          <div className="px-3 py-2 border-b border-slate-100">
-            <p className="text-sm font-medium text-slate-900 font-cairo truncate">{name}</p>
-            <p className="text-xs text-slate-500 truncate">{email}</p>
+        <div className="absolute left-0 top-full mt-1 w-56 rounded-xl border border-[#E4D8F0] bg-white py-1 shadow-lg z-50">
+          <div className="px-3 py-2 border-b border-[#E4D8F0]">
+            <p className="text-sm font-medium text-[#1E0A3C] font-cairo truncate">{name}</p>
+            <p className="text-xs text-[#6B5B7B] truncate">{email}</p>
           </div>
           <button
             onClick={() => signOut()}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 font-cairo"
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-[#6B5B7B] hover:bg-[#F3EEFA] hover:text-[#1E0A3C] font-cairo cursor-pointer transition-colors"
           >
             <LogOut className="h-4 w-4" />
             {t("dashboard.userMenu.logout")}
