@@ -1,6 +1,6 @@
 async function sendWelcomeMessage(whatsappNumber, businessName) {
   const message = [
-    `🎉 أهلاً بيك في InstaPay Checkout!`,
+    `🎉 أهلاً بيك في Insta Checkout!`,
     ``,
     `أنا البوت بتاعك لإنشاء لينكات دفع. في أي وقت عايز تعمل لينك دفع، ابعتلي اسم المنتج والسعر كده:`,
     ``,

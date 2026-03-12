@@ -127,7 +127,7 @@ export default function LoginPage() {
             <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/25">
               <CreditCard className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold text-foreground">InstaPay Checkout</span>
+            <span className="text-xl font-bold text-foreground">Insta Checkout</span>
           </Link>
           <h1 className="text-2xl font-bold text-foreground">{t("landing.loginPage.title")}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{t("landing.loginPage.subtitle")}</p>

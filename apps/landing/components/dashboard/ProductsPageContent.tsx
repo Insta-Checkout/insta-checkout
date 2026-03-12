@@ -335,10 +335,27 @@ export function ProductsPageContent() {
   } | null>(null);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
 
+  // Seller's business category — used as default when creating new products
+  const [sellerCategory, setSellerCategory] = useState<string>("");
+
   const egpShort = t("common.egpShort");
 
   const getToken = () =>
     auth.currentUser ? auth.currentUser.getIdToken() : Promise.resolve(null);
+
+  const loadSellerCategory = async () => {
+    try {
+      const res = await fetchWithAuth(`${getBackendUrl()}/sellers/me`, {}, getToken);
+      if (!res.ok) return;
+      const data = await res.json();
+      // Map business category to product category value
+      const cat = data.category ?? "";
+      const match = ALL_CATEGORIES.find((c) => c.labelEn === cat || c.value === cat);
+      if (match) setSellerCategory(match.value);
+    } catch {
+      // ignore
+    }
+  };
 
   const loadProducts = async () => {
     setLoading(true);
@@ -369,6 +386,7 @@ export function ProductsPageContent() {
 
   useEffect(() => {
     loadProducts();
+    loadSellerCategory();
   }, []);
 
   const resetForm = () => {
@@ -387,6 +405,8 @@ export function ProductsPageContent() {
   const openCreate = () => {
     setEditingId(null);
     resetForm();
+    // Default to seller's business category
+    if (sellerCategory) setFormCategory(sellerCategory);
     setModalOpen(true);
   };
 

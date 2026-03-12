@@ -37,7 +37,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'InstaPay Checkout — Turn every chat into a sale | حوّل كل محادثة لعملية بيع',
+  title: 'Insta Checkout — Turn every chat into a sale | حوّل كل محادثة لعملية بيع',
   description:
     'Create an InstaPay payment link in seconds and send it to your customer on WhatsApp. أنشئ لينك دفع InstaPay في ثانيتين وابعته لعميلك على واتساب.',
   generator: 'v0.app',

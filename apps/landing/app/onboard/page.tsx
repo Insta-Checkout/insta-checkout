@@ -8,7 +8,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Register your business — InstaPay Checkout | سجّل بيزنسك",
+  title: "Register your business — Insta Checkout | سجّل بيزنسك",
   description:
     "Sign up in 2 minutes and start accepting InstaPay payments via WhatsApp. سجّل في دقيقتين وابدأ تقبل مدفوعات InstaPay من عملاءك.",
 };

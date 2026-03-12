@@ -1,6 +1,6 @@
 {
   "common": {
-    "brand": "InstaPay Checkout",
+    "brand": "Insta Checkout",
     "egp": "EGP",
     "egpShort": "EGP",
     "loading": "Loading",
@@ -14,7 +14,7 @@
   },
   "landing": {
     "meta": {
-      "title": "InstaPay Checkout — Turn every chat into a sale",
+      "title": "Insta Checkout — Turn every chat into a sale",
       "description": "Create an InstaPay payment link in seconds and send it to your customer on WhatsApp. No website, no app, no hassle."
     },
     "nav": {
@@ -477,7 +477,7 @@
   },
   "landingV4": {
     "nav": {
-      "logo": "InstaPay Checkout",
+      "logo": "Insta Checkout",
       "features": "Features",
       "howItWorks": "How it works",
       "pricing": "Pricing",
@@ -637,16 +637,16 @@
       "contact": "Contact us",
       "privacy": "Privacy Policy",
       "terms": "Terms & Conditions",
-      "copyright": "© 2026 InstaPay Checkout. All rights reserved."
+      "copyright": "© 2026 Insta Checkout. All rights reserved."
     }
   },
   "onboard": {
     "meta": {
-      "title": "Register your business — InstaPay Checkout",
+      "title": "Register your business — Insta Checkout",
       "description": "Sign up in 2 minutes and start accepting InstaPay payments from your customers via WhatsApp."
     },
     "page": {
-      "title": "Register your business on InstaPay Checkout",
+      "title": "Register your business on Insta Checkout",
       "subtitle": "2 simple steps and you're accepting payments online",
       "signupSubtitle": "Sign up in seconds — complete the rest from inside"
     },
@@ -694,6 +694,8 @@
       "ok": "OK"
     },
     "signup": {
+      "fullName": "Full name *",
+      "fullNamePlaceholder": "e.g. Ahmed Mohamed",
       "businessName": "Business name *",
       "phoneNumber": "Phone number *",
       "phonePlaceholder": "01XXXXXXXXX",
@@ -702,6 +704,8 @@
     },
     "validation": {
       "businessType": "Choose a business type",
+      "fullNameMin": "Full name must be at least 2 characters",
+      "fullNameMax": "Full name must be under 100 characters",
       "businessNameMin": "Business name must be at least 2 characters",
       "businessNameMax": "Business name must be under 100 characters",
       "instapayRequired": "InstaPay account number is required",
@@ -811,7 +815,7 @@
   },
   "dashboard": {
     "meta": {
-      "title": "Dashboard — InstaPay Checkout",
+      "title": "Dashboard — Insta Checkout",
       "description": "Your dashboard — coming soon"
     },
     "sidebar": {
@@ -820,6 +824,7 @@
       "home": "Home",
       "products": "Products",
       "links": "Payment Links",
+      "profile": "Profile",
       "settings": "Settings"
     },
     "title": "Welcome to your dashboard",
@@ -886,7 +891,20 @@
       "completeTitle": "Complete your profile to activate payment links",
       "progress": "{done} of {total} — {pct}%",
       "businessType": "Business type",
+      "instapayInfo": "InstaPay Info",
       "instapayNumber": "InstaPay account number",
+      "instapayMethod": "How do you receive payments?",
+      "methodMobile": "Mobile number",
+      "methodBank": "Bank account",
+      "methodIpa": "InstaPay Address (IPA)",
+      "mobileNumber": "Mobile number",
+      "mobilePlaceholder": "e.g. 01012345678",
+      "bankName": "Bank name",
+      "bankNamePlaceholder": "Choose bank...",
+      "bankAccountNumber": "Account number",
+      "bankAccountPlaceholder": "Enter bank account number",
+      "ipaAddress": "InstaPay Address",
+      "ipaPlaceholder": "e.g. mystore@instapay",
       "maskedName": "Masked name",
       "choose": "Choose...",
       "save": "Save",
@@ -895,18 +913,55 @@
       "instapayPlaceholder": "The number customers will transfer to",
       "maskedPlaceholder": "e.g. A*** M*** A** M***",
       "maskedHint": "The name shown to the customer in the InstaPay app before they confirm",
+      "bankNames": [
+        "National Bank of Egypt (NBE)",
+        "Banque Misr",
+        "Commercial International Bank (CIB)",
+        "QNB Alahli",
+        "Banque du Caire",
+        "HSBC Egypt",
+        "Arab African International Bank (AAIB)",
+        "Faisal Islamic Bank",
+        "Al Baraka Bank Egypt",
+        "Egyptian Arab Land Bank",
+        "Export Development Bank of Egypt",
+        "Abu Dhabi Islamic Bank (ADIB)",
+        "Alex Bank",
+        "Suez Canal Bank",
+        "Other"
+      ],
       "categoryValues": [
-        "Food & Desserts",
-        "Clothing",
-        "Services",
+        "Food & Beverage",
+        "Clothing & Fashion",
         "Electronics",
+        "Services",
+        "Beauty & Care",
+        "Home & Decor",
+        "Sports & Fitness",
+        "Books & Education",
+        "Toys & Kids",
+        "Jewelry & Accessories",
+        "Health & Medical",
+        "Automotive",
+        "Art & Crafts",
+        "Digital Products",
         "Other"
       ],
       "categoryLabels": [
-        "Food & Desserts",
-        "Clothing",
-        "Services",
+        "Food & Beverage",
+        "Clothing & Fashion",
         "Electronics",
+        "Services",
+        "Beauty & Care",
+        "Home & Decor",
+        "Sports & Fitness",
+        "Books & Education",
+        "Toys & Kids",
+        "Jewelry & Accessories",
+        "Health & Medical",
+        "Automotive",
+        "Art & Crafts",
+        "Digital Products",
         "Other"
       ]
     },
@@ -1005,6 +1060,34 @@
     },
     "userMenu": {
       "logout": "Log out"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Manage your account and business details",
+      "personalInfo": "Personal Information",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your full name",
+      "email": "Email",
+      "phone": "Phone number",
+      "phonePlaceholder": "01XXXXXXXXX",
+      "businessInfo": "Business Information",
+      "businessName": "Business name",
+      "businessNamePlaceholder": "Your business name",
+      "category": "Business category",
+      "chooseCategory": "Choose category...",
+      "logo": "Business logo",
+      "socialLinks": "Social links",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "whatsapp": "WhatsApp",
+      "instapaySection": "InstaPay Info",
+      "instapayMethod": "Payment method",
+      "maskedName": "Masked name",
+      "maskedNameHint": "The name shown to the customer in the InstaPay app before they confirm",
+      "saveChanges": "Save changes",
+      "saving": "Saving...",
+      "saveSuccess": "Profile updated",
+      "saveFailed": "Failed to update profile"
     }
   },
   "businessTypes": {

@@ -68,7 +68,7 @@ export function RedesignFooter() {
                 <Zap className="h-5 w-5 text-[var(--r-on-primary)]" />
               </div>
               <span className="text-lg font-bold text-[var(--footer-foreground)]">
-                InstaPay Checkout
+                Insta Checkout
               </span>
             </div>
             <p className="mt-3 text-sm leading-relaxed text-[var(--footer-muted)]">

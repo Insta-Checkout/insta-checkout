@@ -1,6 +1,6 @@
 {
   "common": {
-    "brand": "InstaPay Checkout",
+    "brand": "Insta Checkout",
     "egp": "جنيه",
     "egpShort": "ج.م",
     "loading": "جاري التحميل",
@@ -14,7 +14,7 @@
   },
   "landing": {
     "meta": {
-      "title": "InstaPay Checkout — حوّل كل محادثة لعملية بيع",
+      "title": "Insta Checkout — حوّل كل محادثة لعملية بيع",
       "description": "أنشئ لينك دفع InstaPay في ثانيتين وابعته لعميلك على واتساب. بدون موقع، بدون تطبيق، بدون تعقيد."
     },
     "nav": {
@@ -477,7 +477,7 @@
   },
   "landingV4": {
     "nav": {
-      "logo": "InstaPay Checkout",
+      "logo": "Insta Checkout",
       "features": "الميزات",
       "howItWorks": "ازاي بتشتغل",
       "pricing": "الأسعار",
@@ -637,16 +637,16 @@
       "contact": "تواصل معانا",
       "privacy": "سياسة الخصوصية",
       "terms": "الشروط والأحكام",
-      "copyright": "© ٢٠٢٦ InstaPay Checkout. كل الحقوق محفوظة."
+      "copyright": "© ٢٠٢٦ Insta Checkout. كل الحقوق محفوظة."
     }
   },
   "onboard": {
     "meta": {
-      "title": "سجّل بيزنسك — InstaPay Checkout",
+      "title": "سجّل بيزنسك — Insta Checkout",
       "description": "سجّل في دقيقتين وابدأ تقبل مدفوعات InstaPay من عملاءك عن طريق واتساب."
     },
     "page": {
-      "title": "سجّل بيزنسك على InstaPay Checkout",
+      "title": "سجّل بيزنسك على Insta Checkout",
       "subtitle": "في خطوتين بسيطين هتبدأ تقبض أونلاين",
       "signupSubtitle": "سجّل في ثواني — كمّل باقي البيانات بعد كده من جوا"
     },
@@ -694,6 +694,8 @@
       "ok": "تمام"
     },
     "signup": {
+      "fullName": "الاسم بالكامل *",
+      "fullNamePlaceholder": "مثلاً: أحمد محمد",
       "businessName": "اسم البيزنس *",
       "phoneNumber": "رقم الموبايل *",
       "phonePlaceholder": "01XXXXXXXXX",
@@ -702,6 +704,8 @@
     },
     "validation": {
       "businessType": "اختار نوع البيزنس",
+      "fullNameMin": "الاسم لازم يكون على الأقل حرفين",
+      "fullNameMax": "الاسم لازم يكون أقل من ١٠٠ حرف",
       "businessNameMin": "اسم البيزنس لازم يكون على الأقل حرفين",
       "businessNameMax": "اسم البيزنس لازم يكون أقل من ١٠٠ حرف",
       "instapayRequired": "رقم حساب InstaPay مطلوب",
@@ -811,7 +815,7 @@
   },
   "dashboard": {
     "meta": {
-      "title": "لوحة التحكم — InstaPay Checkout",
+      "title": "لوحة التحكم — Insta Checkout",
       "description": "لوحة التحكم الخاصة بك — قريباً"
     },
     "sidebar": {
@@ -820,6 +824,7 @@
       "home": "الرئيسية",
       "products": "المنتجات",
       "links": "لينكات الدفع",
+      "profile": "الملف الشخصي",
       "settings": "الإعدادات"
     },
     "title": "مرحباً في لوحتك",
@@ -886,7 +891,20 @@
       "completeTitle": "أكمل بياناتك لتفعيل لينكات الدفع",
       "progress": "{done} من {total} — {pct}%",
       "businessType": "نوع البيزنس",
+      "instapayInfo": "بيانات InstaPay",
       "instapayNumber": "رقم حساب InstaPay",
+      "instapayMethod": "إزاي بتستقبل المدفوعات؟",
+      "methodMobile": "رقم موبايل",
+      "methodBank": "حساب بنكي",
+      "methodIpa": "عنوان InstaPay (IPA)",
+      "mobileNumber": "رقم الموبايل",
+      "mobilePlaceholder": "مثلاً: 01012345678",
+      "bankName": "اسم البنك",
+      "bankNamePlaceholder": "اختر البنك...",
+      "bankAccountNumber": "رقم الحساب",
+      "bankAccountPlaceholder": "ادخل رقم الحساب البنكي",
+      "ipaAddress": "عنوان InstaPay",
+      "ipaPlaceholder": "مثلاً: mystore@instapay",
       "maskedName": "الاسم المقنّع",
       "choose": "اختر...",
       "save": "حفظ",
@@ -895,18 +913,55 @@
       "instapayPlaceholder": "الرقم اللي العميل هيحوّل عليه",
       "maskedPlaceholder": "مثلاً: أ*** م*** أ** م***",
       "maskedHint": "الاسم اللي بيظهر للعميل في تطبيق InstaPay قبل التأكيد",
+      "bankNames": [
+        "البنك الأهلي المصري",
+        "بنك مصر",
+        "البنك التجاري الدولي (CIB)",
+        "بنك QNB الأهلي",
+        "بنك القاهرة",
+        "HSBC مصر",
+        "البنك العربي الأفريقي الدولي",
+        "بنك فيصل الإسلامي",
+        "بنك البركة مصر",
+        "البنك العقاري المصري العربي",
+        "بنك تنمية الصادرات",
+        "مصرف أبو ظبي الإسلامي",
+        "بنك الإسكندرية",
+        "بنك قناة السويس",
+        "أخرى"
+      ],
       "categoryValues": [
-        "Food & Desserts",
-        "Clothing",
-        "Services",
+        "Food & Beverage",
+        "Clothing & Fashion",
         "Electronics",
+        "Services",
+        "Beauty & Care",
+        "Home & Decor",
+        "Sports & Fitness",
+        "Books & Education",
+        "Toys & Kids",
+        "Jewelry & Accessories",
+        "Health & Medical",
+        "Automotive",
+        "Art & Crafts",
+        "Digital Products",
         "Other"
       ],
       "categoryLabels": [
-        "أكل وحلويات",
-        "ملابس",
-        "خدمات",
+        "طعام وشراب",
+        "ملابس وأزياء",
         "إلكترونيات",
+        "خدمات",
+        "جمال وعناية",
+        "منزل وديكور",
+        "رياضة ولياقة",
+        "كتب وتعليم",
+        "ألعاب وأطفال",
+        "مجوهرات وإكسسوارات",
+        "صحة وطب",
+        "سيارات وقطع غيار",
+        "فن وحرف يدوية",
+        "منتجات رقمية",
         "أخرى"
       ]
     },
@@ -1005,6 +1060,34 @@
     },
     "userMenu": {
       "logout": "تسجيل الخروج"
+    },
+    "profile": {
+      "title": "الملف الشخصي",
+      "subtitle": "إدارة حسابك وبيانات البيزنس",
+      "personalInfo": "المعلومات الشخصية",
+      "fullName": "الاسم بالكامل",
+      "fullNamePlaceholder": "اسمك بالكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الموبايل",
+      "phonePlaceholder": "01XXXXXXXXX",
+      "businessInfo": "بيانات البيزنس",
+      "businessName": "اسم البيزنس",
+      "businessNamePlaceholder": "اسم البيزنس بتاعك",
+      "category": "نوع البيزنس",
+      "chooseCategory": "اختر نوع البيزنس...",
+      "logo": "لوجو البيزنس",
+      "socialLinks": "لينكات السوشيال",
+      "instagram": "انستجرام",
+      "facebook": "فيسبوك",
+      "whatsapp": "واتساب",
+      "instapaySection": "بيانات InstaPay",
+      "instapayMethod": "طريقة الدفع",
+      "maskedName": "الاسم المقنّع",
+      "maskedNameHint": "الاسم اللي بيظهر للعميل في تطبيق InstaPay قبل التأكيد",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "saveSuccess": "تم تحديث الملف الشخصي",
+      "saveFailed": "فشل تحديث الملف الشخصي"
     }
   },
   "businessTypes": {
