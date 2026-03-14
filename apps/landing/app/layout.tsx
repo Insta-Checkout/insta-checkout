@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { FirebaseAnalytics } from '@/components/firebase-analytics'
 import { LocaleProvider } from '@/lib/locale-provider'
 import { LocalePersist } from '@/components/locale-persist'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 const cairo = Cairo({
@@ -65,6 +66,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <LocaleProvider>
           <LocalePersist />
           {children}
+          <Toaster position="bottom-center" dir="rtl" />
           <Analytics />
           <FirebaseAnalytics />
         </LocaleProvider>

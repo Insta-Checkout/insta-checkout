@@ -3,12 +3,10 @@ import { connectToMongo } from "../db.js"
 import { requireFirebaseAuth } from "../middleware/firebaseAuth.js"
 import { ObjectId } from "mongodb"
 import crypto from "crypto"
+import { CHECKOUT_BASE_URL } from "../config.js"
 
 const router = Router()
 const DEFAULT_TTL_DAYS = 7
-const CHECKOUT_BASE_URL =
-  process.env.CHECKOUT_BASE_URL ??
-  (process.env.NODE_ENV === "production" ? "https://pay.instacheckout.co" : "http://localhost:3001")
 
 router.use(requireFirebaseAuth)
 

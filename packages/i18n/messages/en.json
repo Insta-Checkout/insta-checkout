@@ -956,12 +956,20 @@
       "actions": "Actions",
       "confirm": "Confirm",
       "completeProfile": "Complete your profile to activate link",
+      "copySuccess": "Payment link copied — ready to paste",
       "cancelSuccess": "Link cancelled",
       "cancelFailed": "Failed to cancel link",
       "confirmSuccess": "Payment confirmed",
       "confirmFailed": "Failed to confirm payment",
       "shareProductTemplate": "Product: {product}\nPayment link: {url}",
-      "buyer": "Buyer"
+      "buyer": "Buyer",
+      "shareWhatsAppSuccess": "Opening WhatsApp to share the link",
+      "tooltip": {
+        "copy": "Copy payment link",
+        "shareWhatsApp": "Share via WhatsApp",
+        "cancel": "Cancel link",
+        "confirm": "Confirm payment"
+      }
     },
     "products": {
       "loadFailed": "Failed to load products",

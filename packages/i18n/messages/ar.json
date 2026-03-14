@@ -956,12 +956,20 @@
       "actions": "إجراءات",
       "confirm": "تأكيد",
       "completeProfile": "أكمل بياناتك لتفعيل اللينك",
+      "copySuccess": "تم نسخ رابط الدفع — جاهز للصق",
       "cancelSuccess": "تم إلغاء اللينك",
       "cancelFailed": "فشل إلغاء اللينك",
       "confirmSuccess": "تم تأكيد الدفع",
       "confirmFailed": "فشل تأكيد الدفع",
       "shareProductTemplate": "المنتج: {product}\nلينك الدفع: {url}",
-      "buyer": "المشتري"
+      "buyer": "المشتري",
+      "shareWhatsAppSuccess": "جاري فتح واتساب لمشاركة اللينك",
+      "tooltip": {
+        "copy": "نسخ رابط الدفع",
+        "shareWhatsApp": "مشاركة عبر واتساب",
+        "cancel": "إلغاء الرابط",
+        "confirm": "تأكيد الدفع"
+      }
     },
     "products": {
       "loadFailed": "فشل تحميل المنتجات",
