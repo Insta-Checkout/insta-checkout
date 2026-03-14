@@ -27,10 +27,9 @@ function validateMinimalBody(body: Record<string, unknown>): ValidationError[] {
     errors.push({ field: "businessName", message: "Business name must be 2–100 characters" })
   }
 
+  // Phone is optional for Google OAuth signup
   const phoneRaw = typeof body.phoneNumber === "string" ? body.phoneNumber.trim() : ""
-  if (!phoneRaw) {
-    errors.push({ field: "phoneNumber", message: "Phone number is required" })
-  } else {
+  if (phoneRaw) {
     const normalized = normalizePhone(phoneRaw)
     if (!/^20[0-9]{10}$/.test(normalized)) {
       errors.push({ field: "phoneNumber", message: "Must be a valid Egyptian phone number (01XXXXXXXXX)" })
@@ -52,58 +51,8 @@ function validateMinimalBody(body: Record<string, unknown>): ValidationError[] {
   return errors
 }
 
-function validateFullBody(body: Record<string, unknown>): ValidationError[] {
-  const errors: ValidationError[] = []
-
-  const businessName = typeof body.businessName === "string" ? body.businessName.trim() : ""
-  if (!businessName) {
-    errors.push({ field: "businessName", message: "Business name is required" })
-  } else if (businessName.length < 2 || businessName.length > 100) {
-    errors.push({ field: "businessName", message: "Business name must be 2–100 characters" })
-  }
-
-  const instapayNumber = typeof body.instapayNumber === "string" ? body.instapayNumber.trim() : ""
-  if (!instapayNumber) {
-    errors.push({ field: "instapayNumber", message: "InstaPay number is required" })
-  }
-
-  const maskedFullName = typeof body.maskedFullName === "string" ? body.maskedFullName.trim() : ""
-  if (!maskedFullName) {
-    errors.push({ field: "maskedFullName", message: "Masked full name is required" })
-  } else if (!maskedFullName.includes("*")) {
-    errors.push({ field: "maskedFullName", message: "Masked full name must contain at least one * character" })
-  }
-
-  const whatsappNumber = typeof body.whatsappNumber === "string" ? body.whatsappNumber.trim() : ""
-  if (!whatsappNumber) {
-    errors.push({ field: "whatsappNumber", message: "WhatsApp number is required" })
-  } else if (!/^20[0-9]{10}$/.test(whatsappNumber)) {
-    errors.push({ field: "whatsappNumber", message: "Must be a valid Egyptian phone number (20XXXXXXXXXX)" })
-  }
-
-  const firebaseUid = typeof body.firebaseUid === "string" ? body.firebaseUid.trim() : ""
-  if (!firebaseUid) {
-    errors.push({ field: "firebaseUid", message: "Firebase UID is required" })
-  }
-
-  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : ""
-  if (!email) {
-    errors.push({ field: "email", message: "Email is required" })
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.push({ field: "email", message: "Email must be a valid format" })
-  }
-
-  return errors
-}
-
 function validateBody(body: Record<string, unknown>): ValidationError[] {
-  const hasMinimal = body.businessName != null && body.phoneNumber != null && body.firebaseUid != null && body.email != null
-  const hasFull = body.instapayNumber != null && body.maskedFullName != null && body.whatsappNumber != null
-
-  if (hasMinimal && !hasFull) {
-    return validateMinimalBody(body)
-  }
-  return validateFullBody(body)
+  return validateMinimalBody(body)
 }
 
 router.get("/health", (_req: Request, res: Response) => {
@@ -127,19 +76,17 @@ router.post("/", async (req: Request, res: Response) => {
     return
   }
 
+  const fullName = typeof body.fullName === "string" ? body.fullName.trim() || null : null
   const businessName = (body.businessName as string).trim()
   const category = typeof body.category === "string" ? (body.category as string).trim() || null : null
   const firebaseUid = (body.firebaseUid as string).trim()
   const email = (body.email as string).trim().toLowerCase()
   const socialLinks = (body.socialLinks as Record<string, string> | undefined) ?? {}
 
-  const isMinimalSignup = body.phoneNumber != null && body.instapayNumber == null
-  const whatsappNumber = isMinimalSignup
-    ? normalizePhone((body.phoneNumber as string).trim())
-    : (body.whatsappNumber as string).trim()
-  const instapayNumber = isMinimalSignup ? null : (body.instapayNumber as string).trim()
-  const maskedFullName = isMinimalSignup ? null : (body.maskedFullName as string).trim()
-  const onboardingComplete = !isMinimalSignup
+  const phoneRaw = typeof body.phoneNumber === "string" ? body.phoneNumber.trim() : ""
+  const whatsappNumber = phoneRaw ? normalizePhone(phoneRaw) : null
+  // New signups always start with onboardingComplete: false
+  const onboardingComplete = false
 
   try {
     const db = await connectToMongo()
@@ -149,10 +96,10 @@ router.post("/", async (req: Request, res: Response) => {
 
     const now = new Date()
     const doc: Record<string, unknown> = {
+      fullName,
       businessName,
       category,
-      instapayNumber,
-      maskedFullName,
+      instapayLink: null,
       whatsappNumber,
       firebaseUid,
       email,
@@ -173,7 +120,7 @@ router.post("/", async (req: Request, res: Response) => {
     const result = await sellers.insertOne(doc)
     console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, whatsappNumber=${whatsappNumber}, db=${dbName}`)
 
-    if (!isMinimalSignup) {
+    if (whatsappNumber) {
       try {
         const { code } = await createVerification(result.insertedId as ObjectId, whatsappNumber)
         sendOtpViaWhatsApp(whatsappNumber, code)
@@ -186,10 +133,10 @@ router.post("/", async (req: Request, res: Response) => {
       success: true,
       seller: {
         _id: result.insertedId,
+        fullName,
         businessName,
         category,
-        instapayNumber,
-        maskedFullName,
+        instapayLink: null,
         whatsappNumber,
         whatsappVerified: false,
         onboardingComplete,

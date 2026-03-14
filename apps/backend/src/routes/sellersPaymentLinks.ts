@@ -138,7 +138,7 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
     }
 
     const seller = await db.collection("sellers").findOne({ _id: sellerId })
-    const onboardingComplete = seller?.onboardingComplete ?? !!seller?.instapayNumber
+    const onboardingComplete = seller?.onboardingComplete ?? !!seller?.instapayLink
     const linkStatus = onboardingComplete ? "active" : "preview"
 
     const token = generateToken()

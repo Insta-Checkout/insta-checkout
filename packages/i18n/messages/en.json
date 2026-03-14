@@ -1,6 +1,6 @@
 {
   "common": {
-    "brand": "InstaPay Checkout",
+    "brand": "Insta Checkout",
     "egp": "EGP",
     "egpShort": "EGP",
     "loading": "Loading",
@@ -14,7 +14,7 @@
   },
   "landing": {
     "meta": {
-      "title": "InstaPay Checkout — Turn every chat into a sale",
+      "title": "Insta Checkout — Turn every chat into a sale",
       "description": "Create an InstaPay payment link in seconds and send it to your customer on WhatsApp. No website, no app, no hassle."
     },
     "nav": {
@@ -477,7 +477,7 @@
   },
   "landingV4": {
     "nav": {
-      "logo": "InstaPay Checkout",
+      "logo": "Insta Checkout",
       "features": "Features",
       "howItWorks": "How it works",
       "pricing": "Pricing",
@@ -637,16 +637,16 @@
       "contact": "Contact us",
       "privacy": "Privacy Policy",
       "terms": "Terms & Conditions",
-      "copyright": "© 2026 InstaPay Checkout. All rights reserved."
+      "copyright": "© 2026 Insta Checkout. All rights reserved."
     }
   },
   "onboard": {
     "meta": {
-      "title": "Register your business — InstaPay Checkout",
+      "title": "Register your business — Insta Checkout",
       "description": "Sign up in 2 minutes and start accepting InstaPay payments from your customers via WhatsApp."
     },
     "page": {
-      "title": "Register your business on InstaPay Checkout",
+      "title": "Register your business on Insta Checkout",
       "subtitle": "2 simple steps and you're accepting payments online",
       "signupSubtitle": "Sign up in seconds — complete the rest from inside"
     },
@@ -656,16 +656,10 @@
     ],
     "step1": {
       "businessName": "Business name *",
-      "instapayNumber": "InstaPay account number *",
-      "maskedFullName": "Masked name *",
       "whatsappNumber": "WhatsApp number *",
       "placeholders": {
-        "businessName": "e.g. Sweet Bites",
-        "instapayNumber": "The number customers will transfer to",
-        "maskedName": "e.g. A*** M*** A** M***"
+        "businessName": "e.g. Sweet Bites"
       },
-      "maskedNameWhy": "Why do we ask for the masked name?",
-      "maskedNameExplanation": "When a customer transfers via InstaPay, the app shows them a masked recipient name before they confirm. We display the same name on the payment page so the customer can verify they're sending to the right person.",
       "back": "Back",
       "cta": "Final step — create account"
     },
@@ -694,6 +688,8 @@
       "ok": "OK"
     },
     "signup": {
+      "fullName": "Full name *",
+      "fullNamePlaceholder": "e.g. Ahmed Mohamed",
       "businessName": "Business name *",
       "phoneNumber": "Phone number *",
       "phonePlaceholder": "01XXXXXXXXX",
@@ -702,11 +698,12 @@
     },
     "validation": {
       "businessType": "Choose a business type",
+      "fullNameMin": "Full name must be at least 2 characters",
+      "fullNameMax": "Full name must be under 100 characters",
       "businessNameMin": "Business name must be at least 2 characters",
       "businessNameMax": "Business name must be under 100 characters",
-      "instapayRequired": "InstaPay account number is required",
-      "maskedNameRequired": "Masked name is required",
-      "maskedNameAsterisk": "Masked name must contain at least one *",
+      "instapayLinkRequired": "InstaPay payment link is required",
+      "instapayLinkInvalid": "Must be a valid InstaPay link (ipn.eg or instapay.eg)",
       "whatsappValid": "Valid Egyptian WhatsApp number — e.g. 01XXXXXXXXX or 10XXXXXXXX",
       "phoneRequired": "Phone number is required",
       "phoneValid": "Valid Egyptian number — e.g. 01XXXXXXXXX",
@@ -758,16 +755,12 @@
       "paymentRequest": "Payment request",
       "paymentMethod": "How to pay with InstaPay",
       "instructions": [
-        "Open your bank app or wallet that supports InstaPay",
-        "Start a new transfer",
-        "Enter the account number below"
+        "Click the button below to open InstaPay and complete your transfer",
+        "Once you see \"Transfer successful\", come back here and tap \"I've paid\""
       ],
-      "instapayAccount": "InstaPay account number",
-      "accountCopied": "Account number copied",
-      "copyFailed": "Copy failed. Please copy manually.",
-      "verifyTitle": "How do you know you're sending to the right person?",
-      "verifyIntro": "After entering the account number, InstaPay will show you a masked recipient name before you confirm the transfer. You should see:",
-      "verifyMatch": "If the name matches, you're sending to the right account. Go ahead and confirm the transfer!",
+      "openInstapayButton": "Open InstaPay to pay",
+      "openInstapayHint": "Tap the button to open InstaPay and send the payment",
+      "noInstapayLink": "Payment method not configured — contact the seller",
       "ensureTransfer": "Make sure you see \"Transfer successful\" in your app before continuing",
       "ensureTransferBold": "Transfer successful",
       "paidButton": "I've paid"
@@ -811,7 +804,7 @@
   },
   "dashboard": {
     "meta": {
-      "title": "Dashboard — InstaPay Checkout",
+      "title": "Dashboard — Insta Checkout",
       "description": "Your dashboard — coming soon"
     },
     "sidebar": {
@@ -820,6 +813,7 @@
       "home": "Home",
       "products": "Products",
       "links": "Payment Links",
+      "profile": "Profile",
       "settings": "Settings"
     },
     "title": "Welcome to your dashboard",
@@ -885,28 +879,56 @@
     "onboarding": {
       "completeTitle": "Complete your profile to activate payment links",
       "progress": "{done} of {total} — {pct}%",
-      "businessType": "Business type",
-      "instapayNumber": "InstaPay account number",
-      "maskedName": "Masked name",
+      "businessType": "Business Info",
+      "instapayLink": "InstaPay Link",
+      "instapayLinkPlaceholder": "https://ipn.eg/S/...",
+      "instapayLinkHint": "Open InstaPay app → your name → Share → Copy link",
       "choose": "Choose...",
       "save": "Save",
       "saveSuccess": "Saved",
       "saveFailed": "Failed to save",
-      "instapayPlaceholder": "The number customers will transfer to",
-      "maskedPlaceholder": "e.g. A*** M*** A** M***",
-      "maskedHint": "The name shown to the customer in the InstaPay app before they confirm",
+      "businessLogo": "Business logo (optional)",
+      "logoHint": "Upload your business logo (max 5 MB)",
+      "uploadLogo": "Upload logo",
+      "removeLogo": "Remove",
+      "socialLinksLabel": "Social media links",
+      "socialLinksHint": "At least one link is required",
+      "instagramPlaceholder": "e.g. instagram.com/yourbusiness",
+      "facebookPlaceholder": "e.g. facebook.com/yourbusiness",
+      "instagramLabel": "Instagram",
+      "facebookLabel": "Facebook",
       "categoryValues": [
-        "Food & Desserts",
-        "Clothing",
-        "Services",
+        "Food & Beverage",
+        "Clothing & Fashion",
         "Electronics",
+        "Services",
+        "Beauty & Care",
+        "Home & Decor",
+        "Sports & Fitness",
+        "Books & Education",
+        "Toys & Kids",
+        "Jewelry & Accessories",
+        "Health & Medical",
+        "Automotive",
+        "Art & Crafts",
+        "Digital Products",
         "Other"
       ],
       "categoryLabels": [
-        "Food & Desserts",
-        "Clothing",
-        "Services",
+        "Food & Beverage",
+        "Clothing & Fashion",
         "Electronics",
+        "Services",
+        "Beauty & Care",
+        "Home & Decor",
+        "Sports & Fitness",
+        "Books & Education",
+        "Toys & Kids",
+        "Jewelry & Accessories",
+        "Health & Medical",
+        "Automotive",
+        "Art & Crafts",
+        "Digital Products",
         "Other"
       ]
     },
@@ -988,6 +1010,7 @@
       "chooseCategory": "Choose category",
       "descLabel": "Description (optional)",
       "descPlaceholder": "Short description",
+      "basicText": "Basic text",
       "linkReady": "Payment link ready",
       "linkReadySubtitle": "Copy the link or share it on WhatsApp",
       "linkLabel": "Link",
@@ -1005,6 +1028,33 @@
     },
     "userMenu": {
       "logout": "Log out"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Manage your account and business details",
+      "personalInfo": "Personal Information",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Your full name",
+      "email": "Email",
+      "phone": "Phone number",
+      "phonePlaceholder": "01XXXXXXXXX",
+      "businessInfo": "Business Information",
+      "businessName": "Business name",
+      "businessNamePlaceholder": "Your business name",
+      "category": "Business category",
+      "chooseCategory": "Choose category...",
+      "logo": "Business logo",
+      "socialLinks": "Social links",
+      "instagram": "Instagram",
+      "facebook": "Facebook",
+      "whatsapp": "WhatsApp",
+      "instapaySection": "InstaPay Link",
+      "instapayLink": "Payment link",
+      "instapayLinkHint": "Open InstaPay app → your name → Share → Copy link",
+      "saveChanges": "Save changes",
+      "saving": "Saving...",
+      "saveSuccess": "Profile updated",
+      "saveFailed": "Failed to update profile"
     }
   },
   "businessTypes": {
@@ -1017,31 +1067,26 @@
       "food": {
         "product": "Chocolate cake",
         "business": "Sarah's Sweets",
-        "masked": "S*** M*** A** M***",
         "category": "Desserts & baked goods"
       },
       "clothing": {
         "product": "Denim jeans",
         "business": "Nadia's Boutique",
-        "masked": "N*** A*** D** Y***",
         "category": "Clothing & accessories"
       },
       "electronics": {
         "product": "Phone case",
         "business": "Tech Store",
-        "masked": "A*** H*** M** D***",
         "category": "Electronics"
       },
       "services": {
         "product": "Photo shoot session",
         "business": "Nour Studio",
-        "masked": "N*** W*** R**",
         "category": "Services"
       },
       "other": {
         "product": "Sample product",
         "business": "Sample store",
-        "masked": "A*** M*** A** M***",
         "category": "Other"
       }
     }

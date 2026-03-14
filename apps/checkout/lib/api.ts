@@ -23,8 +23,7 @@ export interface CheckoutData {
   seller: {
     businessName: string
     category: string | null
-    instapayNumber: string
-    maskedFullName: string
+    instapayLink: string | null
     logoUrl: string | null
     whatsappNumber: string
   }

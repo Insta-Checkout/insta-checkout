@@ -48,21 +48,24 @@ router.get("/", async (req: Request, res: Response) => {
       res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
       return
     }
-    const onboardingComplete = seller.onboardingComplete ?? !!seller.instapayNumber
+    const hasSocialLinks = !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook)
+    const onboardingComplete = seller.onboardingComplete ?? (!!seller.instapayLink && !!seller.category && hasSocialLinks)
     res.json({
       id: seller._id,
+      fullName: seller.fullName ?? null,
       businessName: seller.businessName,
       preferredLocale: seller.preferredLocale ?? null,
       email: seller.email,
+      whatsappNumber: seller.whatsappNumber ?? null,
       whatsappVerified: seller.whatsappVerified,
       category: seller.category ?? null,
-      instapayNumber: seller.instapayNumber ?? null,
-      maskedFullName: seller.maskedFullName ?? null,
+      instapayLink: seller.instapayLink ?? null,
+      logoUrl: seller.logoUrl ?? null,
+      socialLinks: seller.socialLinks ?? { instagram: "", facebook: "", whatsapp: "" },
       onboardingComplete,
-      onboardingProgress: seller.onboardingProgress ?? {
+      onboardingProgress: {
         category: !!seller.category,
-        instapayNumber: !!seller.instapayNumber,
-        maskedName: !!seller.maskedFullName,
+        instapayLink: !!seller.instapayLink,
         logo: !!seller.logoUrl,
         socialLinks: !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook || seller.socialLinks?.whatsapp),
       },
@@ -81,15 +84,36 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
   }
   const body = req.body as Record<string, unknown>
   const updates: Record<string, unknown> = {}
+  if (typeof body.fullName === "string") {
+    updates.fullName = body.fullName.trim() || null
+  }
+  if (typeof body.businessName === "string" && body.businessName.trim()) {
+    const val = body.businessName.trim()
+    if (val.length >= 2 && val.length <= 100) updates.businessName = val
+  }
+  if (typeof body.whatsappNumber === "string") {
+    const val = body.whatsappNumber.trim()
+    if (!val) {
+      updates.whatsappNumber = null
+    } else if (/^20[0-9]{10}$/.test(val)) {
+      updates.whatsappNumber = val
+    }
+  }
   if (typeof body.category === "string" && body.category.trim()) {
     updates.category = body.category.trim()
   }
-  if (typeof body.instapayNumber === "string" && body.instapayNumber.trim()) {
-    updates.instapayNumber = body.instapayNumber.trim()
-  }
-  if (typeof body.maskedFullName === "string" && body.maskedFullName.trim()) {
-    const val = body.maskedFullName.trim()
-    if (val.includes("*")) updates.maskedFullName = val
+  if (typeof body.instapayLink === "string") {
+    const val = body.instapayLink.trim()
+    if (val) {
+      try {
+        const url = new URL(val)
+        if (url.hostname === "ipn.eg" || url.hostname === "instapay.eg") {
+          updates.instapayLink = val
+        }
+      } catch { /* ignore invalid URLs */ }
+    } else {
+      updates.instapayLink = null
+    }
   }
   if (typeof body.logoUrl === "string") {
     updates.logoUrl = body.logoUrl.trim() || null
@@ -115,7 +139,9 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
     }
     const now = new Date()
     const merged = { ...seller, ...updates, updatedAt: now } as Record<string, unknown>
-    const requiredComplete = !!(merged.instapayNumber && merged.maskedFullName && merged.category)
+    const mergedSocialLinks = merged.socialLinks as { instagram?: string; facebook?: string } | undefined
+    const hasSocialLinks = !!(mergedSocialLinks?.instagram || mergedSocialLinks?.facebook)
+    const requiredComplete = !!(merged.instapayLink && merged.category && hasSocialLinks)
     updates.onboardingComplete = requiredComplete
     updates.updatedAt = now
 
@@ -140,8 +166,7 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
       onboardingComplete: (doc.onboardingComplete as boolean) ?? requiredComplete,
       onboardingProgress: {
         category: !!doc.category,
-        instapayNumber: !!doc.instapayNumber,
-        maskedName: !!doc.maskedFullName,
+        instapayLink: !!doc.instapayLink,
         logo: !!(doc.logoUrl as string | undefined),
         socialLinks: (() => {
           const sl = doc.socialLinks as { instagram?: string; facebook?: string; whatsapp?: string } | undefined
@@ -161,20 +186,70 @@ router.patch("/", async (req: Request, res: Response) => {
     res.status(401).json({ error: "UNAUTHORIZED" })
     return
   }
-  const { preferredLocale } = req.body as { preferredLocale?: string }
-  if (preferredLocale === undefined) {
-    res.status(400).json({ error: "VALIDATION_ERROR", details: ["preferredLocale must be provided"] })
+  const body = req.body as Record<string, unknown>
+  const updates: Record<string, unknown> = {}
+
+  if (typeof body.preferredLocale === "string") {
+    if (body.preferredLocale !== "ar" && body.preferredLocale !== "en") {
+      res.status(400).json({ error: "VALIDATION_ERROR", details: ["preferredLocale must be 'ar' or 'en'"] })
+      return
+    }
+    updates.preferredLocale = body.preferredLocale
+  }
+  if (typeof body.fullName === "string") {
+    updates.fullName = body.fullName.trim() || null
+  }
+  if (typeof body.businessName === "string" && body.businessName.trim()) {
+    const val = body.businessName.trim()
+    if (val.length >= 2 && val.length <= 100) updates.businessName = val
+  }
+  if (typeof body.whatsappNumber === "string") {
+    const val = body.whatsappNumber.trim()
+    if (!val) {
+      updates.whatsappNumber = null
+    } else if (/^20[0-9]{10}$/.test(val)) {
+      updates.whatsappNumber = val
+    }
+  }
+  if (typeof body.category === "string") {
+    updates.category = body.category.trim() || null
+  }
+  if (typeof body.instapayLink === "string") {
+    const val = body.instapayLink.trim()
+    if (val) {
+      try {
+        const url = new URL(val)
+        if (url.hostname === "ipn.eg" || url.hostname === "instapay.eg") {
+          updates.instapayLink = val
+        }
+      } catch { /* ignore invalid URLs */ }
+    } else {
+      updates.instapayLink = null
+    }
+  }
+  if (typeof body.logoUrl === "string") {
+    updates.logoUrl = body.logoUrl.trim() || null
+  }
+  if (body.socialLinks && typeof body.socialLinks === "object") {
+    const sl = body.socialLinks as Record<string, string>
+    updates.socialLinks = {
+      instagram: typeof sl.instagram === "string" ? sl.instagram : "",
+      facebook: typeof sl.facebook === "string" ? sl.facebook : "",
+      whatsapp: typeof sl.whatsapp === "string" ? sl.whatsapp : "",
+    }
+  }
+
+  if (Object.keys(updates).length === 0) {
+    res.status(400).json({ error: "VALIDATION_ERROR", details: ["No valid fields provided"] })
     return
   }
-  if (preferredLocale !== "ar" && preferredLocale !== "en") {
-    res.status(400).json({ error: "VALIDATION_ERROR", details: ["preferredLocale must be 'ar' or 'en'"] })
-    return
-  }
+
   try {
     const db = await connectToMongo()
+    updates.updatedAt = new Date()
     const result = await db.collection("sellers").findOneAndUpdate(
       { firebaseUid },
-      { $set: { preferredLocale, updatedAt: new Date() } },
+      { $set: updates },
       { returnDocument: "after" }
     )
     if (!result) {
@@ -183,8 +258,22 @@ router.patch("/", async (req: Request, res: Response) => {
     }
     res.json({
       id: result._id,
+      fullName: result.fullName ?? null,
       businessName: result.businessName,
       preferredLocale: result.preferredLocale ?? "ar",
+      email: result.email,
+      whatsappNumber: result.whatsappNumber ?? null,
+      category: result.category ?? null,
+      instapayLink: result.instapayLink ?? null,
+      logoUrl: result.logoUrl ?? null,
+      socialLinks: result.socialLinks ?? { instagram: "", facebook: "", whatsapp: "" },
+      onboardingComplete: result.onboardingComplete ?? false,
+      onboardingProgress: {
+        category: !!result.category,
+        instapayLink: !!result.instapayLink,
+        logo: !!result.logoUrl,
+        socialLinks: !!(result.socialLinks?.instagram || result.socialLinks?.facebook || result.socialLinks?.whatsapp),
+      },
     })
   } catch (err) {
     console.error("[PATCH /sellers/me]", err)

@@ -49,7 +49,7 @@ export function RedesignNavbar() {
             <Zap className="h-5 w-5 text-[var(--r-on-primary)]" />
           </div>
           <span className="text-lg font-bold text-[var(--r-text)]">
-            InstaPay Checkout
+            Insta Checkout
           </span>
         </a>
 

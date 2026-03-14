@@ -71,6 +71,27 @@ function shortId(): string {
  * or products/{firebaseUid}/new_{timestamp}_{shortId}.ext when creating.
  * Product link is stored in MongoDB (Product.imageUrl).
  */
+/** Max logo size: 5 MB */
+export const MAX_LOGO_BYTES = 5 * 1024 * 1024
+
+/**
+ * Upload a seller logo to Firebase Storage.
+ * Path: logos/{firebaseUid}/{timestamp}_{shortId}.ext
+ */
+export async function uploadSellerLogo(
+  file: File,
+  firebaseUid: string
+): Promise<string> {
+  if (file.size > MAX_LOGO_BYTES) {
+    throw new Error(`Image must be under ${MAX_LOGO_BYTES / 1024 / 1024} MB`)
+  }
+  const ext = file.name.split(".").pop()?.toLowerCase() || "jpg"
+  const path = `logos/${firebaseUid}/${Date.now()}_${shortId()}.${ext}`
+  const storageRef = ref(storage, path)
+  await uploadBytes(storageRef, file, { contentType: file.type })
+  return getDownloadURL(storageRef)
+}
+
 export async function uploadProductImage(
   file: File,
   firebaseUid: string,

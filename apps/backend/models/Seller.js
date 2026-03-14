@@ -1,7 +1,36 @@
 const mongoose = require("mongoose");
 
+const ALLOWED_CATEGORIES = [
+  "Food & Beverage",
+  "Clothing & Fashion",
+  "Electronics",
+  "Services",
+  "Beauty & Care",
+  "Home & Decor",
+  "Sports & Fitness",
+  "Books & Education",
+  "Toys & Kids",
+  "Jewelry & Accessories",
+  "Health & Medical",
+  "Automotive",
+  "Art & Crafts",
+  "Digital Products",
+  "Other",
+  // Legacy values — accepted for backwards compat
+  "Food & Desserts",
+  "Clothing",
+];
+
 const sellerSchema = new mongoose.Schema(
   {
+    fullName: {
+      type: String,
+      required: false,
+      default: null,
+      trim: true,
+      minlength: [2, "Full name must be at least 2 characters"],
+      maxlength: [100, "Full name must be at most 100 characters"],
+    },
     businessName: {
       type: String,
       required: [true, "Business name is required"],
@@ -16,26 +45,36 @@ const sellerSchema = new mongoose.Schema(
       validate: {
         validator(v) {
           if (v == null || v === "") return true;
-          return ["Food & Desserts", "Clothing", "Services", "Electronics", "Other"].includes(v);
+          return ALLOWED_CATEGORIES.includes(v);
         },
         message: "Category must be one of the allowed values",
       },
     },
+    instapayInfo: {
+      method: {
+        type: String,
+        enum: ["mobile", "bank", "ipa"],
+        default: null,
+      },
+      mobile: { type: String, trim: true, default: null },
+      bankName: { type: String, trim: true, default: null },
+      bankAccountNumber: { type: String, trim: true, default: null },
+      ipaAddress: { type: String, trim: true, default: null },
+    },
+    // Legacy field — kept for backwards compat with existing data
     instapayNumber: {
       type: String,
-      required: [true, "InstaPay number is required"],
+      required: false,
+      default: null,
       trim: true,
-      validate: {
-        validator: (v) => v.length > 0,
-        message: "InstaPay number cannot be empty",
-      },
     },
     maskedFullName: {
       type: String,
-      required: [true, "Masked full name is required"],
+      required: false,
+      default: null,
       trim: true,
       validate: {
-        validator: (v) => v.length > 0 && v.includes("*"),
+        validator: (v) => v == null || v === "" || v.includes("*"),
         message: "Masked full name must contain at least one * character",
       },
     },
@@ -54,10 +93,11 @@ const sellerSchema = new mongoose.Schema(
     },
     whatsappNumber: {
       type: String,
-      required: [true, "WhatsApp number is required"],
-      unique: true,
+      required: false,
+      default: null,
+      sparse: true,
       validate: {
-        validator: (v) => /^20[0-9]{10}$/.test(v),
+        validator: (v) => v == null || v === "" || /^20[0-9]{10}$/.test(v),
         message:
           "WhatsApp number must be in Egyptian format (20 followed by 10 digits)",
       },
@@ -90,7 +130,7 @@ const sellerSchema = new mongoose.Schema(
   }
 );
 
-sellerSchema.index({ instapayNumber: 1 });
+sellerSchema.index({ "instapayInfo.mobile": 1 }, { sparse: true });
 sellerSchema.index({ firebaseUid: 1 }, { unique: true });
 sellerSchema.index({ createdAt: 1 });
 

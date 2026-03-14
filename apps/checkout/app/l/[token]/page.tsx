@@ -42,8 +42,7 @@ export default async function CheckoutTokenPage({ params }: PageProps) {
       productName={productName}
       productImage={data.product.imageUrl ?? undefined}
       price={String(data.product.price)}
-      instaPayAccount={data.seller.instapayNumber}
-      maskedName={data.seller.maskedFullName}
+      instapayLink={data.seller.instapayLink ?? null}
       whatsappLink={
         data.seller.whatsappNumber
           ? `https://wa.me/${data.seller.whatsappNumber}`

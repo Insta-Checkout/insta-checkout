@@ -43,6 +43,7 @@ type Product = {
   nameEn?: string | null;
   price: number;
   description: string | null;
+  descriptionFormat?: "text" | "markdown";
   imageUrl: string | null;
   category: string | null;
   status: string;
@@ -312,6 +313,7 @@ export function ProductsPageContent() {
   const [formName, setFormName] = useState("");
   const [formPrice, setFormPrice] = useState("");
   const [formDescription, setFormDescription] = useState("");
+  const [formDescriptionFormat, setFormDescriptionFormat] = useState<"text" | "markdown">("text");
   const [formCategory, setFormCategory] = useState("");
   const [formImageUrl, setFormImageUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -335,10 +337,27 @@ export function ProductsPageContent() {
   } | null>(null);
   const [generatingId, setGeneratingId] = useState<string | null>(null);
 
+  // Seller's business category — used as default when creating new products
+  const [sellerCategory, setSellerCategory] = useState<string>("");
+
   const egpShort = t("common.egpShort");
 
   const getToken = () =>
     auth.currentUser ? auth.currentUser.getIdToken() : Promise.resolve(null);
+
+  const loadSellerCategory = async () => {
+    try {
+      const res = await fetchWithAuth(`${getBackendUrl()}/sellers/me`, {}, getToken);
+      if (!res.ok) return;
+      const data = await res.json();
+      // Map business category to product category value
+      const cat = data.category ?? "";
+      const match = ALL_CATEGORIES.find((c) => c.labelEn === cat || c.value === cat);
+      if (match) setSellerCategory(match.value);
+    } catch {
+      // ignore
+    }
+  };
 
   const loadProducts = async () => {
     setLoading(true);
@@ -369,12 +388,14 @@ export function ProductsPageContent() {
 
   useEffect(() => {
     loadProducts();
+    loadSellerCategory();
   }, []);
 
   const resetForm = () => {
     setFormName("");
     setFormPrice("");
     setFormDescription("");
+    setFormDescriptionFormat("text");
     setFormCategory("");
     setFormImageUrl(null);
     setFormNameAr("");
@@ -387,6 +408,8 @@ export function ProductsPageContent() {
   const openCreate = () => {
     setEditingId(null);
     resetForm();
+    // Default to seller's business category
+    if (sellerCategory) setFormCategory(sellerCategory);
     setModalOpen(true);
   };
 
@@ -395,6 +418,7 @@ export function ProductsPageContent() {
     setFormName(p.name);
     setFormPrice(String(p.price));
     setFormDescription(p.description || "");
+    setFormDescriptionFormat(p.descriptionFormat || "text");
     setFormCategory(p.category || "");
     setFormImageUrl(p.imageUrl);
     const hasVariant = !!(p.nameAr || p.nameEn);
@@ -474,6 +498,7 @@ export function ProductsPageContent() {
       name,
       price,
       description: formDescription.trim() || null,
+      descriptionFormat: formDescriptionFormat,
       imageUrl: formImageUrl || null,
       category: formCategory || null,
     };
@@ -883,15 +908,38 @@ export function ProductsPageContent() {
               />
             </div>
 
-            {/* Description — textarea with markdown hint */}
+            {/* Description — textarea with text/markdown toggle */}
             <div>
               <div className="flex items-center justify-between mb-1">
                 <Label htmlFor="prod-desc" className="text-[#1E0A3C]">
                   {t("dashboard.products.descLabel")}
                 </Label>
-                <span className="text-xs text-[#6B5B7B] font-cairo">
-                  {locale === "ar" ? "يدعم Markdown" : "Markdown supported"}
-                </span>
+                <div className="flex items-center gap-1 rounded-lg border border-[#E4D8F0] p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setFormDescriptionFormat("text")}
+                    className={cn(
+                      "rounded-md px-2.5 py-1 text-xs font-cairo transition-colors cursor-pointer",
+                      formDescriptionFormat === "text"
+                        ? "bg-[#7C3AED] text-white"
+                        : "text-[#6B5B7B] hover:text-[#1E0A3C]"
+                    )}
+                  >
+                    {t("dashboard.products.basicText")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFormDescriptionFormat("markdown")}
+                    className={cn(
+                      "rounded-md px-2.5 py-1 text-xs font-cairo transition-colors cursor-pointer",
+                      formDescriptionFormat === "markdown"
+                        ? "bg-[#7C3AED] text-white"
+                        : "text-[#6B5B7B] hover:text-[#1E0A3C]"
+                    )}
+                  >
+                    Markdown
+                  </button>
+                </div>
               </div>
               <textarea
                 id="prod-desc"
@@ -901,11 +949,13 @@ export function ProductsPageContent() {
                 rows={4}
                 className="w-full rounded-lg border border-[#E4D8F0] bg-white px-3 py-2 text-sm font-cairo text-[#1E0A3C] placeholder:text-[#6B5B7B] resize-none focus:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 transition-colors"
               />
-              <p className="mt-1 text-xs text-[#6B5B7B] font-cairo">
-                {locale === "ar"
-                  ? "يمكنك استخدام **نص غامق**، *مائل*، وقوائم نقطية بـ -"
-                  : "Use **bold**, *italic*, and bullet lists with -"}
-              </p>
+              {formDescriptionFormat === "markdown" && (
+                <p className="mt-1 text-xs text-[#6B5B7B] font-cairo">
+                  {locale === "ar"
+                    ? "يمكنك استخدام **نص غامق**، *مائل*، وقوائم نقطية بـ -"
+                    : "Use **bold**, *italic*, and bullet lists with -"}
+                </p>
+              )}
             </div>
 
             <DialogFooter className="gap-2 pt-2">

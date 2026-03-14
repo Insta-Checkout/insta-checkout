@@ -42,7 +42,6 @@ export interface BusinessTypeOption {
   defaultProduct: string;
   defaultPrice: number;
   defaultBusinessName: string;
-  defaultMaskedName: string;
   categoryTag: string;
 }
 
@@ -52,7 +51,7 @@ export function getBusinessTypeOptions(
 ): BusinessTypeOption[] {
   return BUSINESS_TYPE_VALUES.map((value) => {
     const key = BUSINESS_TYPE_KEYS[value];
-    const defaults = get(`businessTypes.defaults.${key}`) as { product: string; business: string; masked: string; category: string } | undefined;
+    const defaults = get(`businessTypes.defaults.${key}`) as { product: string; business: string; category: string } | undefined;
     return {
       value,
       label: t(`businessTypes.${key}`),
@@ -61,26 +60,18 @@ export function getBusinessTypeOptions(
       defaultProduct: defaults?.product ?? "",
       defaultPrice: value === "Clothing" ? 450 : value === "Services" ? 500 : value === "Other" ? 200 : value === "Electronics" ? 150 : 300,
       defaultBusinessName: defaults?.business ?? "",
-      defaultMaskedName: defaults?.masked ?? "",
       categoryTag: defaults?.category ?? "",
     };
   });
 }
 
-/** Step 1: Business info (business name, InstaPay, masked name, WhatsApp) */
+/** Step 1: Business info (business name, WhatsApp) */
 export function createStep1Schema(t: (key: string) => string) {
   return z.object({
     businessName: z
       .string()
       .min(2, t("onboard.validation.businessNameMin"))
       .max(100, t("onboard.validation.businessNameMax")),
-    instapayNumber: z.string().min(1, t("onboard.validation.instapayRequired")),
-    maskedFullName: z
-      .string()
-      .min(1, t("onboard.validation.maskedNameRequired"))
-      .refine((val) => val.includes("*"), {
-        message: t("onboard.validation.maskedNameAsterisk"),
-      }),
     whatsappNumber: z
       .string()
       .refine(

@@ -1,6 +1,6 @@
 {
   "common": {
-    "brand": "InstaPay Checkout",
+    "brand": "Insta Checkout",
     "egp": "جنيه",
     "egpShort": "ج.م",
     "loading": "جاري التحميل",
@@ -14,7 +14,7 @@
   },
   "landing": {
     "meta": {
-      "title": "InstaPay Checkout — حوّل كل محادثة لعملية بيع",
+      "title": "Insta Checkout — حوّل كل محادثة لعملية بيع",
       "description": "أنشئ لينك دفع InstaPay في ثانيتين وابعته لعميلك على واتساب. بدون موقع، بدون تطبيق، بدون تعقيد."
     },
     "nav": {
@@ -477,7 +477,7 @@
   },
   "landingV4": {
     "nav": {
-      "logo": "InstaPay Checkout",
+      "logo": "Insta Checkout",
       "features": "الميزات",
       "howItWorks": "ازاي بتشتغل",
       "pricing": "الأسعار",
@@ -637,16 +637,16 @@
       "contact": "تواصل معانا",
       "privacy": "سياسة الخصوصية",
       "terms": "الشروط والأحكام",
-      "copyright": "© ٢٠٢٦ InstaPay Checkout. كل الحقوق محفوظة."
+      "copyright": "© ٢٠٢٦ Insta Checkout. كل الحقوق محفوظة."
     }
   },
   "onboard": {
     "meta": {
-      "title": "سجّل بيزنسك — InstaPay Checkout",
+      "title": "سجّل بيزنسك — Insta Checkout",
       "description": "سجّل في دقيقتين وابدأ تقبل مدفوعات InstaPay من عملاءك عن طريق واتساب."
     },
     "page": {
-      "title": "سجّل بيزنسك على InstaPay Checkout",
+      "title": "سجّل بيزنسك على Insta Checkout",
       "subtitle": "في خطوتين بسيطين هتبدأ تقبض أونلاين",
       "signupSubtitle": "سجّل في ثواني — كمّل باقي البيانات بعد كده من جوا"
     },
@@ -656,16 +656,10 @@
     ],
     "step1": {
       "businessName": "اسم البيزنس *",
-      "instapayNumber": "رقم حساب InstaPay *",
-      "maskedFullName": "الاسم المقنّع *",
       "whatsappNumber": "رقم واتساب *",
       "placeholders": {
-        "businessName": "مثلاً: Sweet Bites",
-        "instapayNumber": "الرقم اللي العميل هيحوّل عليه",
-        "maskedName": "مثلاً: أ*** م*** أ** م***"
+        "businessName": "مثلاً: Sweet Bites"
       },
-      "maskedNameWhy": "ليه بنطلب الاسم المقنّع؟",
-      "maskedNameExplanation": "لما العميل يحوّل على InstaPay، التطبيق بيظهرله اسم المستلم بشكل مقنّع قبل ما يأكد. إحنا بنعرض نفس الاسم ده في صفحة الدفع عشان العميل يتأكد إنه بيحوّل للشخص الصح.",
       "back": "رجوع",
       "cta": "الخطوة الأخيرة — إنشاء الحساب"
     },
@@ -694,6 +688,8 @@
       "ok": "تمام"
     },
     "signup": {
+      "fullName": "الاسم بالكامل *",
+      "fullNamePlaceholder": "مثلاً: أحمد محمد",
       "businessName": "اسم البيزنس *",
       "phoneNumber": "رقم الموبايل *",
       "phonePlaceholder": "01XXXXXXXXX",
@@ -702,11 +698,12 @@
     },
     "validation": {
       "businessType": "اختار نوع البيزنس",
+      "fullNameMin": "الاسم لازم يكون على الأقل حرفين",
+      "fullNameMax": "الاسم لازم يكون أقل من ١٠٠ حرف",
       "businessNameMin": "اسم البيزنس لازم يكون على الأقل حرفين",
       "businessNameMax": "اسم البيزنس لازم يكون أقل من ١٠٠ حرف",
-      "instapayRequired": "رقم حساب InstaPay مطلوب",
-      "maskedNameRequired": "الاسم المقنّع مطلوب",
-      "maskedNameAsterisk": "الاسم المقنّع لازم يحتوي على * واحدة على الأقل",
+      "instapayLinkRequired": "رابط InstaPay مطلوب",
+      "instapayLinkInvalid": "لازم يكون رابط InstaPay صالح (ipn.eg أو instapay.eg)",
       "whatsappValid": "رقم واتساب مصري صالح — مثلاً 01XXXXXXXXX أو 10XXXXXXXX",
       "phoneRequired": "رقم الموبايل مطلوب",
       "phoneValid": "رقم مصري صالح — مثلاً 01XXXXXXXXX",
@@ -758,16 +755,12 @@
       "paymentRequest": "طلب دفع",
       "paymentMethod": "طريقة الدفع عبر انستاباي",
       "instructions": [
-        "افتح تطبيق البنك أو المحفظة التي تدعم انستاباي",
-        "ابدأ تحويل جديد",
-        "أدخل رقم الحساب أدناه"
+        "اضغط الزر أدناه لفتح انستاباي وإتمام التحويل",
+        "لما تشوف \"تم التحويل بنجاح\"، ارجع هنا واضغط \"لقد قمت بالدفع\""
       ],
-      "instapayAccount": "رقم حساب انستاباي",
-      "accountCopied": "تم نسخ رقم الحساب",
-      "copyFailed": "فشل النسخ. يرجى النسخ يدويًا.",
-      "verifyTitle": "كيف تتأكد أنك ترسل للشخص الصحيح؟",
-      "verifyIntro": "بعد إدخال رقم الحساب، سيعرض لك انستاباي اسمًا مُقنّعًا للمستلم قبل تأكيد التحويل. يجب أن ترى:",
-      "verifyMatch": "إذا تطابق الاسم، فأنت ترسل إلى الحساب الصحيح. تابع وأكّد التحويل!",
+      "openInstapayButton": "افتح انستاباي للدفع",
+      "openInstapayHint": "اضغط الزر لفتح انستاباي وإرسال الدفعة",
+      "noInstapayLink": "طريقة الدفع غير مُعدَّة — تواصل مع البائع",
       "ensureTransfer": "تأكد من ظهور رسالة \"تم التحويل بنجاح\" في تطبيقك قبل المتابعة",
       "ensureTransferBold": "تم التحويل بنجاح",
       "paidButton": "لقد قمت بالدفع"
@@ -811,7 +804,7 @@
   },
   "dashboard": {
     "meta": {
-      "title": "لوحة التحكم — InstaPay Checkout",
+      "title": "لوحة التحكم — Insta Checkout",
       "description": "لوحة التحكم الخاصة بك — قريباً"
     },
     "sidebar": {
@@ -820,6 +813,7 @@
       "home": "الرئيسية",
       "products": "المنتجات",
       "links": "لينكات الدفع",
+      "profile": "الملف الشخصي",
       "settings": "الإعدادات"
     },
     "title": "مرحباً في لوحتك",
@@ -885,28 +879,56 @@
     "onboarding": {
       "completeTitle": "أكمل بياناتك لتفعيل لينكات الدفع",
       "progress": "{done} من {total} — {pct}%",
-      "businessType": "نوع البيزنس",
-      "instapayNumber": "رقم حساب InstaPay",
-      "maskedName": "الاسم المقنّع",
+      "businessType": "بيانات البيزنس",
+      "instapayLink": "رابط InstaPay",
+      "instapayLinkPlaceholder": "https://ipn.eg/S/...",
+      "instapayLinkHint": "افتح تطبيق InstaPay ← اسمك ← مشاركة ← انسخ الرابط",
       "choose": "اختر...",
       "save": "حفظ",
       "saveSuccess": "تم الحفظ",
       "saveFailed": "فشل الحفظ",
-      "instapayPlaceholder": "الرقم اللي العميل هيحوّل عليه",
-      "maskedPlaceholder": "مثلاً: أ*** م*** أ** م***",
-      "maskedHint": "الاسم اللي بيظهر للعميل في تطبيق InstaPay قبل التأكيد",
+      "businessLogo": "لوجو البيزنس (اختياري)",
+      "logoHint": "ارفع لوجو البيزنس (حد أقصى 5 ميغابايت)",
+      "uploadLogo": "رفع اللوجو",
+      "removeLogo": "إزالة",
+      "socialLinksLabel": "لينكات السوشيال ميديا",
+      "socialLinksHint": "لينك واحد على الأقل مطلوب",
+      "instagramPlaceholder": "مثلاً: instagram.com/yourbusiness",
+      "facebookPlaceholder": "مثلاً: facebook.com/yourbusiness",
+      "instagramLabel": "انستجرام",
+      "facebookLabel": "فيسبوك",
       "categoryValues": [
-        "Food & Desserts",
-        "Clothing",
-        "Services",
+        "Food & Beverage",
+        "Clothing & Fashion",
         "Electronics",
+        "Services",
+        "Beauty & Care",
+        "Home & Decor",
+        "Sports & Fitness",
+        "Books & Education",
+        "Toys & Kids",
+        "Jewelry & Accessories",
+        "Health & Medical",
+        "Automotive",
+        "Art & Crafts",
+        "Digital Products",
         "Other"
       ],
       "categoryLabels": [
-        "أكل وحلويات",
-        "ملابس",
-        "خدمات",
+        "طعام وشراب",
+        "ملابس وأزياء",
         "إلكترونيات",
+        "خدمات",
+        "جمال وعناية",
+        "منزل وديكور",
+        "رياضة ولياقة",
+        "كتب وتعليم",
+        "ألعاب وأطفال",
+        "مجوهرات وإكسسوارات",
+        "صحة وطب",
+        "سيارات وقطع غيار",
+        "فن وحرف يدوية",
+        "منتجات رقمية",
         "أخرى"
       ]
     },
@@ -988,6 +1010,7 @@
       "chooseCategory": "اختر الفئة",
       "descLabel": "الوصف (اختياري)",
       "descPlaceholder": "وصف قصير",
+      "basicText": "نص عادي",
       "linkReady": "لينك الدفع جاهز",
       "linkReadySubtitle": "انسخ اللينك أو شاركه على واتساب",
       "linkLabel": "اللينك",
@@ -1005,6 +1028,33 @@
     },
     "userMenu": {
       "logout": "تسجيل الخروج"
+    },
+    "profile": {
+      "title": "الملف الشخصي",
+      "subtitle": "إدارة حسابك وبيانات البيزنس",
+      "personalInfo": "المعلومات الشخصية",
+      "fullName": "الاسم بالكامل",
+      "fullNamePlaceholder": "اسمك بالكامل",
+      "email": "البريد الإلكتروني",
+      "phone": "رقم الموبايل",
+      "phonePlaceholder": "01XXXXXXXXX",
+      "businessInfo": "بيانات البيزنس",
+      "businessName": "اسم البيزنس",
+      "businessNamePlaceholder": "اسم البيزنس بتاعك",
+      "category": "نوع البيزنس",
+      "chooseCategory": "اختر نوع البيزنس...",
+      "logo": "لوجو البيزنس",
+      "socialLinks": "لينكات السوشيال",
+      "instagram": "انستجرام",
+      "facebook": "فيسبوك",
+      "whatsapp": "واتساب",
+      "instapaySection": "رابط InstaPay",
+      "instapayLink": "رابط الدفع",
+      "instapayLinkHint": "افتح تطبيق InstaPay ← اسمك ← مشاركة ← انسخ الرابط",
+      "saveChanges": "حفظ التغييرات",
+      "saving": "جاري الحفظ...",
+      "saveSuccess": "تم تحديث الملف الشخصي",
+      "saveFailed": "فشل تحديث الملف الشخصي"
     }
   },
   "businessTypes": {
@@ -1017,31 +1067,26 @@
       "food": {
         "product": "شوكولاتة كيك",
         "business": "حلويات سارة",
-        "masked": "س*** م*** أ** م***",
         "category": "حلويات ومخبوزات"
       },
       "clothing": {
         "product": "بنطلون جينز",
         "business": "بوتيك ناديا",
-        "masked": "ن*** أ*** د** ي***",
         "category": "ملابس وإكسسوارات"
       },
       "electronics": {
         "product": "كفر موبايل",
         "business": "تيك ستور",
-        "masked": "أ*** ح*** م** د***",
         "category": "إلكترونيات"
       },
       "services": {
         "product": "جلسة تصوير",
         "business": "ستوديو نور",
-        "masked": "ن*** و*** ر**",
         "category": "خدمات"
       },
       "other": {
         "product": "منتج تجريبي",
         "business": "متجر تجريبي",
-        "masked": "أ*** م*** أ** م***",
         "category": "أخرى"
       }
     }

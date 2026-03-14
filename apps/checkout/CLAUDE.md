@@ -1,10 +1,14 @@
 # Checkout App — Claude Instructions
 
+## Design Skill (MANDATORY)
+For ALL frontend/UI work in this app, you MUST invoke the `frontend-design` skill before writing any UI code. This applies to any page, component, section, layout, form, or styled output — no exceptions.
+
 ## Stack
 - **Next.js 16.1.6** — App Router, port 3001
 - **React 19.2.4** + TypeScript 5.7.3
 - **Tailwind CSS v4** — config lives in `globals.css` under `@theme`, NOT `tailwind.config.ts`
 - **Radix UI** — headless component primitives (accordion, dialog, dropdown, tabs, etc.)
+- **Framer Motion 11** — animations and transitions
 - **React Hook Form 7** + **Zod 3** — forms and schema validation
 - **Recharts 2** — data visualization
 - **Firebase 12** — auth and backend services
@@ -49,6 +53,7 @@ npm run dev:checkout   # port 3001
 ## UI Components
 - Use existing Radix UI primitives from `components/ui/`
 - Do not install new UI libraries — extend what exists
+- Framer Motion for animations — use `motion.*` components and `AnimatePresence`
 
 ## Forms
 - React Hook Form for all form state
@@ -70,6 +75,11 @@ npm run dev:checkout   # port 3001
 - No `any` types
 - No raw CSS or inline styles (use Tailwind)
 - No `tailwind.config.ts` — Tailwind v4 config is in CSS
+
+## Test Credentials
+If any flow requires sign-in, use these credentials:
+- **Email**: claude@test.com
+- **Password**: test@123
 
 ## Exports
 - All components and utilities (outside Next.js file conventions) use **named exports**
