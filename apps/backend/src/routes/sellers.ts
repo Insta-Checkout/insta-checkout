@@ -51,58 +51,8 @@ function validateMinimalBody(body: Record<string, unknown>): ValidationError[] {
   return errors
 }
 
-function validateFullBody(body: Record<string, unknown>): ValidationError[] {
-  const errors: ValidationError[] = []
-
-  const businessName = typeof body.businessName === "string" ? body.businessName.trim() : ""
-  if (!businessName) {
-    errors.push({ field: "businessName", message: "Business name is required" })
-  } else if (businessName.length < 2 || businessName.length > 100) {
-    errors.push({ field: "businessName", message: "Business name must be 2–100 characters" })
-  }
-
-  const instapayNumber = typeof body.instapayNumber === "string" ? body.instapayNumber.trim() : ""
-  if (!instapayNumber) {
-    errors.push({ field: "instapayNumber", message: "InstaPay number is required" })
-  }
-
-  const maskedFullName = typeof body.maskedFullName === "string" ? body.maskedFullName.trim() : ""
-  if (!maskedFullName) {
-    errors.push({ field: "maskedFullName", message: "Masked full name is required" })
-  } else if (!maskedFullName.includes("*")) {
-    errors.push({ field: "maskedFullName", message: "Masked full name must contain at least one * character" })
-  }
-
-  const whatsappNumber = typeof body.whatsappNumber === "string" ? body.whatsappNumber.trim() : ""
-  if (!whatsappNumber) {
-    errors.push({ field: "whatsappNumber", message: "WhatsApp number is required" })
-  } else if (!/^20[0-9]{10}$/.test(whatsappNumber)) {
-    errors.push({ field: "whatsappNumber", message: "Must be a valid Egyptian phone number (20XXXXXXXXXX)" })
-  }
-
-  const firebaseUid = typeof body.firebaseUid === "string" ? body.firebaseUid.trim() : ""
-  if (!firebaseUid) {
-    errors.push({ field: "firebaseUid", message: "Firebase UID is required" })
-  }
-
-  const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : ""
-  if (!email) {
-    errors.push({ field: "email", message: "Email is required" })
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    errors.push({ field: "email", message: "Email must be a valid format" })
-  }
-
-  return errors
-}
-
 function validateBody(body: Record<string, unknown>): ValidationError[] {
-  const hasMinimal = body.businessName != null && body.phoneNumber != null && body.firebaseUid != null && body.email != null
-  const hasFull = body.instapayNumber != null && body.maskedFullName != null && body.whatsappNumber != null
-
-  if (hasMinimal && !hasFull) {
-    return validateMinimalBody(body)
-  }
-  return validateFullBody(body)
+  return validateMinimalBody(body)
 }
 
 router.get("/health", (_req: Request, res: Response) => {
@@ -133,11 +83,8 @@ router.post("/", async (req: Request, res: Response) => {
   const email = (body.email as string).trim().toLowerCase()
   const socialLinks = (body.socialLinks as Record<string, string> | undefined) ?? {}
 
-  const isMinimalSignup = body.instapayNumber == null
   const phoneRaw = typeof body.phoneNumber === "string" ? body.phoneNumber.trim() : ""
   const whatsappNumber = phoneRaw ? normalizePhone(phoneRaw) : null
-  const instapayNumber = isMinimalSignup ? null : (body.instapayNumber as string).trim()
-  const maskedFullName = isMinimalSignup ? null : (body.maskedFullName as string).trim()
   // New signups always start with onboardingComplete: false
   const onboardingComplete = false
 
@@ -152,9 +99,7 @@ router.post("/", async (req: Request, res: Response) => {
       fullName,
       businessName,
       category,
-      instapayInfo: { method: null, mobile: null, bankName: null, bankAccountNumber: null, ipaAddress: null },
-      instapayNumber,
-      maskedFullName,
+      instapayLink: null,
       whatsappNumber,
       firebaseUid,
       email,
@@ -175,7 +120,7 @@ router.post("/", async (req: Request, res: Response) => {
     const result = await sellers.insertOne(doc)
     console.log(`[POST /sellers] Success in ${Date.now() - start}ms, id=${result.insertedId}, email=${email}, whatsappNumber=${whatsappNumber}, db=${dbName}`)
 
-    if (!isMinimalSignup && whatsappNumber) {
+    if (whatsappNumber) {
       try {
         const { code } = await createVerification(result.insertedId as ObjectId, whatsappNumber)
         sendOtpViaWhatsApp(whatsappNumber, code)
@@ -191,9 +136,7 @@ router.post("/", async (req: Request, res: Response) => {
         fullName,
         businessName,
         category,
-        instapayInfo: doc.instapayInfo,
-        instapayNumber,
-        maskedFullName,
+        instapayLink: null,
         whatsappNumber,
         whatsappVerified: false,
         onboardingComplete,

@@ -83,7 +83,7 @@ export function StepThree({
         <Button
           variant="outline"
           asChild
-          className="w-full h-12 gap-2 rounded-xl border-[#0D9488]/30 text-[#0D9488] hover:bg-[#0D9488]/5"
+          className="w-full h-12 gap-2 rounded-xl border-[#7C3AED]/30 text-[#7C3AED] hover:bg-[#EDE9FE]"
         >
           <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
             <MessageCircle className="size-5" />

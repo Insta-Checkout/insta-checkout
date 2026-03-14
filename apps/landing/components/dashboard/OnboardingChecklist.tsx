@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Image from "next/image";
 import {
   CheckCircle,
   Circle,
@@ -23,9 +24,7 @@ import { toast } from "sonner";
 
 type OnboardingProgress = {
   category: boolean;
-  instapayInfo: boolean;
-  instapayNumber: boolean;
-  maskedName: boolean;
+  instapayLink: boolean;
   logo: boolean;
   socialLinks: boolean;
 };
@@ -40,8 +39,6 @@ type SellerProfile = {
   onboardingProgress: OnboardingProgress;
 };
 
-type InstapayMethod = "mobile" | "bank" | "ipa" | "";
-
 export function OnboardingChecklist() {
   const { t, get, locale } = useTranslations();
   const [profile, setProfile] = useState<SellerProfile | null>(null);
@@ -53,12 +50,7 @@ export function OnboardingChecklist() {
     logoUrl: "" as string | null,
     instagram: "",
     facebook: "",
-    instapayMethod: "" as InstapayMethod,
-    instapayMobile: "",
-    instapayBankName: "",
-    instapayBankAccount: "",
-    instapayIpa: "",
-    maskedFullName: "",
+    instapayLink: "",
   });
 
   // Logo upload state
@@ -74,19 +66,13 @@ export function OnboardingChecklist() {
       if (!res.ok) return;
       const data = await res.json();
       setProfile(data);
-      const instapayInfo = data.instapayInfo ?? {};
       const socialLinks = data.socialLinks ?? {};
       setFormData({
         category: data.category ?? "",
         logoUrl: data.logoUrl ?? null,
         instagram: socialLinks.instagram ?? "",
         facebook: socialLinks.facebook ?? "",
-        instapayMethod: (instapayInfo.method ?? "") as InstapayMethod,
-        instapayMobile: instapayInfo.mobile ?? data.instapayNumber ?? "",
-        instapayBankName: instapayInfo.bankName ?? "",
-        instapayBankAccount: instapayInfo.bankAccountNumber ?? "",
-        instapayIpa: instapayInfo.ipaAddress ?? "",
-        maskedFullName: data.maskedFullName ?? "",
+        instapayLink: data.instapayLink ?? "",
       });
     } catch {
       // ignore
@@ -145,22 +131,8 @@ export function OnboardingChecklist() {
     });
   };
 
-  const saveInstapayInfo = async () => {
-    const method = formData.instapayMethod;
-    if (!method) return;
-
-    const instapayInfo: Record<string, unknown> = { method };
-    if (method === "mobile") instapayInfo.mobile = formData.instapayMobile;
-    if (method === "bank") {
-      instapayInfo.bankName = formData.instapayBankName;
-      instapayInfo.bankAccountNumber = formData.instapayBankAccount;
-    }
-    if (method === "ipa") instapayInfo.ipaAddress = formData.instapayIpa;
-
-    await saveStep("instapayInfo", {
-      instapayInfo,
-      maskedFullName: formData.maskedFullName,
-    });
+  const saveInstapayLink = async () => {
+    await saveStep("instapayLink", { instapayLink: formData.instapayLink.trim() });
   };
 
   const handleLogoUpload = async (file: File) => {
@@ -197,21 +169,20 @@ export function OnboardingChecklist() {
   if (loading || !profile || profile.onboardingComplete) return null;
 
   const progress = profile.onboardingProgress;
-  const instapayDone = progress?.instapayInfo || progress?.instapayNumber;
+  const instapayDone = progress?.instapayLink;
   const businessInfoDone = progress?.category && progress?.socialLinks;
   const requiredDone =
     (businessInfoDone ? 1 : 0) +
-    (instapayDone && progress?.maskedName ? 1 : 0);
+    (instapayDone ? 1 : 0);
   const requiredTotal = 2;
   const pct = Math.round((requiredDone / requiredTotal) * 100);
 
   const categoryValues = get<string[]>("dashboard.onboarding.categoryValues") ?? [];
   const categoryLabels = get<string[]>("dashboard.onboarding.categoryLabels") ?? [];
-  const bankNames = get<string[]>("dashboard.onboarding.bankNames") ?? [];
 
   const steps = [
     { key: "category", labelKey: "dashboard.onboarding.businessType", done: businessInfoDone, required: true },
-    { key: "instapayInfo", labelKey: "dashboard.onboarding.instapayInfo", done: instapayDone && progress?.maskedName, required: true },
+    { key: "instapayInfo", labelKey: "dashboard.onboarding.instapayLink", done: instapayDone, required: true },
   ];
 
   const isBusinessInfoValid = () => {
@@ -221,12 +192,7 @@ export function OnboardingChecklist() {
   };
 
   const isInstapayFormValid = () => {
-    if (!formData.instapayMethod) return false;
-    if (formData.instapayMethod === "mobile" && !formData.instapayMobile) return false;
-    if (formData.instapayMethod === "bank" && (!formData.instapayBankName || !formData.instapayBankAccount)) return false;
-    if (formData.instapayMethod === "ipa" && !formData.instapayIpa) return false;
-    if (!formData.maskedFullName || !formData.maskedFullName.includes("*")) return false;
-    return true;
+    return formData.instapayLink.trim().length > 0;
   };
 
   return (
@@ -404,102 +370,36 @@ export function OnboardingChecklist() {
                     </div>
                   )}
                   {step.key === "instapayInfo" && (
-                    <div className="space-y-4">
-                      {/* Method selector */}
+                    <div className="space-y-3">
                       <div className="space-y-2">
-                        <Label className="font-cairo">{t("dashboard.onboarding.instapayMethod")}</Label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(["mobile", "bank", "ipa"] as const).map((method) => (
-                            <button
-                              key={method}
-                              type="button"
-                              onClick={() => setFormData((p) => ({ ...p, instapayMethod: method }))}
-                              className={`rounded-lg border px-3 py-2 text-sm font-cairo transition-colors ${
-                                formData.instapayMethod === method
-                                  ? "border-primary bg-primary/10 text-primary"
-                                  : "border-border hover:border-primary/30"
-                              }`}
-                            >
-                              {t(`dashboard.onboarding.method${method.charAt(0).toUpperCase() + method.slice(1)}`)}
-                            </button>
-                          ))}
-                        </div>
+                        <Label className="font-cairo">{t("dashboard.onboarding.instapayLink")}</Label>
+                        <Input
+                          value={formData.instapayLink}
+                          onChange={(e) => setFormData((p) => ({ ...p, instapayLink: e.target.value }))}
+                          placeholder={t("dashboard.onboarding.instapayLinkPlaceholder")}
+                          className="font-mono font-cairo"
+                          dir="ltr"
+                        />
+                        <p className="text-xs text-muted-foreground font-cairo">
+                          {t("dashboard.onboarding.instapayLinkHint")}
+                        </p>
                       </div>
 
-                      {/* Method-specific fields */}
-                      {formData.instapayMethod === "mobile" && (
-                        <div className="space-y-2">
-                          <Label className="font-cairo">{t("dashboard.onboarding.mobileNumber")}</Label>
-                          <Input
-                            value={formData.instapayMobile}
-                            onChange={(e) => setFormData((p) => ({ ...p, instapayMobile: e.target.value }))}
-                            placeholder={t("dashboard.onboarding.mobilePlaceholder")}
-                            className="font-mono font-cairo"
-                            dir="ltr"
-                          />
-                        </div>
-                      )}
-
-                      {formData.instapayMethod === "bank" && (
-                        <div className="space-y-3">
-                          <div className="space-y-2">
-                            <Label className="font-cairo">{t("dashboard.onboarding.bankName")}</Label>
-                            <select
-                              value={formData.instapayBankName}
-                              onChange={(e) => setFormData((p) => ({ ...p, instapayBankName: e.target.value }))}
-                              className="w-full h-10 rounded-lg border border-input px-3 font-cairo"
-                            >
-                              <option value="">{t("dashboard.onboarding.bankNamePlaceholder")}</option>
-                              {bankNames.map((name) => (
-                                <option key={name} value={name}>{name}</option>
-                              ))}
-                            </select>
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="font-cairo">{t("dashboard.onboarding.bankAccountNumber")}</Label>
-                            <Input
-                              value={formData.instapayBankAccount}
-                              onChange={(e) => setFormData((p) => ({ ...p, instapayBankAccount: e.target.value }))}
-                              placeholder={t("dashboard.onboarding.bankAccountPlaceholder")}
-                              className="font-mono font-cairo"
-                              dir="ltr"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      {formData.instapayMethod === "ipa" && (
-                        <div className="space-y-2">
-                          <Label className="font-cairo">{t("dashboard.onboarding.ipaAddress")}</Label>
-                          <Input
-                            value={formData.instapayIpa}
-                            onChange={(e) => setFormData((p) => ({ ...p, instapayIpa: e.target.value }))}
-                            placeholder={t("dashboard.onboarding.ipaPlaceholder")}
-                            className="font-cairo"
-                            dir="ltr"
-                          />
-                        </div>
-                      )}
-
-                      {/* Masked name — grouped under InstaPay Info */}
-                      {formData.instapayMethod && (
-                        <div className="space-y-2 border-t border-border pt-3">
-                          <Label className="font-cairo">{t("dashboard.onboarding.maskedName")}</Label>
-                          <Input
-                            value={formData.maskedFullName}
-                            onChange={(e) => setFormData((p) => ({ ...p, maskedFullName: e.target.value }))}
-                            placeholder={t("dashboard.onboarding.maskedPlaceholder")}
-                            className="font-cairo"
-                          />
-                          <p className="text-xs text-muted-foreground font-cairo">
-                            {t("dashboard.onboarding.maskedHint")}
-                          </p>
-                        </div>
-                      )}
+                      {/* Screenshot showing where to find the link */}
+                      <div className="rounded-xl overflow-hidden border border-border">
+                        <Image
+                          src="/instapay-link-hint.png"
+                          alt={t("dashboard.onboarding.instapayLinkHint")}
+                          width={600}
+                          height={400}
+                          className="w-full h-auto object-cover"
+                          unoptimized
+                        />
+                      </div>
 
                       <Button
                         size="sm"
-                        onClick={saveInstapayInfo}
+                        onClick={saveInstapayLink}
                         disabled={!isInstapayFormValid() || saving === "instapayInfo"}
                         className="gap-2 font-cairo"
                       >

@@ -1,6 +1,6 @@
 "use client";
 
-import { Cake, Shirt, Smartphone, Scissors, Package, Hash, ShieldCheck, ArrowLeftRight } from "lucide-react";
+import { Cake, Shirt, Smartphone, Scissors, Package, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "@/lib/locale-provider";
@@ -27,8 +27,6 @@ interface CheckoutPreviewProps {
   businessName: string;
   productName: string;
   price: number;
-  instapayNumber?: string;
-  maskedName?: string;
   businessType?: BusinessTypeValue;
   categoryTag?: string;
   inPhoneFrame?: boolean;
@@ -41,8 +39,6 @@ export function CheckoutPreview({
   businessName,
   productName,
   price,
-  instapayNumber = "01XXXXXXXXX",
-  maskedName = "أ*** م*** أ** م***",
   businessType = "Food & Desserts",
   categoryTag,
   inPhoneFrame = true,
@@ -104,49 +100,20 @@ export function CheckoutPreview({
               <span className="flex size-5 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488] text-[10px] font-bold shrink-0">2</span>
               <span>{t("checkout.step1.instructions.1")}</span>
             </li>
-            <li className="flex items-start gap-2">
-              <span className="flex size-5 items-center justify-center rounded-full bg-[#0D9488]/10 text-[#0D9488] shrink-0">
-                <ArrowLeftRight className="size-2.5" />
-              </span>
-              <span>{t("checkout.step1.instructions.2")}</span>
-            </li>
           </ol>
         </CardContent>
       </Card>
 
-      {/* InstaPay Account — matches checkout */}
+      {/* Open InstaPay button — matches checkout */}
       <Card className="border-[#E2E8F0] shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-        <CardContent className="py-3">
-          <label className="text-xs font-medium text-muted-foreground flex items-center gap-1.5 mb-2">
-            <Hash className="size-3.5" />
-            {t("checkout.step1.instapayAccount")}
-          </label>
-          <div className="rounded-xl bg-[#F8FAFC] border border-dashed border-[#CBD5E1] p-3">
-            <span className="text-sm font-mono font-medium tracking-[1px] text-foreground" dir="ltr">
-              {instapayNumber}
-            </span>
+        <CardContent className="py-3 flex flex-col gap-2 items-center text-center">
+          <p className="text-xs text-muted-foreground">{t("checkout.step1.openInstapayHint")}</p>
+          <div className="w-full h-9 inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#7C3AED] text-white font-bold text-xs">
+            <ExternalLink className="size-3.5" />
+            {t("checkout.step1.openInstapayButton")}
           </div>
         </CardContent>
       </Card>
-
-      {/* Verification — matches checkout */}
-      <div className="bg-[#ECFDF5] border-s-[3px] border-[#10B981] rounded-lg p-3">
-        <div className="flex items-start gap-2 mb-2">
-          <ShieldCheck className="size-4 text-[#0D9488] shrink-0 mt-0.5" />
-          <p className="text-xs font-bold text-[#0D9488]">{t("checkout.step1.verifyTitle")}</p>
-        </div>
-        <p className="text-[11px] text-foreground leading-relaxed mb-2">
-          {t("checkout.step1.verifyIntro")}
-        </p>
-        <div className="bg-card rounded-xl p-3 border border-[#10B981]/20 text-center shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-          <span className="text-sm font-bold font-mono tracking-wider text-[#0D9488]" dir="ltr">
-            {maskedName}
-          </span>
-        </div>
-        <p className="text-[11px] text-muted-foreground leading-relaxed mt-2">
-          {t("checkout.step1.verifyMatch")}
-        </p>
-      </div>
 
       {/* CTA button — matches checkout */}
       <button

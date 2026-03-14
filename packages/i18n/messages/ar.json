@@ -656,16 +656,10 @@
     ],
     "step1": {
       "businessName": "اسم البيزنس *",
-      "instapayNumber": "رقم حساب InstaPay *",
-      "maskedFullName": "الاسم المقنّع *",
       "whatsappNumber": "رقم واتساب *",
       "placeholders": {
-        "businessName": "مثلاً: Sweet Bites",
-        "instapayNumber": "الرقم اللي العميل هيحوّل عليه",
-        "maskedName": "مثلاً: أ*** م*** أ** م***"
+        "businessName": "مثلاً: Sweet Bites"
       },
-      "maskedNameWhy": "ليه بنطلب الاسم المقنّع؟",
-      "maskedNameExplanation": "لما العميل يحوّل على InstaPay، التطبيق بيظهرله اسم المستلم بشكل مقنّع قبل ما يأكد. إحنا بنعرض نفس الاسم ده في صفحة الدفع عشان العميل يتأكد إنه بيحوّل للشخص الصح.",
       "back": "رجوع",
       "cta": "الخطوة الأخيرة — إنشاء الحساب"
     },
@@ -708,9 +702,8 @@
       "fullNameMax": "الاسم لازم يكون أقل من ١٠٠ حرف",
       "businessNameMin": "اسم البيزنس لازم يكون على الأقل حرفين",
       "businessNameMax": "اسم البيزنس لازم يكون أقل من ١٠٠ حرف",
-      "instapayRequired": "رقم حساب InstaPay مطلوب",
-      "maskedNameRequired": "الاسم المقنّع مطلوب",
-      "maskedNameAsterisk": "الاسم المقنّع لازم يحتوي على * واحدة على الأقل",
+      "instapayLinkRequired": "رابط InstaPay مطلوب",
+      "instapayLinkInvalid": "لازم يكون رابط InstaPay صالح (ipn.eg أو instapay.eg)",
       "whatsappValid": "رقم واتساب مصري صالح — مثلاً 01XXXXXXXXX أو 10XXXXXXXX",
       "phoneRequired": "رقم الموبايل مطلوب",
       "phoneValid": "رقم مصري صالح — مثلاً 01XXXXXXXXX",
@@ -762,16 +755,12 @@
       "paymentRequest": "طلب دفع",
       "paymentMethod": "طريقة الدفع عبر انستاباي",
       "instructions": [
-        "افتح تطبيق البنك أو المحفظة التي تدعم انستاباي",
-        "ابدأ تحويل جديد",
-        "أدخل رقم الحساب أدناه"
+        "اضغط الزر أدناه لفتح انستاباي وإتمام التحويل",
+        "لما تشوف \"تم التحويل بنجاح\"، ارجع هنا واضغط \"لقد قمت بالدفع\""
       ],
-      "instapayAccount": "رقم حساب انستاباي",
-      "accountCopied": "تم نسخ رقم الحساب",
-      "copyFailed": "فشل النسخ. يرجى النسخ يدويًا.",
-      "verifyTitle": "كيف تتأكد أنك ترسل للشخص الصحيح؟",
-      "verifyIntro": "بعد إدخال رقم الحساب، سيعرض لك انستاباي اسمًا مُقنّعًا للمستلم قبل تأكيد التحويل. يجب أن ترى:",
-      "verifyMatch": "إذا تطابق الاسم، فأنت ترسل إلى الحساب الصحيح. تابع وأكّد التحويل!",
+      "openInstapayButton": "افتح انستاباي للدفع",
+      "openInstapayHint": "اضغط الزر لفتح انستاباي وإرسال الدفعة",
+      "noInstapayLink": "طريقة الدفع غير مُعدَّة — تواصل مع البائع",
       "ensureTransfer": "تأكد من ظهور رسالة \"تم التحويل بنجاح\" في تطبيقك قبل المتابعة",
       "ensureTransferBold": "تم التحويل بنجاح",
       "paidButton": "لقد قمت بالدفع"
@@ -891,26 +880,13 @@
       "completeTitle": "أكمل بياناتك لتفعيل لينكات الدفع",
       "progress": "{done} من {total} — {pct}%",
       "businessType": "بيانات البيزنس",
-      "instapayInfo": "بيانات InstaPay",
-      "instapayNumber": "رقم حساب InstaPay",
-      "instapayMethod": "إزاي بتستقبل المدفوعات؟",
-      "methodMobile": "رقم موبايل",
-      "methodBank": "حساب بنكي",
-      "methodIpa": "عنوان InstaPay (IPA)",
-      "mobileNumber": "رقم الموبايل",
-      "mobilePlaceholder": "مثلاً: 01012345678",
-      "bankName": "اسم البنك",
-      "bankNamePlaceholder": "اختر البنك...",
-      "bankAccountNumber": "رقم الحساب",
-      "bankAccountPlaceholder": "ادخل رقم الحساب البنكي",
-      "ipaAddress": "عنوان InstaPay",
-      "ipaPlaceholder": "مثلاً: mystore@instapay",
-      "maskedName": "الاسم المقنّع",
+      "instapayLink": "رابط InstaPay",
+      "instapayLinkPlaceholder": "https://ipn.eg/S/...",
+      "instapayLinkHint": "افتح تطبيق InstaPay ← اسمك ← مشاركة ← انسخ الرابط",
       "choose": "اختر...",
       "save": "حفظ",
       "saveSuccess": "تم الحفظ",
       "saveFailed": "فشل الحفظ",
-      "instapayPlaceholder": "الرقم اللي العميل هيحوّل عليه",
       "businessLogo": "لوجو البيزنس (اختياري)",
       "logoHint": "ارفع لوجو البيزنس (حد أقصى 5 ميغابايت)",
       "uploadLogo": "رفع اللوجو",
@@ -921,25 +897,6 @@
       "facebookPlaceholder": "مثلاً: facebook.com/yourbusiness",
       "instagramLabel": "انستجرام",
       "facebookLabel": "فيسبوك",
-      "maskedPlaceholder": "مثلاً: أ*** م*** أ** م***",
-      "maskedHint": "الاسم اللي بيظهر للعميل في تطبيق InstaPay قبل التأكيد",
-      "bankNames": [
-        "البنك الأهلي المصري",
-        "بنك مصر",
-        "البنك التجاري الدولي (CIB)",
-        "بنك QNB الأهلي",
-        "بنك القاهرة",
-        "HSBC مصر",
-        "البنك العربي الأفريقي الدولي",
-        "بنك فيصل الإسلامي",
-        "بنك البركة مصر",
-        "البنك العقاري المصري العربي",
-        "بنك تنمية الصادرات",
-        "مصرف أبو ظبي الإسلامي",
-        "بنك الإسكندرية",
-        "بنك قناة السويس",
-        "أخرى"
-      ],
       "categoryValues": [
         "Food & Beverage",
         "Clothing & Fashion",
@@ -1091,10 +1048,9 @@
       "instagram": "انستجرام",
       "facebook": "فيسبوك",
       "whatsapp": "واتساب",
-      "instapaySection": "بيانات InstaPay",
-      "instapayMethod": "طريقة الدفع",
-      "maskedName": "الاسم المقنّع",
-      "maskedNameHint": "الاسم اللي بيظهر للعميل في تطبيق InstaPay قبل التأكيد",
+      "instapaySection": "رابط InstaPay",
+      "instapayLink": "رابط الدفع",
+      "instapayLinkHint": "افتح تطبيق InstaPay ← اسمك ← مشاركة ← انسخ الرابط",
       "saveChanges": "حفظ التغييرات",
       "saving": "جاري الحفظ...",
       "saveSuccess": "تم تحديث الملف الشخصي",
@@ -1111,31 +1067,26 @@
       "food": {
         "product": "شوكولاتة كيك",
         "business": "حلويات سارة",
-        "masked": "س*** م*** أ** م***",
         "category": "حلويات ومخبوزات"
       },
       "clothing": {
         "product": "بنطلون جينز",
         "business": "بوتيك ناديا",
-        "masked": "ن*** أ*** د** ي***",
         "category": "ملابس وإكسسوارات"
       },
       "electronics": {
         "product": "كفر موبايل",
         "business": "تيك ستور",
-        "masked": "أ*** ح*** م** د***",
         "category": "إلكترونيات"
       },
       "services": {
         "product": "جلسة تصوير",
         "business": "ستوديو نور",
-        "masked": "ن*** و*** ر**",
         "category": "خدمات"
       },
       "other": {
         "product": "منتج تجريبي",
         "business": "متجر تجريبي",
-        "masked": "أ*** م*** أ** م***",
         "category": "أخرى"
       }
     }

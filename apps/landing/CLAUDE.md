@@ -1,5 +1,8 @@
 # Landing App — Claude Instructions
 
+## Design Skill (MANDATORY)
+For ALL frontend/UI work in this app, you MUST invoke the `frontend-design` skill before writing any UI code. This applies to any page, component, section, layout, form, or styled output — no exceptions.
+
 ## Stack
 - **Next.js 16.1.6** — App Router, port 3000
 - **React 19.2.4** + TypeScript 5.7.3

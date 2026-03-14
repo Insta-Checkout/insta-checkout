@@ -1,18 +1,14 @@
 "use client"
 
-import { useState } from "react"
-import { Copy, Check, ShieldCheck, Smartphone, ArrowLeftRight, Hash, CircleAlert } from "lucide-react"
+import { ExternalLink, Smartphone, CircleAlert } from "lucide-react"
 import { useTranslations } from "@/lib/locale-provider"
 import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
 
 interface StepOneProps {
   productName: string
   productImage?: string
   price: string
-  instaPayAccount: string
-  maskedName: string
+  instapayLink: string | null
   onProceed: () => void
 }
 
@@ -20,35 +16,22 @@ export function StepOne({
   productName,
   productImage,
   price,
-  instaPayAccount,
-  maskedName,
+  instapayLink,
   onProceed,
 }: StepOneProps) {
   const { t, get } = useTranslations()
-  const [copied, setCopied] = useState(false)
   const instructions = (get("checkout.step1.instructions") ?? []) as string[]
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(instaPayAccount)
-      setCopied(true)
-      toast.success(t("checkout.step1.accountCopied"))
-      setTimeout(() => setCopied(false), 2500)
-    } catch {
-      toast.error(t("checkout.step1.copyFailed"))
-    }
-  }
 
   return (
     <div className="flex flex-col gap-5 pb-28">
       {/* Order Details Card with Product Image */}
       <Card className="overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
         {productImage && (
-          <div className="relative w-full aspect-[16/10] bg-muted overflow-hidden">
+          <div className="relative w-full aspect-[16/10] bg-white overflow-hidden">
             <img
               src={productImage}
               alt={productName}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         )}
@@ -57,7 +40,7 @@ export function StepOne({
             <h3 className="font-bold text-foreground text-lg leading-tight">{productName}</h3>
             <p className="text-sm text-muted-foreground">{t("checkout.step1.paymentRequest")}</p>
           </div>
-          <div className="flex items-center gap-1.5 bg-[#0D9488]/10 text-[#0D9488] px-4 py-2.5 rounded-xl">
+          <div className="flex items-center gap-1.5 bg-[#EDE9FE] text-[#7C3AED] px-4 py-2.5 rounded-xl">
             <span className="text-2xl font-bold">{price}</span>
             <span className="text-sm font-semibold">{t("common.egpShort")}</span>
           </div>
@@ -75,85 +58,36 @@ export function StepOne({
         <CardContent className="py-5">
           <ol className="flex flex-col gap-3 text-sm text-foreground">
             <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center size-6 rounded-full bg-[#0D9488]/10 text-[#0D9488] text-xs font-bold shrink-0 mt-0.5">1</span>
+              <span className="flex items-center justify-center size-6 rounded-full bg-[#EDE9FE] text-[#7C3AED] text-xs font-bold shrink-0 mt-0.5">1</span>
               <span>{instructions[0] ?? ""}</span>
             </li>
             <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center size-6 rounded-full bg-[#0D9488]/10 text-[#0D9488] text-xs font-bold shrink-0 mt-0.5">2</span>
+              <span className="flex items-center justify-center size-6 rounded-full bg-[#EDE9FE] text-[#7C3AED] text-xs font-bold shrink-0 mt-0.5">2</span>
               <span>{instructions[1] ?? ""}</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="flex items-center justify-center size-6 rounded-full bg-[#0D9488]/10 text-[#0D9488] text-xs font-bold shrink-0 mt-0.5">
-                <ArrowLeftRight className="size-3" />
-              </span>
-              <span>{instructions[2] ?? ""}</span>
             </li>
           </ol>
         </CardContent>
       </Card>
 
-      {/* InstaPay Account Number — Copy Box */}
-      <Card className="border-[#E2E8F0] shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-        <CardContent className="py-5">
-          <div className="flex flex-col gap-3">
-            <label className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Hash className="size-4" />
-              {t("checkout.step1.instapayAccount")}
-            </label>
-            <div className="flex items-center gap-3 bg-[#F8FAFC] border border-dashed border-[#CBD5E1] rounded-xl p-4">
-              <span
-                className="flex-1 text-xl font-mono font-medium tracking-[1px] text-foreground text-left"
-                dir="ltr"
-              >
-                {instaPayAccount}
-              </span>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopy}
-                className={`shrink-0 gap-2 transition-all ${
-                  copied
-                    ? "bg-success text-success-foreground border-success hover:bg-success/90"
-                    : "border-[#0D9488]/30 text-[#0D9488] hover:bg-[#0D9488]/5"
-                }`}
-              >
-                {copied ? (
-                  <>
-                    <Check className="size-4" />
-                    <span>{t("common.done")}</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="size-4" />
-                    <span>{t("common.copy")}</span>
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
+      {/* Open InstaPay button */}
+      <Card className="border-[#E4D8F0] shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
+        <CardContent className="py-5 flex flex-col gap-3 items-center text-center">
+          <p className="text-sm text-muted-foreground">{t("checkout.step1.openInstapayHint")}</p>
+          {instapayLink ? (
+            <a
+              href={instapayLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full h-11 inline-flex items-center justify-center gap-2 rounded-xl bg-[#7C3AED] text-white font-bold text-sm hover:bg-[#6D28D9] transition-colors shadow-lg shadow-[#7C3AED]/25"
+            >
+              <ExternalLink className="size-4" />
+              {t("checkout.step1.openInstapayButton")}
+            </a>
+          ) : (
+            <p className="text-sm text-destructive">{t("checkout.step1.noInstapayLink")}</p>
+          )}
         </CardContent>
       </Card>
-
-      {/* Verification Hint — Trust Badge */}
-      <div className="bg-[#ECFDF5] border-s-[3px] border-[#10B981] rounded-lg p-4">
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-[#0D9488]">
-            <ShieldCheck className="size-5" />
-            <p className="text-sm font-bold">{t("checkout.step1.verifyTitle")}</p>
-          </div>
-          <p className="text-sm text-foreground leading-relaxed">
-            {t("checkout.step1.verifyIntro")}
-          </p>
-          <div className="bg-card rounded-xl p-4 border border-[#10B981]/20 text-center shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
-            <span className="text-lg font-bold font-mono tracking-wider text-[#0D9488]" dir="ltr">
-              {maskedName}
-            </span>
-          </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            {t("checkout.step1.verifyMatch")}
-          </p>
-        </div>
-      </div>
 
       {/* CTA — Fixed Bottom */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-t border-border px-4 pt-3 pb-6">
@@ -167,7 +101,7 @@ export function StepOne({
           <button
             type="button"
             onClick={onProceed}
-            className="w-full h-12 text-base font-bold rounded-xl bg-[#0D9488] text-card hover:bg-[#0F766E] shadow-lg inline-flex items-center justify-center transition-colors cursor-pointer"
+            className="w-full h-12 text-base font-bold rounded-xl bg-[#7C3AED] text-card hover:bg-[#6D28D9] shadow-lg shadow-[#7C3AED]/25 inline-flex items-center justify-center transition-colors cursor-pointer"
           >
             {t("checkout.step1.paidButton")}
           </button>

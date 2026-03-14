@@ -48,10 +48,8 @@ router.get("/", async (req: Request, res: Response) => {
       res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
       return
     }
-    const instapayInfo = seller.instapayInfo ?? { method: null, mobile: null, bankName: null, bankAccountNumber: null, ipaAddress: null }
-    const hasInstapayInfo = !!(instapayInfo.method)
     const hasSocialLinks = !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook)
-    const onboardingComplete = seller.onboardingComplete ?? (hasInstapayInfo && !!seller.maskedFullName && !!seller.category && hasSocialLinks)
+    const onboardingComplete = seller.onboardingComplete ?? (!!seller.instapayLink && !!seller.category && hasSocialLinks)
     res.json({
       id: seller._id,
       fullName: seller.fullName ?? null,
@@ -61,17 +59,13 @@ router.get("/", async (req: Request, res: Response) => {
       whatsappNumber: seller.whatsappNumber ?? null,
       whatsappVerified: seller.whatsappVerified,
       category: seller.category ?? null,
-      instapayInfo,
-      instapayNumber: seller.instapayNumber ?? null,
-      maskedFullName: seller.maskedFullName ?? null,
+      instapayLink: seller.instapayLink ?? null,
       logoUrl: seller.logoUrl ?? null,
       socialLinks: seller.socialLinks ?? { instagram: "", facebook: "", whatsapp: "" },
       onboardingComplete,
-      onboardingProgress: seller.onboardingProgress ?? {
+      onboardingProgress: {
         category: !!seller.category,
-        instapayInfo: hasInstapayInfo,
-        instapayNumber: hasInstapayInfo || !!seller.instapayNumber,
-        maskedName: !!seller.maskedFullName,
+        instapayLink: !!seller.instapayLink,
         logo: !!seller.logoUrl,
         socialLinks: !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook || seller.socialLinks?.whatsapp),
       },
@@ -108,30 +102,18 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
   if (typeof body.category === "string" && body.category.trim()) {
     updates.category = body.category.trim()
   }
-  if (body.instapayInfo && typeof body.instapayInfo === "object") {
-    const info = body.instapayInfo as Record<string, unknown>
-    const method = typeof info.method === "string" ? info.method : null
-    if (method === "mobile" || method === "bank" || method === "ipa") {
-      updates.instapayInfo = {
-        method,
-        mobile: method === "mobile" && typeof info.mobile === "string" ? info.mobile.trim() : null,
-        bankName: method === "bank" && typeof info.bankName === "string" ? info.bankName.trim() : null,
-        bankAccountNumber: method === "bank" && typeof info.bankAccountNumber === "string" ? info.bankAccountNumber.trim() : null,
-        ipaAddress: method === "ipa" && typeof info.ipaAddress === "string" ? info.ipaAddress.trim() : null,
-      }
+  if (typeof body.instapayLink === "string") {
+    const val = body.instapayLink.trim()
+    if (val) {
+      try {
+        const url = new URL(val)
+        if (url.hostname === "ipn.eg" || url.hostname === "instapay.eg") {
+          updates.instapayLink = val
+        }
+      } catch { /* ignore invalid URLs */ }
+    } else {
+      updates.instapayLink = null
     }
-  }
-  // Legacy support
-  if (typeof body.instapayNumber === "string" && body.instapayNumber.trim()) {
-    updates.instapayNumber = body.instapayNumber.trim()
-    // Auto-migrate to instapayInfo if not already set
-    if (!updates.instapayInfo) {
-      updates.instapayInfo = { method: "mobile", mobile: body.instapayNumber.trim(), bankName: null, bankAccountNumber: null, ipaAddress: null }
-    }
-  }
-  if (typeof body.maskedFullName === "string" && body.maskedFullName.trim()) {
-    const val = body.maskedFullName.trim()
-    if (val.includes("*")) updates.maskedFullName = val
   }
   if (typeof body.logoUrl === "string") {
     updates.logoUrl = body.logoUrl.trim() || null
@@ -157,11 +139,9 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
     }
     const now = new Date()
     const merged = { ...seller, ...updates, updatedAt: now } as Record<string, unknown>
-    const mergedInstapayInfo = merged.instapayInfo as { method?: string } | undefined
-    const hasInstapayInfo = !!(mergedInstapayInfo?.method)
     const mergedSocialLinks = merged.socialLinks as { instagram?: string; facebook?: string } | undefined
     const hasSocialLinks = !!(mergedSocialLinks?.instagram || mergedSocialLinks?.facebook)
-    const requiredComplete = !!(hasInstapayInfo && merged.maskedFullName && merged.category && hasSocialLinks)
+    const requiredComplete = !!(merged.instapayLink && merged.category && hasSocialLinks)
     updates.onboardingComplete = requiredComplete
     updates.updatedAt = now
 
@@ -181,15 +161,12 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
       )
     }
     const doc = result as Record<string, unknown>
-    const docInstapayInfo = doc.instapayInfo as { method?: string } | undefined
     res.json({
       id: doc._id,
       onboardingComplete: (doc.onboardingComplete as boolean) ?? requiredComplete,
       onboardingProgress: {
         category: !!doc.category,
-        instapayInfo: !!(docInstapayInfo?.method),
-        instapayNumber: !!(docInstapayInfo?.method) || !!doc.instapayNumber,
-        maskedName: !!doc.maskedFullName,
+        instapayLink: !!doc.instapayLink,
         logo: !!(doc.logoUrl as string | undefined),
         socialLinks: (() => {
           const sl = doc.socialLinks as { instagram?: string; facebook?: string; whatsapp?: string } | undefined
@@ -237,22 +214,18 @@ router.patch("/", async (req: Request, res: Response) => {
   if (typeof body.category === "string") {
     updates.category = body.category.trim() || null
   }
-  if (body.instapayInfo && typeof body.instapayInfo === "object") {
-    const info = body.instapayInfo as Record<string, unknown>
-    const method = typeof info.method === "string" ? info.method : null
-    if (method === "mobile" || method === "bank" || method === "ipa") {
-      updates.instapayInfo = {
-        method,
-        mobile: method === "mobile" && typeof info.mobile === "string" ? info.mobile.trim() : null,
-        bankName: method === "bank" && typeof info.bankName === "string" ? info.bankName.trim() : null,
-        bankAccountNumber: method === "bank" && typeof info.bankAccountNumber === "string" ? info.bankAccountNumber.trim() : null,
-        ipaAddress: method === "ipa" && typeof info.ipaAddress === "string" ? info.ipaAddress.trim() : null,
-      }
+  if (typeof body.instapayLink === "string") {
+    const val = body.instapayLink.trim()
+    if (val) {
+      try {
+        const url = new URL(val)
+        if (url.hostname === "ipn.eg" || url.hostname === "instapay.eg") {
+          updates.instapayLink = val
+        }
+      } catch { /* ignore invalid URLs */ }
+    } else {
+      updates.instapayLink = null
     }
-  }
-  if (typeof body.maskedFullName === "string") {
-    const val = body.maskedFullName.trim()
-    if (!val || val.includes("*")) updates.maskedFullName = val || null
   }
   if (typeof body.logoUrl === "string") {
     updates.logoUrl = body.logoUrl.trim() || null
@@ -283,7 +256,6 @@ router.patch("/", async (req: Request, res: Response) => {
       res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
       return
     }
-    const instapayInfo = result.instapayInfo as { method?: string } | undefined
     res.json({
       id: result._id,
       fullName: result.fullName ?? null,
@@ -292,15 +264,13 @@ router.patch("/", async (req: Request, res: Response) => {
       email: result.email,
       whatsappNumber: result.whatsappNumber ?? null,
       category: result.category ?? null,
-      instapayInfo: result.instapayInfo ?? { method: null, mobile: null, bankName: null, bankAccountNumber: null, ipaAddress: null },
-      maskedFullName: result.maskedFullName ?? null,
+      instapayLink: result.instapayLink ?? null,
       logoUrl: result.logoUrl ?? null,
       socialLinks: result.socialLinks ?? { instagram: "", facebook: "", whatsapp: "" },
       onboardingComplete: result.onboardingComplete ?? false,
       onboardingProgress: {
         category: !!result.category,
-        instapayInfo: !!(instapayInfo?.method),
-        maskedName: !!result.maskedFullName,
+        instapayLink: !!result.instapayLink,
         logo: !!result.logoUrl,
         socialLinks: !!(result.socialLinks?.instagram || result.socialLinks?.facebook || result.socialLinks?.whatsapp),
       },

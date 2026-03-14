@@ -26,11 +26,6 @@ export function SellerHeader({ businessName, categoryTag, logoUrl }: SellerHeade
         <h1 className="text-xl font-bold text-foreground text-balance text-center">
           {businessName}
         </h1>
-        {categoryTag && (
-          <span className="text-sm text-muted-foreground">
-            {categoryTag}
-          </span>
-        )}
       </div>
     </header>
   )

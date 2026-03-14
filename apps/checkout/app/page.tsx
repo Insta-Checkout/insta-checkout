@@ -12,8 +12,7 @@ const checkoutData = {
   productNameEn: "Chocolate cake",
   productImage: "/images/chocolate-cake.jpg",
   price: "300",
-  instaPayAccount: "sarah.sweets@instapay",
-  maskedName: "س*** م*** أ** م***",
+  instapayLink: "https://ipn.eg/S/demo",
   whatsappLink: "https://wa.me/201012345678",
 }
 
@@ -27,8 +26,7 @@ export default function CheckoutPage() {
       productNameEn={checkoutData.productNameEn}
       productImage={checkoutData.productImage}
       price={checkoutData.price}
-      instaPayAccount={checkoutData.instaPayAccount}
-      maskedName={checkoutData.maskedName}
+      instapayLink={checkoutData.instapayLink}
       whatsappLink={checkoutData.whatsappLink}
     />
   )

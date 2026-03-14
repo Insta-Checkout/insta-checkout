@@ -11,14 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 
-type InstapayInfo = {
-  method: "mobile" | "bank" | "ipa" | null;
-  mobile: string | null;
-  bankName: string | null;
-  bankAccountNumber: string | null;
-  ipaAddress: string | null;
-};
-
 type SellerProfile = {
   id: string;
   fullName: string | null;
@@ -26,13 +18,10 @@ type SellerProfile = {
   email: string;
   whatsappNumber: string | null;
   category: string | null;
-  instapayInfo: InstapayInfo;
-  maskedFullName: string | null;
+  instapayLink: string | null;
   logoUrl: string | null;
   socialLinks: { instagram: string; facebook: string; whatsapp: string };
 };
-
-type InstapayMethod = "mobile" | "bank" | "ipa" | "";
 
 export function ProfilePageContent() {
   const { t, get, locale } = useTranslations();
@@ -44,12 +33,7 @@ export function ProfilePageContent() {
   const [businessName, setBusinessName] = useState("");
   const [phone, setPhone] = useState("");
   const [category, setCategory] = useState("");
-  const [instapayMethod, setInstapayMethod] = useState<InstapayMethod>("");
-  const [instapayMobile, setInstapayMobile] = useState("");
-  const [instapayBankName, setInstapayBankName] = useState("");
-  const [instapayBankAccount, setInstapayBankAccount] = useState("");
-  const [instapayIpa, setInstapayIpa] = useState("");
-  const [maskedFullName, setMaskedFullName] = useState("");
+  const [instapayLink, setInstapayLink] = useState("");
   const [instagram, setInstagram] = useState("");
   const [facebook, setFacebook] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
@@ -67,13 +51,7 @@ export function ProfilePageContent() {
       setBusinessName(data.businessName ?? "");
       setPhone(data.whatsappNumber ? data.whatsappNumber.replace(/^20/, "0") : "");
       setCategory(data.category ?? "");
-      const info = data.instapayInfo ?? {};
-      setInstapayMethod((info.method ?? "") as InstapayMethod);
-      setInstapayMobile(info.mobile ?? data.instapayNumber ?? "");
-      setInstapayBankName(info.bankName ?? "");
-      setInstapayBankAccount(info.bankAccountNumber ?? "");
-      setInstapayIpa(info.ipaAddress ?? "");
-      setMaskedFullName(data.maskedFullName ?? "");
+      setInstapayLink(data.instapayLink ?? "");
       setInstagram(data.socialLinks?.instagram ?? "");
       setFacebook(data.socialLinks?.facebook ?? "");
       setWhatsapp(data.socialLinks?.whatsapp ?? "");
@@ -97,21 +75,12 @@ export function ProfilePageContent() {
           : `20${phone.trim().replace(/^0/, "")}`
         : null;
 
-      const instapayInfo: Record<string, unknown> = { method: instapayMethod || null };
-      if (instapayMethod === "mobile") instapayInfo.mobile = instapayMobile;
-      if (instapayMethod === "bank") {
-        instapayInfo.bankName = instapayBankName;
-        instapayInfo.bankAccountNumber = instapayBankAccount;
-      }
-      if (instapayMethod === "ipa") instapayInfo.ipaAddress = instapayIpa;
-
       const body: Record<string, unknown> = {
         fullName: fullName.trim() || null,
         businessName: businessName.trim(),
         whatsappNumber: phoneNorm,
         category: category || null,
-        instapayInfo,
-        maskedFullName: maskedFullName.trim() || null,
+        instapayLink: instapayLink.trim() || null,
         socialLinks: { instagram, facebook, whatsapp },
       };
 
@@ -136,7 +105,6 @@ export function ProfilePageContent() {
 
   const categoryValues = get<string[]>("dashboard.onboarding.categoryValues") ?? [];
   const categoryLabels = get<string[]>("dashboard.onboarding.categoryLabels") ?? [];
-  const bankNames = get<string[]>("dashboard.onboarding.bankNames") ?? [];
 
   if (loading) {
     return (
@@ -234,95 +202,23 @@ export function ProfilePageContent() {
         </CardContent>
       </Card>
 
-      {/* InstaPay Info */}
+      {/* InstaPay Link */}
       <Card>
         <CardHeader>
           <CardTitle className="font-cairo text-lg">{t("dashboard.profile.instapaySection")}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           <div className="space-y-2">
-            <Label className="font-cairo">{t("dashboard.profile.instapayMethod")}</Label>
-            <div className="grid grid-cols-3 gap-2">
-              {(["mobile", "bank", "ipa"] as const).map((method) => (
-                <button
-                  key={method}
-                  type="button"
-                  onClick={() => setInstapayMethod(method)}
-                  className={`rounded-lg border px-3 py-2 text-sm font-cairo transition-colors ${
-                    instapayMethod === method
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border hover:border-primary/30"
-                  }`}
-                >
-                  {t(`dashboard.onboarding.method${method.charAt(0).toUpperCase() + method.slice(1)}`)}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {instapayMethod === "mobile" && (
-            <div className="space-y-2">
-              <Label className="font-cairo">{t("dashboard.onboarding.mobileNumber")}</Label>
-              <Input
-                value={instapayMobile}
-                onChange={(e) => setInstapayMobile(e.target.value)}
-                placeholder={t("dashboard.onboarding.mobilePlaceholder")}
-                className="font-mono"
-                dir="ltr"
-              />
-            </div>
-          )}
-
-          {instapayMethod === "bank" && (
-            <div className="space-y-3">
-              <div className="space-y-2">
-                <Label className="font-cairo">{t("dashboard.onboarding.bankName")}</Label>
-                <select
-                  value={instapayBankName}
-                  onChange={(e) => setInstapayBankName(e.target.value)}
-                  className="w-full h-10 rounded-lg border border-input px-3 font-cairo"
-                >
-                  <option value="">{t("dashboard.onboarding.bankNamePlaceholder")}</option>
-                  {bankNames.map((name) => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label className="font-cairo">{t("dashboard.onboarding.bankAccountNumber")}</Label>
-                <Input
-                  value={instapayBankAccount}
-                  onChange={(e) => setInstapayBankAccount(e.target.value)}
-                  placeholder={t("dashboard.onboarding.bankAccountPlaceholder")}
-                  className="font-mono"
-                  dir="ltr"
-                />
-              </div>
-            </div>
-          )}
-
-          {instapayMethod === "ipa" && (
-            <div className="space-y-2">
-              <Label className="font-cairo">{t("dashboard.onboarding.ipaAddress")}</Label>
-              <Input
-                value={instapayIpa}
-                onChange={(e) => setInstapayIpa(e.target.value)}
-                placeholder={t("dashboard.onboarding.ipaPlaceholder")}
-                dir="ltr"
-              />
-            </div>
-          )}
-
-          <div className="space-y-2 border-t border-border pt-3">
-            <Label className="font-cairo">{t("dashboard.profile.maskedName")}</Label>
+            <Label className="font-cairo">{t("dashboard.profile.instapayLink")}</Label>
             <Input
-              value={maskedFullName}
-              onChange={(e) => setMaskedFullName(e.target.value)}
-              placeholder={t("dashboard.onboarding.maskedPlaceholder")}
-              className="font-cairo"
+              value={instapayLink}
+              onChange={(e) => setInstapayLink(e.target.value)}
+              placeholder={t("dashboard.onboarding.instapayLinkPlaceholder")}
+              className="font-mono font-cairo"
+              dir="ltr"
             />
             <p className="text-xs text-muted-foreground font-cairo">
-              {t("dashboard.profile.maskedNameHint")}
+              {t("dashboard.profile.instapayLinkHint")}
             </p>
           </div>
         </CardContent>
