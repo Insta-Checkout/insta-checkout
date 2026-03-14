@@ -1,0 +1,23 @@
+{
+  "skill_name": "night-shift",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Run night shift",
+      "expected_output": "Agent should confirm pre-flight, query Notion Dev Launch Board for Groomed tasks, pick bugs first by priority, and begin the autonomous loop",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Start autonomous mode and work through my Notion tasks",
+      "expected_output": "Agent should trigger the night-shift skill, confirm with user, then begin the Phase 0 initialization (pull main, read config, create session branch)",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I'm heading to bed, can you work through the groomed tasks on the board?",
+      "expected_output": "Agent should recognize this as a night-shift request, confirm the pre-flight checklist, and begin autonomous task processing from Notion",
+      "files": []
+    }
+  ]
+}

@@ -78,6 +78,18 @@ Follow these rules unless the user explicitly instructs otherwise.
 
 - **Project-scoped only**: When creating any new skill, always create it under `.claude/skills/` in this project — never in the global `~/.claude/skills/` directory. All skills for Insta Checkout must be project-specific.
 
+## Night Shift Mode
+
+When running in night shift mode (triggered via `/night-shift` skill):
+- The agent operates autonomously following `.claude/skills/night-shift/SKILL.md`
+- Commits and pushes to feature branches ARE allowed (single branch per session: `claude/night-shift-YYYY-MM-DD`)
+- Creating PRs (not draft) IS allowed at session end
+- Notion task status updates ARE allowed (only to "In Progress" or "🔍 To Be Reviewed")
+- Writing Agent Reports on Notion task cards IS allowed
+- All other Critical Rules still apply: **no merge, no deploy**
+- The agent MUST leave a comment or Agent Report on every Notion task it touches
+- The agent MUST NOT modify tasks it didn't work on
+
 ## Git & Commits
 
 ### Pre-commit Hook Strategy
