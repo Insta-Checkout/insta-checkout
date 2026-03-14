@@ -28,3 +28,4 @@ apps/backend/uploads/
 __pycache__/
 *.pyc
 
+.gstack/

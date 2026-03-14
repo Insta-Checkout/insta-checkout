@@ -82,6 +82,12 @@ src/
 - Constants: `SCREAMING_SNAKE_CASE`
 - Route paths: kebab-case (e.g., `/payment-links`)
 
+## API Documentation Sync
+- **Every endpoint change must be reflected in the [API Documentation Notion page](https://www.notion.so/karimtamer/API-Documentation-1cc606c6eb024bffa94633079f005478?t=323c92f98d9c804aa65200a9fc7b8c52)**
+- This includes: adding new endpoints, editing existing endpoints (path, method, request/response body, auth requirements), and deleting endpoints
+- After any route modification, update the Notion page using the Notion MCP tools before marking the task as complete
+- Do not skip this step — the Notion page is the single source of truth for API consumers
+
 ## What to Avoid
 - No `any` types
 - No synchronous blocking operations

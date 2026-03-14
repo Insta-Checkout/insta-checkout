@@ -10,7 +10,9 @@
     "done": "تم",
     "copy": "نسخ",
     "closeMenu": "إغلاق القائمة",
-    "openMenu": "فتح القائمة"
+    "openMenu": "فتح القائمة",
+    "showPassword": "إظهار كلمة السر",
+    "hidePassword": "إخفاء كلمة السر"
   },
   "landing": {
     "meta": {

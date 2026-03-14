@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useTranslations } from "@/lib/locale-provider";
 import { auth } from "@/lib/firebase";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader2, Mail, KeyRound } from "lucide-react";
@@ -459,9 +460,8 @@ export function OnboardingForm() {
                     {t("onboard.step2.forgotPassword")}
                   </button>
                 </div>
-                <Input
+                <PasswordInput
                   id="password"
-                  type="password"
                   placeholder={t("onboard.step2.placeholders.passwordSignin")}
                   className="h-12 rounded-lg"
                   dir="ltr"
@@ -599,9 +599,8 @@ export function OnboardingForm() {
 
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">{t("onboard.step2.password")}</Label>
-                  <Input
+                  <PasswordInput
                     id="signup-password"
-                    type="password"
                     placeholder={t("onboard.step2.placeholders.passwordSignup")}
                     className="h-12 rounded-lg"
                     dir="ltr"

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { motion } from "framer-motion";
 import { useTranslations } from "@/lib/locale-provider";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -276,9 +277,8 @@ export function StepTwo({ onBack, onSubmit }: StepTwoProps) {
                   {t("onboard.step2.forgotPassword")}
                 </button>
               </div>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 placeholder={authMode === "signup" ? t("onboard.step2.placeholders.passwordSignup") : t("onboard.step2.placeholders.passwordSignin")}
                 className="h-12 rounded-lg"
                 dir="ltr"

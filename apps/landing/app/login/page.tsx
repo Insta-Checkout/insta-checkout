@@ -9,6 +9,7 @@ import { z } from "zod";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "@/lib/locale-provider";
 import { Input } from "@/components/ui/input";
+import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { CreditCard } from "lucide-react";
@@ -192,9 +193,8 @@ export default function LoginPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="password">{t("onboard.step3.password")}</Label>
-                <Input
+                <PasswordInput
                   id="password"
-                  type="password"
                   placeholder={t("onboard.step3.placeholders.passwordSignin")}
                   className="h-12 rounded-lg"
                   dir="ltr"

@@ -24,6 +24,8 @@ name: Sync PR Backend to Vercel
 on:
   pull_request:
     types: [opened, synchronize]
+    paths:
+      - 'apps/backend/**'
 
 jobs:
   sync:
