@@ -81,12 +81,22 @@ If no Groomed tasks remain, skip to Phase 8 (Session End).
 
 1. Update the task status to "🚧 In Progress" via `notion-update-page`
 2. Fetch the full task page content — this IS the spec
+3. **Check for comments** — Use `notion-get-comments` on the task page. If there are comments from the user (Karim), this may be a previously implemented task that needs adjustments:
+   - Read the user's comment carefully
+   - Check the existing implementation in the codebase
+   - Apply the changes requested in the comment
+   - **Reply with a Notion comment** (via `notion-create-comment`) explaining what you changed — do NOT write an Agent Report for comment-driven changes
+   - Update the task status to "🔍 To Be Reviewed" and move to the next task
 
 ---
 
 ## Phase 2: Load Context
 
 The task's Notion page body contains the spec. Read it carefully.
+
+### Check for `@agent` instructions
+
+Scan the task description for any text prefixed with `@agent`. These are direct instructions from the user to the agent — they may ask for information, request a specific approach, or add constraints. Track all `@agent` instructions found and address each one during implementation. The results will be included in the Agent Report under an **"Agent Answers"** section (see Phase 7).
 
 Based on the task's **Category**, load the relevant app instructions and Notion reference docs:
 
@@ -231,6 +241,30 @@ Write the QA report to `.gstack/qa-reports/qa-report-night-shift-TASK_ID.md` wit
 - Console errors found
 - Screenshot paths
 
+### Add regression tests
+
+After all task-specific tests pass, add **general regression tests** to the global test suite at `.gstack/regression-tests/`. These tests should be reusable and runnable independently of the current task.
+
+1. **Read the existing regression suite** — check `.gstack/regression-tests/regression-suite.md` for existing test cases (create the file if it doesn't exist)
+2. **Add 1-3 new regression test cases** based on what this task touched:
+   - Focus on the happy path of the feature/fix — something that should always work
+   - Write each test as a reproducible sequence of headless browser commands
+   - Include the expected outcome for each step
+3. **Append to the suite file** — don't overwrite existing tests. Format:
+
+```markdown
+### RT-<number>: <short description>
+- **Added by:** Task #<task-id>
+- **Route:** /path/to/test
+- **Steps:**
+  1. Navigate to <URL>
+  2. <interaction>
+  3. Assert <expected outcome>
+- **Pass criteria:** <what constitutes a pass>
+```
+
+4. **Run all existing regression tests** to make sure nothing is broken. Log any failures.
+
 ### Cleanup
 
 Kill the dev server when done:
@@ -310,6 +344,12 @@ Use `notion-update-page` to append a toggle heading "Agent Report" to the task p
 | Code Quality | APPROVE/REQUEST_CHANGES | <brief note> |
 | Performance | APPROVE/REQUEST_CHANGES | <brief note> |
 | Human Advocate | APPROVE/REQUEST_CHANGES | <brief note> |
+
+### Agent Answers
+<!-- Only include this section if the task description contained @agent instructions -->
+| Instruction | Answer |
+|-------------|--------|
+| <@agent instruction from the spec> | <what the agent did or found> |
 
 ### Blockers / Follow-ups
 - <any unresolved issues or things for human review>
