@@ -889,6 +889,17 @@
       "generateLink": "Generate Link",
       "linkGenerated": "Link generated"
     },
+    "recentLinks": {
+      "title": "Recent payment links",
+      "refresh": "Refresh",
+      "emptyTitle": "No payment links yet",
+      "emptySubtitle": "Create your first product and generate a payment link to share with customers.",
+      "createFirst": "Create your first link",
+      "confirm": "Confirm",
+      "confirmSuccess": "Payment confirmed",
+      "confirmFailed": "Failed to confirm payment",
+      "viewAll": "View all"
+    },
     "onboarding": {
       "completeTitle": "Complete your profile to activate payment links",
       "progress": "{done} of {total} — {pct}%",

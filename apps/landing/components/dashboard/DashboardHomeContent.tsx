@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OnboardingChecklist } from "./OnboardingChecklist";
 import { QuickProductsRow } from "./QuickProductsRow";
+import { RecentLinksWidget } from "./RecentLinksWidget";
 import type { QuickProduct } from "./QuickProductsRow";
 
 type Analytics = {
@@ -28,15 +29,6 @@ type Analytics = {
   aov: number;
   activeLinksCount: number;
   revenueOverTime: { date: string; revenue: number; payments: number }[];
-};
-
-type ConfirmedPaymentItem = {
-  id: string;
-  productName: string;
-  price: number;
-  status: string;
-  confirmedAt: string | null;
-  createdAt: string;
 };
 
 function formatEgp(n: number, egpShort: string, locale: string): string {
@@ -102,7 +94,6 @@ function getDateRange(preset: DatePreset, customFrom?: string, customTo?: string
 export function DashboardHomeContent() {
   const { t, locale } = useTranslations();
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
-  const [confirmedPayments, setConfirmedPayments] = useState<ConfirmedPaymentItem[]>([]);
   const [quickProducts, setQuickProducts] = useState<QuickProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -124,18 +115,11 @@ export function DashboardHomeContent() {
         customTo || undefined
       );
       try {
-        const [analRes, linksRes] = await Promise.all([
-          fetchWithAuth(
-            `${getBackendUrl()}/sellers/me/analytics?from=${from}&to=${to}`,
-            {},
-            getToken
-          ),
-          fetchWithAuth(
-            `${getBackendUrl()}/sellers/me/payment-links?status=confirmed&limit=10`,
-            {},
-            getToken
-          ),
-        ]);
+        const analRes = await fetchWithAuth(
+          `${getBackendUrl()}/sellers/me/analytics?from=${from}&to=${to}`,
+          {},
+          getToken
+        );
 
         if (!analRes.ok) {
           if (analRes.status === 401) return;
@@ -147,28 +131,14 @@ export function DashboardHomeContent() {
               activeLinksCount: 0,
               revenueOverTime: [],
             });
-            setConfirmedPayments([]);
             setLoading(false);
             return;
           }
           throw new Error(`Analytics: ${analRes.status}`);
         }
-        if (!linksRes.ok) {
-          if (linksRes.status === 401) return;
-          if (linksRes.status === 404) {
-            const analData = await analRes.json();
-            setAnalytics(analData);
-            setConfirmedPayments([]);
-            setLoading(false);
-            return;
-          }
-          throw new Error(`Payment links: ${linksRes.status}`);
-        }
 
         const analData: Analytics = await analRes.json();
-        const linksData = await linksRes.json();
         setAnalytics(analData);
-        setConfirmedPayments(linksData.items ?? []);
       } catch (e) {
         setError(e instanceof Error ? e.message : t("dashboard.home.loadFailed"));
       } finally {
@@ -198,14 +168,6 @@ export function DashboardHomeContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const statusLabels: Record<string, string> = {
-    confirmed: t("dashboard.links.confirmed"),
-    paid: t("dashboard.links.paid"),
-    active: t("dashboard.links.active"),
-    cancelled: t("dashboard.links.cancelled"),
-    expired: t("dashboard.links.expired"),
-  };
-
   if (error) {
     return (
       <div className="space-y-6">
@@ -226,7 +188,7 @@ export function DashboardHomeContent() {
     );
   }
 
-  const isEmpty = !loading && analytics && analytics.totalPayments === 0 && confirmedPayments.length === 0;
+  const isEmpty = !loading && analytics && analytics.totalPayments === 0;
 
   return (
     <div className="space-y-8">
@@ -396,60 +358,7 @@ export function DashboardHomeContent() {
           </CardContent>
         </Card>
 
-        <Card className="border-[#E4D8F0] shadow-sm">
-          <CardHeader>
-            <CardTitle className="font-cairo text-[#1E0A3C]">{t("dashboard.home.latestConfirmed")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-12 w-full" />
-                ))}
-              </div>
-            ) : confirmedPayments.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="mb-4 rounded-full bg-[#EDE9FE] p-3">
-                  <Package className="h-6 w-6 text-[#7C3AED]" />
-                </div>
-                <h3 className="mb-1 text-base font-semibold text-[#1E0A3C] font-cairo">
-                  {t("dashboard.home.startJourney")}
-                </h3>
-                <p className="mb-4 max-w-xs text-xs text-[#6B5B7B] font-cairo">
-                  {t("dashboard.home.startJourneySubtitle")}
-                </p>
-                <Link href="/dashboard/products">
-                  <Button variant="outline" size="sm" className="gap-2 font-cairo border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA] cursor-pointer">
-                    <Package className="h-3 w-3" />
-                    {t("dashboard.home.addNewProduct")}
-                  </Button>
-                </Link>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                {confirmedPayments.map((p) => (
-                  <div
-                    key={p.id}
-                    className="flex items-center justify-between rounded-lg border border-[#E4D8F0] px-3 py-2.5 bg-white hover:bg-[#F3EEFA] transition-colors"
-                  >
-                    <div>
-                      <p className="font-medium text-[#1E0A3C] font-cairo">
-                        {p.productName}
-                      </p>
-                      <p className="text-sm text-[#6B5B7B] font-cairo">
-                        {formatEgp(p.price, egpShort, locale)} ·{" "}
-                        {statusLabels[p.status] ?? p.status}
-                      </p>
-                    </div>
-                    <span className="text-xs text-[#6B5B7B] font-cairo">
-                      {new Date(p.confirmedAt ?? p.createdAt).toLocaleDateString(locale === "ar" ? "ar-EG" : "en-GB")}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        <RecentLinksWidget />
       </div>
     </div>
   );

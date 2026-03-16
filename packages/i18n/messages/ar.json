@@ -889,6 +889,17 @@
       "generateLink": "إنشاء لينك",
       "linkGenerated": "تم إنشاء اللينك"
     },
+    "recentLinks": {
+      "title": "آخر لينكات الدفع",
+      "refresh": "تحديث",
+      "emptyTitle": "مفيش لينكات دفع لسه",
+      "emptySubtitle": "أنشئ أول منتج وولّد لينك دفع لمشاركته مع العملاء.",
+      "createFirst": "أنشئ أول لينك",
+      "confirm": "أكّد",
+      "confirmSuccess": "تم تأكيد الدفع",
+      "confirmFailed": "فشل التأكيد",
+      "viewAll": "عرض الكل"
+    },
     "onboarding": {
       "completeTitle": "أكمل بياناتك لتفعيل لينكات الدفع",
       "progress": "{done} من {total} — {pct}%",
