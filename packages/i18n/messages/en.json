@@ -876,7 +876,11 @@
       "startJourney": "Start your journey",
       "startJourneySubtitle": "Create your first product and share it with customers to start receiving payments.",
       "addNewProduct": "Add new product",
-      "latestConfirmed": "Latest confirmed payments"
+      "latestConfirmed": "Latest confirmed payments",
+      "yourProducts": "Your Products",
+      "showAllProducts": "Show All Products",
+      "generateLink": "Generate Link",
+      "linkGenerated": "Link generated"
     },
     "onboarding": {
       "completeTitle": "Complete your profile to activate payment links",

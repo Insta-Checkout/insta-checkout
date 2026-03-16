@@ -876,7 +876,11 @@
       "startJourney": "ابدأ رحلتك",
       "startJourneySubtitle": "أنشئ منتجك الأول وشاركه مع عملائك لتبدأ في استقبال المدفوعات.",
       "addNewProduct": "إضافة منتج جديد",
-      "latestConfirmed": "أحدث المدفوعات المؤكدة"
+      "latestConfirmed": "أحدث المدفوعات المؤكدة",
+      "yourProducts": "منتجاتك",
+      "showAllProducts": "عرض كل المنتجات",
+      "generateLink": "إنشاء لينك",
+      "linkGenerated": "تم إنشاء اللينك"
     },
     "onboarding": {
       "completeTitle": "أكمل بياناتك لتفعيل لينكات الدفع",

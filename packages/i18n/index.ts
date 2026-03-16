@@ -10,7 +10,7 @@ import arMessages from "./messages/ar.json";
 export type Locale = "en" | "ar";
 
 export const LOCALES: Locale[] = ["en", "ar"];
-export const DEFAULT_LOCALE: Locale = "ar";
+export const DEFAULT_LOCALE: Locale = "en";
 
 export const LOCALE_DIR: Record<Locale, "ltr" | "rtl"> = {
   en: "ltr",

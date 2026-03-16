@@ -57,7 +57,7 @@ export function UserMenu({ name, email, photoURL }: Props) {
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-56 rounded-xl border border-[#E4D8F0] bg-white py-1 shadow-lg z-50">
+        <div className="absolute end-0 top-full mt-1 w-56 rounded-xl border border-[#E4D8F0] bg-white py-1 shadow-lg z-50">
           <div className="px-3 py-2 border-b border-[#E4D8F0]">
             <p className="text-sm font-medium text-[#1E0A3C] font-cairo truncate">{name}</p>
             <p className="text-xs text-[#6B5B7B] truncate">{email}</p>

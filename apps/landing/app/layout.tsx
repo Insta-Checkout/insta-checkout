@@ -4,7 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { FirebaseAnalytics } from '@/components/firebase-analytics'
 import { LocaleProvider } from '@/lib/locale-provider'
 import { LocalePersist } from '@/components/locale-persist'
-import { Toaster } from '@/components/ui/sonner'
+import { LocaleAwareToaster } from '@/components/locale-aware-toaster'
 import './globals.css'
 
 const cairo = Cairo({
@@ -61,12 +61,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="en" dir="ltr" suppressHydrationWarning data-scroll-behavior="smooth">
       <body className={`${cairo.variable} ${inter.variable} ${outfit.variable} ${jetbrainsMono.variable} ${plusJakarta.variable} font-sans antialiased`}>
         <LocaleProvider>
           <LocalePersist />
           {children}
-          <Toaster position="bottom-center" dir="rtl" />
+          <LocaleAwareToaster />
           <Analytics />
           <FirebaseAnalytics />
         </LocaleProvider>
