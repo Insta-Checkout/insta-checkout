@@ -372,6 +372,18 @@ Update the Notion task status to "🔍 To Be Reviewed" via `notion-update-page`.
 
 Read `max_tasks` from config.md. If you've completed that many tasks, proceed to session end.
 
+### Large task detection
+
+Before starting a task, estimate its scope. If a task involves **scaffolding a new app**, **creating 10+ new files**, or would consume more than ~40% of remaining context, do NOT skip it — instead:
+
+1. Commit and push all completed work so far
+2. Create the PR for completed tasks
+3. Stop caffeinate and sleep the Mac
+4. **Start a fresh conversation** to tackle the large task with a full context window
+5. In the fresh session, continue on the same branch and pick up where you left off
+
+This prevents half-finished work from context exhaustion.
+
 ### If continuing
 
 Go back to **Phase 1** to pick the next task.
