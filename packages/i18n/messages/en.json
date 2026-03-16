@@ -765,9 +765,13 @@
       "noInstapayLink": "Payment method not configured — contact the seller",
       "ensureTransfer": "Make sure you see \"Transfer successful\" in your app before continuing",
       "ensureTransferBold": "Transfer successful",
-      "paidButton": "I've paid"
+      "paidButton": "I've paid",
+      "welcomeMessage": "{seller} is requesting a payment from you"
     },
     "step2": {
+      "fullName": "Full name",
+      "fullNamePlaceholder": "e.g., Ahmed Mohamed",
+      "fullNameRequired": "Full name is required",
       "phoneLabel": "Phone number used for the transfer",
       "phoneHint": "So the seller can match their InstaPay notification",
       "phoneRequired": "Phone number is required",
@@ -779,6 +783,7 @@
       "removeScreenshot": "Remove screenshot",
       "uploadPrompt": "Click to upload screenshot",
       "uploadFormat": "JPEG or PNG",
+      "fileTooLarge": "Image must be under 10MB",
       "submit": "Confirm transfer",
       "submitting": "Submitting...",
       "completeFields": "Complete all required fields to continue"
@@ -801,6 +806,8 @@
       "alreadyPaid": "This payment link has already been used",
       "comingSoon": "This link is being set up — the seller is still completing their profile. It will be activated soon.",
       "notFound": "Payment link not found",
+      "networkError": "Could not reach the server. Please check your connection and try again.",
+      "unknown": "Something went wrong. Please try again.",
       "goBack": "Go back"
     }
   },

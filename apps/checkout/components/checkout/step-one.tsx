@@ -5,6 +5,7 @@ import { useTranslations } from "@/lib/locale-provider"
 import { Card, CardContent } from "@/components/ui/card"
 
 interface StepOneProps {
+  sellerName: string
   productName: string
   productImage?: string
   price: string
@@ -13,6 +14,7 @@ interface StepOneProps {
 }
 
 export function StepOne({
+  sellerName,
   productName,
   productImage,
   price,
@@ -24,6 +26,13 @@ export function StepOne({
 
   return (
     <div className="flex flex-col gap-5 pb-28">
+      {/* Welcome message */}
+      <div className="text-center mb-2">
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          {t("checkout.step1.welcomeMessage", { seller: sellerName })}
+        </p>
+      </div>
+
       {/* Order Details Card with Product Image */}
       <Card className="overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.08)]">
         {productImage && (
@@ -38,7 +47,6 @@ export function StepOne({
         <CardContent className="flex items-center justify-between py-5">
           <div className="flex flex-col gap-1">
             <h3 className="font-bold text-foreground text-lg leading-tight">{productName}</h3>
-            <p className="text-sm text-muted-foreground">{t("checkout.step1.paymentRequest")}</p>
           </div>
           <div className="flex items-center gap-1.5 bg-[#EDE9FE] text-[#7C3AED] px-4 py-2.5 rounded-xl">
             <span className="text-2xl font-bold">{price}</span>
@@ -101,7 +109,7 @@ export function StepOne({
           <button
             type="button"
             onClick={onProceed}
-            className="w-full h-12 text-base font-bold rounded-xl bg-[#7C3AED] text-card hover:bg-[#6D28D9] shadow-lg shadow-[#7C3AED]/25 inline-flex items-center justify-center transition-colors cursor-pointer"
+            className="w-full h-12 text-base font-bold rounded-xl bg-[#7C3AED] text-white hover:bg-[#6D28D9] shadow-lg shadow-[#7C3AED]/25 inline-flex items-center justify-center transition-colors cursor-pointer"
           >
             {t("checkout.step1.paidButton")}
           </button>

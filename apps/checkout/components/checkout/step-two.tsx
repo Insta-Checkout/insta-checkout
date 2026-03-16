@@ -1,22 +1,25 @@
 "use client"
 
 import { useState, useRef, type ChangeEvent, type FormEvent } from "react"
-import { Upload, ImageIcon, X, Phone, Loader2 } from "lucide-react"
+import { Upload, ImageIcon, X, Phone, Loader2, User } from "lucide-react"
 import { useTranslations } from "@/lib/locale-provider"
+import { toast } from "sonner"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
 interface StepTwoProps {
-  onSubmit: (phoneNumber: string, screenshot: File) => void
+  onSubmit: (phoneNumber: string, fullName: string, screenshot: File) => void
   isSubmitting: boolean
 }
 
 export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
   const { t } = useTranslations()
+  const [fullName, setFullName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
   const [screenshot, setScreenshot] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const [nameError, setNameError] = useState("")
   const [phoneError, setPhoneError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -56,6 +59,7 @@ export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
     const file = e.target.files?.[0]
     if (file) {
       if (file.size > 10 * 1024 * 1024) {
+        toast.error(t("checkout.step2.fileTooLarge"))
         return
       }
       setScreenshot(file)
@@ -73,14 +77,52 @@ export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setNameError(t("checkout.step2.fullNameRequired"))
+      return
+    }
     if (!validatePhone() || !screenshot) return
-    onSubmit(phoneNumber.replace(/\D/g, ""), screenshot)
+    onSubmit(phoneNumber.replace(/\D/g, ""), fullName.trim(), screenshot)
   }
 
-  const isFormValid = phoneNumber.replace(/\D/g, "").length === 11 && screenshot !== null
+  const isFormValid = fullName.trim().length >= 2 && phoneNumber.replace(/\D/g, "").length === 11 && screenshot !== null
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+      {/* Full Name Field */}
+      <Card>
+        <CardContent className="py-5">
+          <div className="flex flex-col gap-3">
+            <label htmlFor="fullName" className="text-sm font-bold text-foreground flex items-center gap-2">
+              <User className="size-4 text-primary" />
+              {t("checkout.step2.fullName")}
+              <span className="text-destructive">*</span>
+            </label>
+            <Input
+              id="fullName"
+              type="text"
+              value={fullName}
+              onChange={(e) => {
+                setFullName(e.target.value)
+                if (nameError) setNameError("")
+              }}
+              placeholder={t("checkout.step2.fullNamePlaceholder")}
+              required
+              className={`h-12 text-sm ${
+                nameError ? "border-destructive ring-destructive/20" : ""
+              }`}
+              aria-describedby={nameError ? "name-error" : undefined}
+              aria-invalid={!!nameError}
+            />
+            {nameError && (
+              <p id="name-error" className="text-xs text-destructive font-medium">
+                {nameError}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Phone Number Field */}
       <Card>
         <CardContent className="py-5">
@@ -140,7 +182,7 @@ export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
                 <button
                   type="button"
                   onClick={removeScreenshot}
-                  className="absolute top-2 left-2 size-8 rounded-full bg-foreground/80 text-background flex items-center justify-center hover:bg-foreground transition-colors"
+                  className="absolute top-2 start-2 size-11 rounded-full bg-foreground/80 text-background flex items-center justify-center hover:bg-foreground transition-colors"
                   aria-label={t("checkout.step2.removeScreenshot")}
                 >
                   <X className="size-4" />

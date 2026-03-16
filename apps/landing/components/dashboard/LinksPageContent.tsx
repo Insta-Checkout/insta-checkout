@@ -248,9 +248,12 @@ export function LinksPageContent() {
                     <td className="px-4 py-3 font-medium text-slate-900">
                       <div>
                         {getLinkProductDisplayName(link, locale)}
-                        {(link.status === "paid" || link.status === "confirmed") && link.buyerPhone && (
+                        {(link.status === "paid" || link.status === "confirmed") && (link.buyerName || link.buyerPhone) && (
                           <p className="text-xs text-slate-500 mt-0.5 font-normal">
-                            {t("dashboard.links.buyer")}: {link.buyerPhone}
+                            {t("dashboard.links.buyer")}:{" "}
+                            {link.buyerName && link.buyerPhone
+                              ? `${link.buyerName} — ${link.buyerPhone}`
+                              : link.buyerName || link.buyerPhone}
                           </p>
                         )}
                       </div>

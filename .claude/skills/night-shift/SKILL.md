@@ -16,7 +16,7 @@ Before starting the loop, check that **bypass permissions mode** is enabled. If 
 Then confirm with the user:
 
 > Starting Night Shift session. I will:
-> 1. Pick Groomed tasks from the Dev Launch Board (bugs first)
+> 1. Pick Groomed tasks from the Dev Launch Board (top to bottom)
 > 2. Implement, validate with headless QA, and review with 6 personas
 > 3. Commit all work to `claude/night-shift-YYYY-MM-DD`
 > 4. Write Agent Reports on each Notion task card
@@ -69,13 +69,7 @@ view://f8ad4f5b-1e21-42b8-bf8f-600cd4cb1912
 
 Filter for tasks where `Task status` = "✅ Groomed".
 
-Pick order (this is important — always follow this priority):
-1. **Bugs first** — Tasks where `Task Type` = "Bug"
-   - Within bugs: 🔴 Critical → 🟡 Medium → 🟢 Low
-   - Within same priority: oldest first (lowest ID)
-2. **Features second** — Tasks where `Task Type` = "Feature"
-   - Same priority ordering as bugs
-3. **Chores last** — Tasks where `Task Type` = "Chore"
+Pick order: **top to bottom** as they appear in the Groomed column. The board is already ordered by the user — just take the next Groomed task from the top of the list.
 
 If no Groomed tasks remain, skip to Phase 8 (Session End).
 

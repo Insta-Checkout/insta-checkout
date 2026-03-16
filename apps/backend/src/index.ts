@@ -26,6 +26,7 @@ const allowedOrigins = [
   "https://instacheckouteg.com",
   "https://www.instacheckouteg.com",
   "https://checkout.instacheckouteg.com",
+  "https://pay.instacheckouteg.com",
   "https://landing.instacheckouteg.com",
   "http://localhost:3000",
   "http://localhost:3001",
