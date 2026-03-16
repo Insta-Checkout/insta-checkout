@@ -5,6 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       firebaseUid?: string
+      firebaseEmail?: string
     }
   }
 }
@@ -40,6 +41,7 @@ export async function requireFirebaseAuth(
     initFirebase()
     const decoded = await admin.auth().verifyIdToken(token)
     req.firebaseUid = decoded.uid
+    req.firebaseEmail = decoded.email
     next()
   } catch (err) {
     console.error("[Firebase Auth] Token verification failed:", err)
