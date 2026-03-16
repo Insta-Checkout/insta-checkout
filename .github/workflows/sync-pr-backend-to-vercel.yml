@@ -81,7 +81,7 @@ jobs:
           BRANCH: ${{ github.head_ref }}
         run: |
           set -e
-          PROJECT_IDS="${{ vars.VERCEL_PROJECT_IDS || 'insta-checkout-landing' }}"
+          PROJECT_IDS="insta-checkout-landing,insta-checkout-checkout,insta-checkout-admin"
           DEPLOY_LINKS=""
           for PROJECT in ${PROJECT_IDS//,/ }; do
             PROJECT=$(echo "$PROJECT" | xargs)
