@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { AuthRedirect } from "@/components/auth-redirect";
 import { OnboardingForm } from "@/components/onboarding/onboarding-form";
 import { LocaleAwareToaster } from "@/components/locale-aware-toaster";
 import { OnboardPageHeader } from "@/components/onboarding/onboard-page-header";
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
 export default function OnboardPage() {
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center bg-background px-4 py-8 overflow-hidden">
+      <AuthRedirect />
       <div className="absolute top-4 right-4 md:top-6 md:right-6">
         <LanguageSwitcher />
       </div>

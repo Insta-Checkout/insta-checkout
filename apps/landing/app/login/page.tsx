@@ -63,7 +63,7 @@ export default function LoginPage() {
         } catch (e) {
           console.warn("[Session] Failed to set cookie:", e);
         }
-        router.replace("/dashboard");
+        router.replace("/dashboard/home");
       }
     });
     return () => unsub();
@@ -75,7 +75,7 @@ export default function LoginPage() {
       await signInWithGoogle();
       await setSessionCookie();
       toast.success(t("onboard.errors.signInSuccess"));
-      router.replace("/dashboard");
+      router.replace("/dashboard/home");
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       const message =
@@ -98,7 +98,7 @@ export default function LoginPage() {
       await signInWithEmail(data.email, data.password);
       await setSessionCookie();
       toast.success(t("onboard.errors.signInSuccess"));
-      router.replace("/dashboard");
+      router.replace("/dashboard/home");
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code === "auth/invalid-credential" || code === "auth/wrong-password") {

@@ -1,7 +1,8 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { onAuthStateChanged, User, signOut as fbSignOut } from "firebase/auth";
+import { onAuthStateChanged, signOut as fbSignOut } from "firebase/auth";
+import type { User } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { auth } from "@/lib/firebase";
 
@@ -23,10 +24,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(auth, (u) => {
+    const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u);
       setLoading(false);
-      if (!u) router.replace("/");
+      if (u) {
+        // Refresh the session cookie so middleware stays in sync
+        try {
+          const idToken = await u.getIdToken();
+          const res = await fetch("/api/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ idToken }),
+          });
+          if (!res.ok) throw new Error(`Session refresh failed: ${res.status}`);
+        } catch (e) {
+          console.warn("[AuthProvider] Failed to refresh session cookie:", e);
+        }
+      } else {
+        router.replace("/");
+      }
     });
     return unsub;
   }, [router]);
