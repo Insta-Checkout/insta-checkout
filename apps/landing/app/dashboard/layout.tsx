@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AuthProvider } from "@/lib/auth/AuthProvider";
 import { DashboardShell } from "@/components/dashboard/DashboardShell";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata: Metadata = {
   title: "لوحة التحكم | Insta Checkout",
@@ -14,7 +15,9 @@ export default function DashboardLayout({
 }) {
   return (
     <AuthProvider>
-      <DashboardShell>{children}</DashboardShell>
+      <TooltipProvider delayDuration={200}>
+        <DashboardShell>{children}</DashboardShell>
+      </TooltipProvider>
     </AuthProvider>
   );
 }

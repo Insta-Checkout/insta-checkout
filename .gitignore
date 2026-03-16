@@ -17,6 +17,7 @@ _full_b64.txt
 
 # Build output
 apps/backend/dist/
+*.tsbuildinfo
 
 # Backend uploads
 apps/backend/uploads/

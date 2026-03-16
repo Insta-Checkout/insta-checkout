@@ -5,10 +5,11 @@ import Link from "next/link";
 import { auth } from "@/lib/firebase";
 import { getBackendUrl, fetchWithAuth } from "@/lib/api";
 import { useTranslations } from "@/lib/locale-provider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link2, Copy, MessageCircle, Package, XCircle, CheckCircle, Loader2 } from "lucide-react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { toast } from "sonner";
 
 type PaymentLink = {
@@ -96,6 +97,7 @@ export function LinksPageContent() {
       `https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_BOT_NUMBER || "201000000000"}?text=${text}`,
       "_blank"
     )
+    toast.success(t("dashboard.links.shareWhatsAppSuccess"));
   };
 
   const cancelLink = async (id: string) => {
@@ -299,33 +301,57 @@ export function LinksPageContent() {
                         )}
                         {link.checkoutUrl && link.status !== "preview" && (
                           <>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => copyLink(link.checkoutUrl)}
-                            >
-                              <Copy className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                shareWhatsApp(link.checkoutUrl, link)
-                              }
-                            >
-                              <MessageCircle className="h-4 w-4" />
-                            </Button>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  aria-label={t("dashboard.links.tooltip.copy")}
+                                  onClick={() => copyLink(link.checkoutUrl)}
+                                >
+                                  <Copy className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {t("dashboard.links.tooltip.copy")}
+                              </TooltipContent>
+                            </Tooltip>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  aria-label={t("dashboard.links.tooltip.shareWhatsApp")}
+                                  onClick={() =>
+                                    shareWhatsApp(link.checkoutUrl, link)
+                                  }
+                                >
+                                  <MessageCircle className="h-4 w-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {t("dashboard.links.tooltip.shareWhatsApp")}
+                              </TooltipContent>
+                            </Tooltip>
                           </>
                         )}
                         {link.status === "active" && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                            onClick={() => cancelLink(link.id)}
-                          >
-                            <XCircle className="h-4 w-4" />
-                          </Button>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                aria-label={t("dashboard.links.tooltip.cancel")}
+                                onClick={() => cancelLink(link.id)}
+                              >
+                                <XCircle className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              {t("dashboard.links.tooltip.cancel")}
+                            </TooltipContent>
+                          </Tooltip>
                         )}
                       </div>
                     </td>
