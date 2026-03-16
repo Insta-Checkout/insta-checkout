@@ -11,7 +11,9 @@ Run an autonomous coding session that picks Groomed tasks from Notion, implement
 
 ## Pre-flight
 
-Before starting the loop, confirm with the user:
+Before starting the loop, check that **bypass permissions mode** is enabled. If it's not, ask the user to enable it before proceeding — the session will stall on permission prompts otherwise.
+
+Then confirm with the user:
 
 > Starting Night Shift session. I will:
 > 1. Pick Groomed tasks from the Dev Launch Board (bugs first)
