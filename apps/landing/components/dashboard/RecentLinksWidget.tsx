@@ -72,6 +72,7 @@ export function RecentLinksWidget(): React.JSX.Element {
   const [links, setLinks] = useState<PaymentLink[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [fetchError, setFetchError] = useState(false)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
   const getToken = useCallback(
@@ -92,9 +93,12 @@ export function RecentLinksWidget(): React.JSX.Element {
         if (res.ok) {
           const data = await res.json()
           setLinks(data.items ?? [])
+          setFetchError(false)
+        } else {
+          setFetchError(true)
         }
       } catch {
-        // Widget is non-critical — fail silently
+        setFetchError(true)
       } finally {
         setLoading(false)
         setRefreshing(false)
@@ -192,6 +196,12 @@ export function RecentLinksWidget(): React.JSX.Element {
               <Skeleton key={i} className="h-14 w-full" />
             ))}
           </div>
+        ) : fetchError && links.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-6 text-center">
+            <p className="text-sm text-[#6B5B7B] font-cairo">
+              {locale === "ar" ? "مقدرناش نحمّل اللينكات — جرب تحديث" : "Could not load links — tap refresh"}
+            </p>
+          </div>
         ) : links.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <div className="mb-4 rounded-full bg-[#EDE9FE] p-3">
@@ -236,7 +246,7 @@ export function RecentLinksWidget(): React.JSX.Element {
                         {formatRelativeTime(link.createdAt, locale)}
                       </span>
                     </div>
-                    {link.status === "paid" && (link.buyerName || link.buyerPhone) && (
+                    {(link.status === "paid" || link.status === "confirmed") && (link.buyerName || link.buyerPhone) && (
                       <p className="text-xs text-[#6B5B7B] mt-0.5 font-cairo truncate">
                         {link.buyerName && link.buyerPhone
                           ? `${link.buyerName} — ${link.buyerPhone}`
