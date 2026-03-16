@@ -364,10 +364,6 @@ Update the Notion task status to "🔍 To Be Reviewed" via `notion-update-page`.
 - At **~70% context consumed**: run `/compact` to free up space, then continue
 - At **~90% context consumed**: hard stop — proceed to session end regardless of remaining tasks
 
-### Check limits
-
-Read `max_tasks` from config.md. If you've completed that many tasks, proceed to session end.
-
 ### Large task detection
 
 Before starting a task, estimate its scope. If a task involves **scaffolding a new app**, **creating 10+ new files**, or would consume more than ~40% of remaining context, do NOT skip it — instead:
