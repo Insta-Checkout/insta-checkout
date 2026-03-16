@@ -166,7 +166,11 @@ export function RecentLinksWidget(): React.JSX.Element {
               {t("dashboard.recentLinks.title")}
             </CardTitle>
             {paidCount > 0 && (
-              <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FEF3C7] px-1.5 text-xs font-bold text-[#D97706]">
+              <span
+                className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#FEF3C7] px-1.5 text-xs font-bold text-[#D97706]"
+                aria-label={`${paidCount} ${locale === "ar" ? "لينكات في انتظار التأكيد" : "links awaiting confirmation"}`}
+                role="status"
+              >
                 {paidCount}
               </span>
             )}
@@ -199,11 +203,12 @@ export function RecentLinksWidget(): React.JSX.Element {
             <p className="mb-4 max-w-xs text-xs text-[#6B5B7B] font-cairo">
               {t("dashboard.recentLinks.emptySubtitle")}
             </p>
-            <Link href="/dashboard/products">
-              <span className="inline-flex items-center gap-2 rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-bold text-white hover:bg-[#6D28D9] transition-colors cursor-pointer">
-                <Link2 className="h-3.5 w-3.5" />
-                {t("dashboard.recentLinks.createFirst")}
-              </span>
+            <Link
+              href="/dashboard/products"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-bold text-white hover:bg-[#6D28D9] focus-visible:ring-2 focus-visible:ring-[#7C3AED]/40 focus-visible:outline-none transition-colors"
+            >
+              <Link2 className="h-3.5 w-3.5" />
+              {t("dashboard.recentLinks.createFirst")}
             </Link>
           </div>
         ) : (
@@ -240,7 +245,7 @@ export function RecentLinksWidget(): React.JSX.Element {
                     )}
                   </div>
                   <div className="flex items-center gap-2.5 shrink-0 ms-3">
-                    <span className="font-mono text-sm font-bold text-[#1E0A3C]">
+                    <span className={`text-sm font-bold text-[#1E0A3C] ${locale === "ar" ? "font-cairo" : "font-mono"}`}>
                       {formatEgp(link.price, locale)}
                     </span>
                     {link.status === "paid" && (
@@ -269,7 +274,7 @@ export function RecentLinksWidget(): React.JSX.Element {
           <div className="mt-3 pt-3 border-t border-[#E4D8F0]">
             <Link
               href="/dashboard/links"
-              className="flex items-center justify-center gap-1.5 text-sm font-semibold text-[#7C3AED] hover:text-[#6D28D9] transition-colors cursor-pointer"
+              className="flex items-center justify-center gap-1.5 rounded-md text-sm font-semibold text-[#7C3AED] hover:text-[#6D28D9] focus-visible:ring-2 focus-visible:ring-[#7C3AED]/40 focus-visible:outline-none transition-colors cursor-pointer"
             >
               {t("dashboard.recentLinks.viewAll")}
               <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" aria-hidden="true" />
