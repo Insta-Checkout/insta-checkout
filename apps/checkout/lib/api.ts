@@ -58,9 +58,24 @@ export async function confirmPayment(
   if (data.buyerName) formData.append("buyerName", data.buyerName)
   if (data.screenshot) formData.append("screenshot", data.screenshot)
 
-  const res = await fetch(`${getBackendUrl()}/checkout/${token}/confirm`, {
-    method: "POST",
-    body: formData,
-  })
-  return res.json()
+  try {
+    const res = await fetch(`${getBackendUrl()}/checkout/${token}/confirm`, {
+      method: "POST",
+      body: formData,
+    })
+    const body = await res.json().catch(() => ({}))
+    if (!res.ok) {
+      return {
+        error: body.error ?? "UNKNOWN",
+        message: body.message ?? "Something went wrong",
+      }
+    }
+    return body
+  } catch (err) {
+    console.error("[confirmPayment] fetch failed:", err)
+    return {
+      error: "NETWORK_ERROR",
+      message: "Could not reach the server. Please check your connection and try again.",
+    }
+  }
 }

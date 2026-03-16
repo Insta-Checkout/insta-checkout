@@ -59,33 +59,41 @@ export function CheckoutFlow({
   }, [])
 
   const handleSubmitPayment = useCallback(
-    async (phoneNumber: string, screenshot: File) => {
+    async (phoneNumber: string, fullName: string, screenshot: File) => {
       if (!token) {
         toast.error(t("checkout.errors.notFound"))
         return
       }
       setIsSubmitting(true)
 
-      const egyptianPhone = phoneNumber.startsWith("01")
-        ? `20${phoneNumber.slice(1)}`
-        : phoneNumber.startsWith("20")
-          ? phoneNumber
-          : `20${phoneNumber}`
+      try {
+        const egyptianPhone = phoneNumber.startsWith("01")
+          ? `20${phoneNumber.slice(1)}`
+          : phoneNumber.startsWith("20")
+            ? phoneNumber
+            : `20${phoneNumber}`
 
-      const res = await confirmPayment(token, {
-        buyerPhone: egyptianPhone,
-        screenshot,
-      })
+        const res = await confirmPayment(token, {
+          buyerPhone: egyptianPhone,
+          buyerName: fullName,
+          screenshot,
+        })
 
-      setIsSubmitting(false)
+        if (res.error) {
+          const errorKey = res.error === "NETWORK_ERROR"
+            ? "checkout.errors.networkError"
+            : "checkout.errors.unknown"
+          toast.error(t(errorKey))
+          return
+        }
 
-      if (res.error) {
-        toast.error(res.message ?? t("checkout.errors.notFound"))
-        return
+        setCurrentStep(3)
+        window.scrollTo({ top: 0, behavior: "smooth" })
+      } catch {
+        toast.error(t("checkout.errors.notFound"))
+      } finally {
+        setIsSubmitting(false)
       }
-
-      setCurrentStep(3)
-      window.scrollTo({ top: 0, behavior: "smooth" })
     },
     [token, t]
   )
@@ -104,6 +112,7 @@ export function CheckoutFlow({
         <main className="mt-2">
           {currentStep === 1 && (
             <StepOne
+              sellerName={sellerName}
               productName={displayName}
               productImage={productImage}
               price={price}
