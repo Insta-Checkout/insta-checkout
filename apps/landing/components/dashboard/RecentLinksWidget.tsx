@@ -174,10 +174,10 @@ export function RecentLinksWidget(): React.JSX.Element {
           <button
             onClick={() => fetchLinks(true)}
             disabled={refreshing}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-[#6B5B7B] hover:bg-[#F3EEFA] hover:text-[#7C3AED] focus-visible:ring-2 focus-visible:ring-[#7C3AED]/40 focus-visible:outline-none transition-colors cursor-pointer"
+            className="flex h-11 w-11 items-center justify-center rounded-lg text-[#6B5B7B] hover:bg-[#F3EEFA] hover:text-[#7C3AED] focus-visible:ring-2 focus-visible:ring-[#7C3AED]/40 focus-visible:outline-none transition-colors cursor-pointer"
             aria-label={t("dashboard.recentLinks.refresh")}
           >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
+            <RefreshCw className={`h-4 w-4 ${refreshing ? "motion-safe:animate-spin" : ""}`} />
           </button>
         </div>
       </CardHeader>
@@ -247,10 +247,11 @@ export function RecentLinksWidget(): React.JSX.Element {
                       <button
                         onClick={() => handleConfirm(link.id)}
                         disabled={confirmingId === link.id}
-                        className="flex items-center gap-1.5 rounded-lg bg-[#10B981] px-3.5 py-2.5 text-xs font-bold text-white hover:bg-[#059669] focus-visible:ring-2 focus-visible:ring-[#10B981]/40 focus-visible:outline-none transition-colors disabled:opacity-50 cursor-pointer"
+                        aria-label={`${t("dashboard.recentLinks.confirm")} — ${link.productName}`}
+                        className="flex items-center gap-1.5 rounded-lg bg-[#10B981] min-h-11 px-3.5 py-2.5 text-xs font-bold text-white hover:bg-[#059669] focus-visible:ring-2 focus-visible:ring-[#10B981]/40 focus-visible:outline-none transition-colors disabled:opacity-50 cursor-pointer"
                       >
                         {confirmingId === link.id ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
+                          <Loader2 className="h-3 w-3 motion-safe:animate-spin" />
                         ) : (
                           <Check className="h-3 w-3" />
                         )}
