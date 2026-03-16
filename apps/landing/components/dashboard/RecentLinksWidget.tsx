@@ -199,7 +199,7 @@ export function RecentLinksWidget(): React.JSX.Element {
             <p className="mb-4 max-w-xs text-xs text-[#6B5B7B] font-cairo">
               {t("dashboard.recentLinks.emptySubtitle")}
             </p>
-            <Link href="/dashboard/links">
+            <Link href="/dashboard/products">
               <span className="inline-flex items-center gap-2 rounded-xl bg-[#7C3AED] px-4 py-2 text-sm font-bold text-white hover:bg-[#6D28D9] transition-colors cursor-pointer">
                 <Link2 className="h-3.5 w-3.5" />
                 {t("dashboard.recentLinks.createFirst")}

@@ -894,8 +894,8 @@
       "refresh": "تحديث",
       "emptyTitle": "مفيش لينكات دفع لسه",
       "emptySubtitle": "أنشئ أول منتج وولّد لينك دفع لمشاركته مع العملاء.",
-      "createFirst": "أنشئ أول لينك",
-      "confirm": "أكّد",
+      "createFirst": "الذهاب للمنتجات",
+      "confirm": "أكّد الدفع",
       "confirmSuccess": "تم تأكيد الدفع",
       "confirmFailed": "مقدرناش نأكد الدفع — جرب تاني",
       "viewAll": "عرض الكل"
