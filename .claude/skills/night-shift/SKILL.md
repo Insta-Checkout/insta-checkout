@@ -36,6 +36,7 @@ Then confirm with the user:
 > 3. Commit all work to `{branch name}`
 > 4. Write Agent Reports on each Notion task card
 > 5. Create a PR at session end
+> 6. Verify all Vercel deployments pass — fix any failures automatically
 >
 > Shall I proceed?
 
@@ -409,13 +410,51 @@ Go back to **Phase 1** to pick the next task.
    - Body: list all completed tasks with their Notion links and brief summaries
    - Link to each task's Agent Report
 
-3. Stop caffeinate and put the Mac to sleep:
+3. **Verify deployments** (see Phase 9 below) before winding down.
+
+4. Stop caffeinate and put the Mac to sleep:
    ```bash
    kill $CAFFEINATE_PID 2>/dev/null
    pmset sleepnow
    ```
 
-4. Report to the user what was accomplished (they'll see it when they wake the Mac).
+5. Report to the user what was accomplished (they'll see it when they wake the Mac).
+
+---
+
+## Phase 9: Verify Deployments
+
+After the PR is created and Agent Reports are written, verify that all Vercel deployments succeed.
+
+### Steps
+
+1. **Wait ~90 seconds** after the PR is created to give Vercel time to start builds.
+
+2. **Check deployment status** using `gh pr checks <PR_NUMBER>`:
+   - Look for all Vercel deployment checks (checkout, landing, admin, etc.)
+   - If all checks pass → done, proceed to sleep the Mac
+   - If any check is still pending, wait another 60 seconds and re-check (max 5 retries)
+
+3. **If a deployment fails**:
+   a. Identify the failed deployment from the check output (get the deployment ID or URL)
+   b. Find the team ID: read `.vercel/project.json` if it exists, or use `list_teams` via Vercel MCP
+   c. Fetch build logs using `get_deployment_build_logs` via Vercel MCP with the deployment ID and team ID
+   d. Analyze the error — common failures:
+      - **Missing dependency**: add it to the correct app's `package.json`, run `pnpm install`
+      - **TypeScript error**: fix the type error in the reported file
+      - **Build-time import error**: fix the import path or add the missing module
+      - **Environment variable missing**: log it as a blocker (don't add secrets)
+   e. Commit the fix:
+      ```
+      fix(<app>): resolve deployment failure — <brief description>
+      ```
+   f. Push the fix to the same branch — this will trigger a new Vercel deployment
+   g. **Re-run Phase 9 from step 1** to verify the new deployment succeeds
+   h. Maximum 3 fix attempts per deployment — if still failing after 3 tries, log it as a blocker in the PR body and move on
+
+4. **Update the PR body** if any deployment fixes were made:
+   - Add a "Deployment Fixes" section listing what was fixed
+   - Use `gh pr edit` to append to the body
 
 ---
 
