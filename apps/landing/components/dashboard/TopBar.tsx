@@ -33,7 +33,8 @@ export function TopBar({ onMenuToggle }: Props) {
     return () => controller.abort();
   }, [user]);
 
-  const displayName = sellerName || user?.displayName || t("dashboard.aria.seller");
+  const businessName = sellerName || t("dashboard.aria.seller");
+  const userName = user?.displayName || null;
 
   return (
     <header className="flex items-center justify-between h-16 px-4 sm:px-6 border-b border-[#E4D8F0] bg-white">
@@ -48,7 +49,8 @@ export function TopBar({ onMenuToggle }: Props) {
       <div className="flex-1" />
 
       <UserMenu
-        name={displayName}
+        businessName={businessName}
+        userName={userName}
         email={user?.email || ""}
         photoURL={user?.photoURL}
       />

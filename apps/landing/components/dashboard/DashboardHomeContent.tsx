@@ -193,31 +193,25 @@ export function DashboardHomeContent() {
   return (
     <div className="space-y-8">
       <OnboardingChecklist />
+      <QuickProductsRow products={quickProducts} loading={loading} />
+
       {isEmpty && (
-        <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/30">
-          <CardContent className="flex flex-col items-center gap-6 px-6 py-10 text-center sm:flex-row sm:items-start sm:justify-center sm:text-start">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-primary/15">
-              <TrendingUp className="h-10 w-10 text-primary" />
+        <Card className="border-[#E4D8F0] bg-gradient-to-br from-[#F3EEFA] via-white to-white">
+          <CardContent className="flex items-center gap-4 px-5 py-4">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EDE9FE]">
+              <TrendingUp className="h-5 w-5 text-[#7C3AED]" />
             </div>
-            <div className="space-y-2">
-              <h2 className="text-xl font-bold text-slate-900 font-cairo">
+            <div>
+              <p className="text-sm font-semibold text-[#1E0A3C] font-cairo">
                 {t("dashboard.home.welcome")}
-              </h2>
-              <p className="max-w-md text-slate-600 font-cairo">
+              </p>
+              <p className="text-xs text-[#6B5B7B] font-cairo">
                 {t("dashboard.home.welcomeSubtitle")}
               </p>
-              <Link href="/dashboard/products" className="inline-block pt-2">
-                <Button className="gap-2 font-cairo">
-                  <Package className="h-4 w-4" />
-                  {t("dashboard.home.addFirstProduct")}
-                </Button>
-              </Link>
             </div>
           </CardContent>
         </Card>
       )}
-
-      <QuickProductsRow products={quickProducts} loading={loading} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-[#1E0A3C] font-cairo">{t("dashboard.home.title")}</h1>
