@@ -897,7 +897,7 @@
       "createFirst": "أنشئ أول لينك",
       "confirm": "أكّد",
       "confirmSuccess": "تم تأكيد الدفع",
-      "confirmFailed": "فشل التأكيد",
+      "confirmFailed": "مقدرناش نأكد الدفع — جرب تاني",
       "viewAll": "عرض الكل"
     },
     "onboarding": {
