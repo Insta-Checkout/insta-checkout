@@ -17,6 +17,7 @@ import sellersRouter from "./routes/sellers.js"
 import sellersMeRouter from "./routes/sellersMe.js"
 import webhooksRouter from "./routes/webhooks.js"
 import checkoutRouter from "./routes/checkout.js"
+import adminRouter from "./routes/admin.js"
 
 const app = express()
 const PORT = process.env.PORT ?? 4000
@@ -78,6 +79,9 @@ app.use("/webhooks", webhooksRouter)
 
 // Checkout API (public)
 app.use("/checkout", checkoutRouter)
+
+// Admin API (admin-only)
+app.use("/admin", adminRouter)
 
 // MongoDB connection validation
 app.get("/api/health/db", async (_req, res) => {

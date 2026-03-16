@@ -182,7 +182,7 @@ export function OnboardingForm() {
       const ok = await createSellerOnBackend(user.uid, user.email);
       if (ok) {
         toast.success(t("onboard.errors.accountCreated"));
-        router.replace("/dashboard");
+        router.replace("/dashboard/home");
       }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
@@ -217,7 +217,7 @@ export function OnboardingForm() {
       });
       if (ok) {
         toast.success(t("onboard.errors.accountCreated"));
-        router.replace("/dashboard");
+        router.replace("/dashboard/home");
       }
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
@@ -248,7 +248,7 @@ export function OnboardingForm() {
         });
       }
       toast.success(t("onboard.errors.signInSuccess"));
-      router.replace("/dashboard");
+      router.replace("/dashboard/home");
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       if (code === "auth/invalid-credential" || code === "auth/wrong-password") {
@@ -277,7 +277,7 @@ export function OnboardingForm() {
         });
       }
       toast.success(t("onboard.errors.signInSuccess"));
-      router.replace("/dashboard");
+      router.replace("/dashboard/home");
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
       const message =

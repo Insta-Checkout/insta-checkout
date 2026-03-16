@@ -121,7 +121,7 @@ export function Navbar() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -4 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 top-10 z-50 min-w-[120px] rounded-xl border border-[#E4D8F0] bg-white p-1 shadow-xl shadow-[#2D0A4E]/10"
+                  className="absolute end-0 top-10 z-50 min-w-[120px] rounded-xl border border-[#E4D8F0] bg-white p-1 shadow-xl shadow-[#2D0A4E]/10"
                 >
                   {locales.map((loc) => (
                     <button

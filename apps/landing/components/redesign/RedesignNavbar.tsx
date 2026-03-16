@@ -110,7 +110,7 @@ export function RedesignNavbar() {
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95, y: -4 }}
                   transition={{ duration: 0.15 }}
-                  className="absolute right-0 top-11 z-50 min-w-[120px] rounded-xl border border-[var(--r-glass-border)] bg-[var(--r-bg-elevated)] p-1 shadow-xl"
+                  className="absolute end-0 top-11 z-50 min-w-[120px] rounded-xl border border-[var(--r-glass-border)] bg-[var(--r-bg-elevated)] p-1 shadow-xl"
                 >
                   {locales.map((loc) => (
                     <button

@@ -2,4 +2,5 @@ packages:
   - "apps/backend"
   - "apps/checkout"
   - "apps/landing"
+  - "apps/admin"
   - "packages/i18n"

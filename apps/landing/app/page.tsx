@@ -1,3 +1,4 @@
+import { AuthRedirect } from "@/components/auth-redirect"
 import { Navbar } from "@/components/navbar"
 import { HeroSection } from "@/components/hero-section"
 import { PainPointsSection } from "@/components/pain-points-section"
@@ -14,6 +15,7 @@ export const dynamic = "force-dynamic";
 export default function Home() {
   return (
     <>
+      <AuthRedirect />
       <Navbar />
       <main>
         <HeroSection />

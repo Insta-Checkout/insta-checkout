@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #FAFAFA;
+  --foreground: #1E0A3C;
+  --card: #FFFFFF;
+  --card-foreground: #1E0A3C;
+  --popover: #FFFFFF;
+  --popover-foreground: #1E0A3C;
+  --primary: #7C3AED;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F3EEFA;
+  --secondary-foreground: #1E0A3C;
+  --muted: #F3EEFA;
+  --muted-foreground: #6B5B7B;
+  --accent: #F3EEFA;
+  --accent-foreground: #1E0A3C;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E4D8F0;
+  --input: #E4D8F0;
+  --ring: #7C3AED;
+  --chart-1: #7C3AED;
+  --chart-2: #8B5CF6;
+  --chart-3: #6D28D9;
+  --chart-4: #EDE9FE;
+  --chart-5: #A78BFA;
+  --radius: 0.75rem;
+  --sidebar: #FAFAFA;
+  --sidebar-foreground: #1E0A3C;
+  --sidebar-primary: #7C3AED;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #F3EEFA;
+  --sidebar-accent-foreground: #1E0A3C;
+  --sidebar-border: #E4D8F0;
+  --sidebar-ring: #7C3AED;
+
+  --success: #10B981;
+  --success-foreground: #FFFFFF;
+  --warning: #F59E0B;
+  --warning-foreground: #78350F;
+}
+
+.dark {
+  --background: #1A0A2E;
+  --foreground: #F3EEFA;
+  --card: #2D0A4E;
+  --card-foreground: #F3EEFA;
+  --popover: #2D0A4E;
+  --popover-foreground: #F3EEFA;
+  --primary: #8B5CF6;
+  --primary-foreground: #F3EEFA;
+  --secondary: #3D1A5E;
+  --secondary-foreground: #F3EEFA;
+  --muted: #3D1A5E;
+  --muted-foreground: #A78BFA;
+  --accent: #3D1A5E;
+  --accent-foreground: #F3EEFA;
+  --destructive: #DC2626;
+  --destructive-foreground: #FEE2E2;
+  --border: #4C1D95;
+  --input: #4C1D95;
+  --ring: #8B5CF6;
+  --chart-1: #8B5CF6;
+  --chart-2: #A78BFA;
+  --chart-3: #7C3AED;
+  --chart-4: #EDE9FE;
+  --chart-5: #C4B5FD;
+  --sidebar: #2D0A4E;
+  --sidebar-foreground: #F3EEFA;
+  --sidebar-primary: #8B5CF6;
+  --sidebar-primary-foreground: #F3EEFA;
+  --sidebar-accent: #3D1A5E;
+  --sidebar-accent-foreground: #F3EEFA;
+  --sidebar-border: #4C1D95;
+  --sidebar-ring: #8B5CF6;
+
+  --success: #10B981;
+  --success-foreground: #F3EEFA;
+  --warning: #F59E0B;
+  --warning-foreground: #78350F;
+}
+
+@theme inline {
+  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', var(--font-cairo), 'Cairo', system-ui, sans-serif;
+  --font-heading: var(--font-outfit), 'Outfit', system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono', monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

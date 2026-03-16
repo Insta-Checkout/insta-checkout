@@ -7,7 +7,8 @@
     "packages/i18n",
     "apps/backend",
     "apps/checkout",
-    "apps/landing"
+    "apps/landing",
+    "apps/admin"
   ],
   "scripts": {
     "dev": "npm run dev:landing",
@@ -17,10 +18,12 @@
     "dev:backend:docker": "npx pnpm --filter backend dev",
     "dev:checkout": "npm run dev --workspace=checkout",
     "dev:landing": "npm run dev --workspace=landing",
+    "dev:admin": "npm run dev --workspace=admin",
     "build": "npm run build --workspaces",
     "build:backend": "npm run build --workspace=backend",
     "build:checkout": "npm run build --workspace=checkout",
     "build:landing": "npm run build --workspace=landing",
+    "build:admin": "npm run build --workspace=admin",
     "lint": "npm run lint --workspaces",
     "firebase:deploy": "firebase deploy --only storage"
   },

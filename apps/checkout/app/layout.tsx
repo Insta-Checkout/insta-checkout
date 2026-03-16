@@ -32,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
       <body className={`${_cairo.variable} ${_outfit.variable} ${_plusJakarta.variable} ${_geistMono.variable} font-sans antialiased`}>
         <Suspense fallback={null}>
           <LocaleProvider>

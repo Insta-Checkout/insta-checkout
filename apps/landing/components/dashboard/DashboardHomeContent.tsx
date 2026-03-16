@@ -19,6 +19,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { OnboardingChecklist } from "./OnboardingChecklist";
+import { QuickProductsRow } from "./QuickProductsRow";
+import type { QuickProduct } from "./QuickProductsRow";
 
 type Analytics = {
   totalRevenue: number;
@@ -101,6 +103,7 @@ export function DashboardHomeContent() {
   const { t, locale } = useTranslations();
   const [analytics, setAnalytics] = useState<Analytics | null>(null);
   const [confirmedPayments, setConfirmedPayments] = useState<ConfirmedPaymentItem[]>([]);
+  const [quickProducts, setQuickProducts] = useState<QuickProduct[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [datePreset, setDatePreset] = useState<DatePreset>("30d");
@@ -108,7 +111,7 @@ export function DashboardHomeContent() {
   const [customTo, setCustomTo] = useState("");
   const egpShort = t("common.egpShort");
 
-  const getToken = () =>
+  const getToken = (): Promise<string | null> =>
     auth.currentUser ? auth.currentUser.getIdToken() : Promise.resolve(null);
 
   useEffect(() => {
@@ -175,6 +178,26 @@ export function DashboardHomeContent() {
     load();
   }, [datePreset, customFrom, customTo, t]);
 
+  useEffect(() => {
+    async function loadProducts(): Promise<void> {
+      try {
+        const res = await fetchWithAuth(
+          `${getBackendUrl()}/sellers/me/products`,
+          {},
+          getToken
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setQuickProducts(data.items ?? data ?? []);
+        }
+      } catch {
+        // Products fetch is non-critical — fail silently
+      }
+    }
+    loadProducts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const statusLabels: Record<string, string> = {
     confirmed: t("dashboard.links.confirmed"),
     paid: t("dashboard.links.paid"),
@@ -231,6 +254,8 @@ export function DashboardHomeContent() {
           </CardContent>
         </Card>
       )}
+
+      <QuickProductsRow products={quickProducts} loading={loading} />
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-bold text-[#1E0A3C] font-cairo">{t("dashboard.home.title")}</h1>
