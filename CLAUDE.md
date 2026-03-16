@@ -16,6 +16,7 @@ Follow these rules unless the user explicitly instructs otherwise.
 - If something goes sideways, STOP and re-plan immediately — don't keep pushing.
 - Use plan mode for verification steps, not just building.
 - Write detailed specs upfront to reduce ambiguity.
+- **Exception**: Skip plan mode during Night Shift — execute tasks directly without entering plan mode.
 
 ### 2. Subagent Strategy
 - Use subagents liberally to keep main context window clean.
