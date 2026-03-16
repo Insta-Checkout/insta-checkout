@@ -104,14 +104,14 @@ export function SplashPage(): React.JSX.Element {
         >
           <a
             href={LANDING_APP_URL}
-            className="flex-1 bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold text-center px-6 py-3 rounded-xl transition-colors duration-200 shadow-lg shadow-[#7C3AED]/25 font-[family-name:var(--font-cairo)]"
+            className="flex-1 bg-[#7C3AED] hover:bg-[#6D28D9] text-white font-semibold text-center px-6 py-3 rounded-xl transition-colors duration-200 shadow-lg shadow-[#7C3AED]/25 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:outline-none font-[family-name:var(--font-cairo)]"
             dir="rtl"
           >
             ابدأ مجاناً
           </a>
           <a
             href={LANDING_APP_URL}
-            className="flex-1 border border-white/20 text-white hover:bg-white/10 font-medium text-center px-6 py-3 rounded-xl transition-colors duration-200 font-[family-name:var(--font-plus-jakarta)]"
+            className="flex-1 border border-white/20 text-white hover:bg-white/10 font-medium text-center px-6 py-3 rounded-xl transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:outline-none font-[family-name:var(--font-plus-jakarta)]"
           >
             Learn more
           </a>
