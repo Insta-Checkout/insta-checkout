@@ -13,12 +13,27 @@ Run an autonomous coding session that picks Groomed tasks from Notion, implement
 
 Before starting the loop, check that **bypass permissions mode** is enabled. If it's not, ask the user to enable it before proceeding — the session will stall on permission prompts otherwise.
 
+### Check for session assignment
+
+The user may provide a **session assignment** from `/night-shift-plan`. This looks like:
+
+> Session tasks: #XX, #YY, #ZZ
+> Branch: claude/night-shift-YYYY-MM-DD-sN
+
+If a session assignment is provided:
+- Use the specified branch name (not the default)
+- Only work on the assigned task IDs — do not query the board for other tasks
+- Pick tasks in the order listed
+
+If NO session assignment is provided:
+- Fall back to the original behavior: query the board and pick Groomed tasks top to bottom
+
 Then confirm with the user:
 
 > Starting Night Shift session. I will:
-> 1. Pick Groomed tasks from the Dev Launch Board (top to bottom)
+> 1. {Pick assigned tasks / Pick Groomed tasks from the board (top to bottom)}
 > 2. Implement, validate with headless QA, and review with 6 personas
-> 3. Commit all work to `claude/night-shift-YYYY-MM-DD`
+> 3. Commit all work to `{branch name}`
 > 4. Write Agent Reports on each Notion task card
 > 5. Create a PR at session end
 >
@@ -45,9 +60,11 @@ Wait for explicit confirmation before continuing.
 
 2. Read session config from `.claude/skills/night-shift/config.md`
 
-3. Create the session branch (one branch for the entire session):
+3. Create the session branch:
    ```bash
+   # Use the assigned branch name if provided, otherwise default:
    git checkout -b claude/night-shift-$(date +%Y-%m-%d)
+   # If session assignment specified a branch like claude/night-shift-2026-03-17-s2, use that instead
    ```
 
 4. Read reviewer personas from `.claude/skills/night-shift/REVIEW_PERSONAS.md`
