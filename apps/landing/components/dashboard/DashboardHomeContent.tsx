@@ -21,6 +21,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { OnboardingChecklist } from "./OnboardingChecklist";
 import { QuickProductsRow } from "./QuickProductsRow";
 import { RecentLinksWidget } from "./RecentLinksWidget";
+import { QuickLinkModal } from "@/components/quick-link/QuickLinkModal";
 import type { QuickProduct } from "./QuickProductsRow";
 
 type Analytics = {
@@ -99,6 +100,7 @@ export function DashboardHomeContent() {
   const [error, setError] = useState<string | null>(null);
   const [datePreset, setDatePreset] = useState<DatePreset>("30d");
   const [customFrom, setCustomFrom] = useState("");
+  const [showQuickLinkModal, setShowQuickLinkModal] = useState(false);
   const [customTo, setCustomTo] = useState("");
   const egpShort = t("common.egpShort");
 
@@ -268,6 +270,20 @@ export function DashboardHomeContent() {
         />
       </div>
 
+      {/* Quick link CTA */}
+      <button
+        onClick={() => setShowQuickLinkModal(true)}
+        className="group flex items-center gap-4 rounded-2xl border-2 border-dashed border-[#E4D8F0] bg-[#F3EEFA]/50 p-5 transition-all hover:border-[#7C3AED]/40 hover:bg-[#F3EEFA] cursor-pointer w-full text-start"
+      >
+        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#EDE9FE] group-hover:bg-[#7C3AED]/20 transition-colors">
+          <Link2 className="h-5 w-5 text-[#7C3AED]" />
+        </div>
+        <div>
+          <p className="font-bold text-[#1E0A3C] font-cairo">{t("dashboard.quickLink.title")}</p>
+          <p className="text-sm text-[#6B5B7B] font-cairo">{t("dashboard.quickLink.subtitle")}</p>
+        </div>
+      </button>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Card className="border-[#E4D8F0] shadow-sm">
           <CardHeader>
@@ -354,6 +370,11 @@ export function DashboardHomeContent() {
 
         <RecentLinksWidget />
       </div>
+
+      <QuickLinkModal
+        open={showQuickLinkModal}
+        onOpenChange={setShowQuickLinkModal}
+      />
     </div>
   );
 }

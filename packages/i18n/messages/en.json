@@ -900,6 +900,25 @@
       "confirmFailed": "Failed to confirm payment",
       "viewAll": "View all"
     },
+    "quickLink": {
+      "title": "Create a quick link",
+      "subtitle": "Send a payment link in seconds — no product needed",
+      "titleLabel": "What's this payment for?",
+      "titlePlaceholder": "e.g., Logo design",
+      "priceLabel": "Amount",
+      "priceRequired": "Enter a valid price",
+      "titleRequired": "Title is required",
+      "moreOptions": "More options",
+      "descriptionLabel": "Note for buyer (optional)",
+      "descriptionPlaceholder": "e.g., Design project — 2 revisions included",
+      "create": "Create quick link",
+      "createFailed": "Failed to create link",
+      "linkReady": "Quick link ready!",
+      "linkReadySubtitle": "Copy the link or share it via WhatsApp",
+      "copyLink": "Copy link",
+      "shareWhatsApp": "Share on WhatsApp",
+      "badge": "Quick link"
+    },
     "onboarding": {
       "completeTitle": "Complete your profile to activate payment links",
       "progress": "{done} of {total} — {pct}%",

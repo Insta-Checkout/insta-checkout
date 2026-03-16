@@ -72,10 +72,17 @@ router.get("/payment-links", async (req: Request, res: Response) => {
 
     const formatted = items.map((i) => ({
       id: i._id,
-      productId: i.productId,
-      productName: productMap[i.productId?.toString()]?.name ?? "—",
-      productNameAr: productMap[i.productId?.toString()]?.nameAr ?? null,
-      productNameEn: productMap[i.productId?.toString()]?.nameEn ?? null,
+      productId: i.productId ?? null,
+      isQuickLink: i.isQuickLink ?? false,
+      productName: i.productId
+        ? (productMap[i.productId?.toString()]?.name ?? i.productName ?? "—")
+        : (i.productName ?? "Quick link"),
+      productNameAr: i.productId
+        ? (productMap[i.productId?.toString()]?.nameAr ?? null)
+        : (i.productNameAr ?? null),
+      productNameEn: i.productId
+        ? (productMap[i.productId?.toString()]?.nameEn ?? null)
+        : (i.productNameEn ?? null),
       checkoutUrl: i.checkoutUrl ?? "",
       status: i.status ?? "active",
       createdAt: i.createdAt,
@@ -173,6 +180,84 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
   } catch (err) {
     console.error("[POST /sellers/me/products/:id/payment-links]", err)
     res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to create payment link" })
+  }
+})
+
+// POST /sellers/me/quick-links — create a product-less payment link
+router.post("/quick-links", async (req: Request, res: Response) => {
+  const firebaseUid = req.firebaseUid
+  if (!firebaseUid) {
+    res.status(401).json({ error: "UNAUTHORIZED" })
+    return
+  }
+
+  const sellerId = await getSellerId(firebaseUid)
+  if (!sellerId) {
+    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
+    return
+  }
+
+  const body = req.body as Record<string, unknown>
+  const title = typeof body.title === "string" ? body.title.trim() : ""
+  const titleAr = typeof body.titleAr === "string" ? body.titleAr.trim() : ""
+  const titleEn = typeof body.titleEn === "string" ? body.titleEn.trim() : ""
+  const price = typeof body.price === "number" ? body.price : NaN
+  const description = typeof body.description === "string" ? body.description.trim() : ""
+  const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim() : ""
+
+  if (!title) {
+    res.status(400).json({ error: "VALIDATION_ERROR", message: "Title is required" })
+    return
+  }
+  if (isNaN(price) || price <= 0) {
+    res.status(400).json({ error: "VALIDATION_ERROR", message: "Price must be a positive number" })
+    return
+  }
+
+  try {
+    const db = await connectToMongo()
+    const paymentLinks = db.collection("payment_links")
+
+    const seller = await db.collection("sellers").findOne({ _id: sellerId })
+    const onboardingComplete = seller?.onboardingComplete ?? !!seller?.instapayLink
+    const linkStatus = onboardingComplete ? "active" : "preview"
+
+    const token = generateToken()
+    const now = new Date()
+    const expiresAt = new Date(now.getTime() + DEFAULT_TTL_DAYS * 24 * 60 * 60 * 1000)
+    const checkoutUrl = `${CHECKOUT_BASE_URL.replace(/\/$/, "")}/l/${token}`
+
+    const doc = {
+      token,
+      sellerId,
+      productId: null,
+      productName: title,
+      productNameAr: titleAr || title,
+      productNameEn: titleEn || title,
+      productImageUrl: imageUrl || null,
+      price,
+      description: description || null,
+      checkoutUrl,
+      status: linkStatus,
+      isQuickLink: true,
+      createdAt: now,
+      expiresAt,
+      paidAt: null,
+      cancelledAt: null,
+    }
+
+    const result = await paymentLinks.insertOne(doc)
+
+    res.status(201).json({
+      paymentLinkId: result.insertedId,
+      checkoutUrl,
+      status: linkStatus,
+      createdAt: now,
+      expiresAt,
+    })
+  } catch (err) {
+    console.error("[POST /sellers/me/quick-links]", err)
+    res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to create quick link" })
   }
 })
 

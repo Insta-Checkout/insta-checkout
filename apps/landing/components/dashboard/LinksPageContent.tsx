@@ -17,6 +17,7 @@ type PaymentLink = {
   productName: string;
   productNameAr?: string | null;
   productNameEn?: string | null;
+  isQuickLink?: boolean;
   checkoutUrl: string;
   status: string;
   createdAt: string;
@@ -247,7 +248,14 @@ export function LinksPageContent() {
                   <tr key={link.id} className="border-t border-slate-100">
                     <td className="px-4 py-3 font-medium text-slate-900">
                       <div>
-                        {getLinkProductDisplayName(link, locale)}
+                        <span className="flex items-center gap-2">
+                          {getLinkProductDisplayName(link, locale)}
+                          {link.isQuickLink && (
+                            <span className="text-xs font-medium px-1.5 py-0.5 rounded bg-[#EDE9FE] text-[#7C3AED]">
+                              {t("dashboard.quickLink.badge")}
+                            </span>
+                          )}
+                        </span>
                         {(link.status === "paid" || link.status === "confirmed") && (link.buyerName || link.buyerPhone) && (
                           <p className="text-xs text-slate-500 mt-0.5 font-normal">
                             {t("dashboard.links.buyer")}:{" "}
