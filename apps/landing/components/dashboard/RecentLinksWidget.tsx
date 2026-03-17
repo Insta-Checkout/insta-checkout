@@ -67,7 +67,11 @@ function formatEgp(n: number, locale: string): string {
   return `${formatted} ${locale === "ar" ? "ج.م" : "EGP"}`
 }
 
-export function RecentLinksWidget(): React.JSX.Element {
+type RecentLinksWidgetProps = {
+  onPaymentConfirmed?: () => void
+}
+
+export function RecentLinksWidget({ onPaymentConfirmed }: RecentLinksWidgetProps = {}): React.JSX.Element {
   const { t, locale } = useTranslations()
   const [links, setLinks] = useState<PaymentLink[]>([])
   const [loading, setLoading] = useState(true)
@@ -138,6 +142,7 @@ export function RecentLinksWidget(): React.JSX.Element {
         toast.error(t("dashboard.recentLinks.confirmFailed"))
       } else {
         toast.success(t("dashboard.recentLinks.confirmSuccess"))
+        onPaymentConfirmed?.()
       }
     } catch {
       setLinks(previousLinks)

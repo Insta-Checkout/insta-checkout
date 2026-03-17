@@ -1,17 +1,8 @@
 import { Router, Request, Response } from "express"
 import { connectToMongo } from "../db.js"
-import { requireFirebaseAuth } from "../middleware/firebaseAuth.js"
 import { ObjectId } from "mongodb"
 
 const router = Router()
-
-router.use(requireFirebaseAuth)
-
-async function getSellerId(firebaseUid: string): Promise<ObjectId | null> {
-  const db = await connectToMongo()
-  const seller = await db.collection("sellers").findOne({ firebaseUid })
-  return seller ? (seller._id as ObjectId) : null
-}
 
 function validateOptionalName(val: unknown, maxLen: number): string | null {
   if (val == null || val === "") return null
@@ -51,16 +42,7 @@ function validateProductBody(body: Record<string, unknown>): { ok: boolean; data
 }
 
 router.get("/products", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+  const { sellerId } = req.sellerContext!
   const page = Math.max(1, parseInt((req.query.page as string) || "1", 10))
   const limit = Math.min(100, Math.max(1, parseInt((req.query.limit as string) || "20", 10)))
   const statusFilter = req.query.status as string | undefined
@@ -118,16 +100,7 @@ router.get("/products", async (req: Request, res: Response) => {
 })
 
 router.post("/products", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+  const { sellerId } = req.sellerContext!
 
   const validation = validateProductBody(req.body as Record<string, unknown>)
   if (!validation.ok) {
@@ -168,16 +141,7 @@ router.post("/products", async (req: Request, res: Response) => {
 })
 
 router.put("/products/:id", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+  const { sellerId } = req.sellerContext!
 
   let productId: ObjectId
   try {
@@ -273,16 +237,7 @@ router.put("/products/:id", async (req: Request, res: Response) => {
 })
 
 router.delete("/products/:id", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+  const { sellerId } = req.sellerContext!
 
   let productId: ObjectId
   try {

@@ -1,19 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Home, Users, BarChart3, Settings, Zap } from "lucide-react";
 
 import { AdminSidebarLink } from "./AdminSidebarLink";
+import { useAuth } from "@/lib/auth/AuthProvider";
+import { getBackendUrl, fetchWithAuth } from "@/lib/api";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/", icon: Home },
-  { label: "Sellers", href: "/sellers", icon: Users },
+  { label: "Sellers", href: "/sellers", icon: Users, badgeKey: "pendingSellers" as const },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const { user } = useAuth();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchCount = async (): Promise<void> => {
+      try {
+        const res = await fetchWithAuth(
+          `${getBackendUrl()}/admin/sellers/pending/count`,
+          {},
+          () => user.getIdToken()
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setPendingCount(data.count ?? 0);
+        }
+      } catch {
+        // Non-critical
+      }
+    };
+
+    fetchCount();
+    const interval = setInterval(fetchCount, 60_000);
+    return () => clearInterval(interval);
+  }, [user]);
 
   return (
     <nav className="flex flex-col h-full py-6">
@@ -38,6 +67,7 @@ export function AdminSidebar() {
                 ? pathname === "/"
                 : pathname.startsWith(item.href)
             }
+            badge={"badgeKey" in item && item.badgeKey === "pendingSellers" ? pendingCount : undefined}
           />
         ))}
       </div>
