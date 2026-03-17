@@ -1,36 +1,20 @@
 import { Router, Request, Response } from "express"
 import { connectToMongo } from "../db.js"
-import { requireFirebaseAuth } from "../middleware/firebaseAuth.js"
 import { ObjectId } from "mongodb"
 import crypto from "crypto"
 import { CHECKOUT_BASE_URL } from "../config.js"
+import { requirePermission } from "../middleware/requirePermission.js"
+import { PERMISSIONS } from "../permissions.js"
 
 const router = Router()
 const DEFAULT_TTL_DAYS = 7
-
-router.use(requireFirebaseAuth)
-
-async function getSellerId(firebaseUid: string): Promise<ObjectId | null> {
-  const db = await connectToMongo()
-  const seller = await db.collection("sellers").findOne({ firebaseUid })
-  return seller ? (seller._id as ObjectId) : null
-}
 
 function generateToken(): string {
   return crypto.randomBytes(12).toString("base64url")
 }
 
 router.get("/payment-links", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+  const { sellerId } = req.sellerContext!
   const page = Math.max(1, parseInt((req.query.page as string) || "1", 10))
   const limit = Math.min(100, Math.max(1, parseInt((req.query.limit as string) || "20", 10)))
   const statusFilter = req.query.status as string | undefined
@@ -106,18 +90,11 @@ router.get("/payment-links", async (req: Request, res: Response) => {
   }
 })
 
-router.post("/products/:id/payment-links", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+router.post(
+  "/products/:id/payment-links",
+  requirePermission(PERMISSIONS.PAYMENT_LINKS_CREATE),
+  async (req: Request, res: Response) => {
+  const { sellerId } = req.sellerContext!
 
   let productId: ObjectId
   try {
@@ -143,6 +120,15 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
     }
 
     const seller = await db.collection("sellers").findOne({ _id: sellerId })
+
+    if (seller?.approvalStatus && seller.approvalStatus !== "approved") {
+      res.status(403).json({
+        error: "ACCOUNT_PENDING",
+        message: "Your account is pending approval. You cannot create payment links yet.",
+      })
+      return
+    }
+
     const onboardingComplete = seller?.onboardingComplete ?? !!seller?.instapayLink
     const linkStatus = onboardingComplete ? "active" : "preview"
 
@@ -184,18 +170,11 @@ router.post("/products/:id/payment-links", async (req: Request, res: Response) =
 })
 
 // POST /sellers/me/quick-links — create a product-less payment link
-router.post("/quick-links", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+router.post(
+  "/quick-links",
+  requirePermission(PERMISSIONS.PAYMENT_LINKS_CREATE),
+  async (req: Request, res: Response) => {
+  const { sellerId } = req.sellerContext!
 
   const body = req.body as Record<string, unknown>
   const title = typeof body.title === "string" ? body.title.trim() : ""
@@ -219,6 +198,15 @@ router.post("/quick-links", async (req: Request, res: Response) => {
     const paymentLinks = db.collection("payment_links")
 
     const seller = await db.collection("sellers").findOne({ _id: sellerId })
+
+    if (seller?.approvalStatus && seller.approvalStatus !== "approved") {
+      res.status(403).json({
+        error: "ACCOUNT_PENDING",
+        message: "Your account is pending approval. You cannot create payment links yet.",
+      })
+      return
+    }
+
     const onboardingComplete = seller?.onboardingComplete ?? !!seller?.instapayLink
     const linkStatus = onboardingComplete ? "active" : "preview"
 
@@ -261,18 +249,11 @@ router.post("/quick-links", async (req: Request, res: Response) => {
   }
 })
 
-router.patch("/payment-links/:id/status", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+router.patch(
+  "/payment-links/:id/status",
+  requirePermission(PERMISSIONS.PAYMENT_LINKS_APPROVE),
+  async (req: Request, res: Response) => {
+  const { sellerId } = req.sellerContext!
 
   let linkId: ObjectId
   try {
@@ -320,18 +301,11 @@ router.patch("/payment-links/:id/status", async (req: Request, res: Response) =>
   }
 })
 
-router.delete("/payment-links/:id", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+router.delete(
+  "/payment-links/:id",
+  requirePermission(PERMISSIONS.PAYMENT_LINKS_DELETE),
+  async (req: Request, res: Response) => {
+  const { sellerId } = req.sellerContext!
 
   let linkId: ObjectId
   try {

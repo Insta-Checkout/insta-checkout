@@ -18,6 +18,7 @@ import sellersMeRouter from "./routes/sellersMe.js"
 import webhooksRouter from "./routes/webhooks.js"
 import checkoutRouter from "./routes/checkout.js"
 import adminRouter from "./routes/admin.js"
+import inviteAcceptRouter from "./routes/inviteAccept.js"
 
 const app = express()
 const PORT = process.env.PORT ?? 4000
@@ -80,6 +81,9 @@ app.use("/webhooks", webhooksRouter)
 
 // Checkout API (public)
 app.use("/checkout", checkoutRouter)
+
+// Invite acceptance (public GET, auth-protected POST)
+app.use("/invitations", inviteAcceptRouter)
 
 // Admin API (admin-only)
 app.use("/admin", adminRouter)

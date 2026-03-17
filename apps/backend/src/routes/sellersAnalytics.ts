@@ -1,17 +1,9 @@
 import { Router, Request, Response } from "express"
 import { connectToMongo } from "../db.js"
-import { requireFirebaseAuth } from "../middleware/firebaseAuth.js"
-import { ObjectId } from "mongodb"
+import { requirePermission } from "../middleware/requirePermission.js"
+import { PERMISSIONS } from "../permissions.js"
 
 const router = Router()
-
-router.use(requireFirebaseAuth)
-
-async function getSellerId(firebaseUid: string): Promise<ObjectId | null> {
-  const db = await connectToMongo()
-  const seller = await db.collection("sellers").findOne({ firebaseUid })
-  return seller ? (seller._id as ObjectId) : null
-}
 
 function parseDateRange(from?: string, to?: string): { from: Date; to: Date } {
   const now = new Date()
@@ -27,17 +19,11 @@ function parseDateRange(from?: string, to?: string): { from: Date; to: Date } {
   return { from: fromDate, to: toDate }
 }
 
-router.get("/analytics", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+router.get(
+  "/analytics",
+  requirePermission(PERMISSIONS.ANALYTICS_VIEW),
+  async (req: Request, res: Response) => {
+  const { sellerId } = req.sellerContext!
   const from = req.query.from as string | undefined
   const to = req.query.to as string | undefined
   const granularity = (req.query.granularity as string) || "daily"
@@ -47,10 +33,11 @@ router.get("/analytics", async (req: Request, res: Response) => {
     const db = await connectToMongo()
     const paymentLinks = db.collection("payment_links")
 
-    // Stats from confirmed payment links (seller confirmed payment received)
+    // Stats from confirmed payment links — aggregate by paidAt (actual payment date)
+    // not confirmedAt (when seller clicked confirm), for accurate financial reporting
     const confirmedPipeline = [
-      { $match: { sellerId, status: "confirmed" } },
-      { $match: { confirmedAt: { $gte: fromDate, $lte: toDate } } },
+      { $match: { sellerId, status: "confirmed", paidAt: { $ne: null } } },
+      { $match: { paidAt: { $gte: fromDate, $lte: toDate } } },
       {
         $group: {
           _id: null,
@@ -72,14 +59,14 @@ router.get("/analytics", async (req: Request, res: Response) => {
 
     const dateFormat = granularity === "weekly" ? "%Y-W%V" : "%Y-%m-%d"
     const revenuePipeline = [
-      { $match: { sellerId, status: "confirmed" } },
-      { $match: { confirmedAt: { $gte: fromDate, $lte: toDate } } },
+      { $match: { sellerId, status: "confirmed", paidAt: { $ne: null } } },
+      { $match: { paidAt: { $gte: fromDate, $lte: toDate } } },
       {
         $group: {
           _id: {
             $dateToString: {
               format: dateFormat,
-              date: "$confirmedAt",
+              date: "$paidAt",
             },
           },
           revenue: { $sum: "$price" },
@@ -108,17 +95,7 @@ router.get("/analytics", async (req: Request, res: Response) => {
 })
 
 router.post("/resend-verification", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
-
-  const sellerId = await getSellerId(firebaseUid)
-  if (!sellerId) {
-    res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
-    return
-  }
+  const { sellerId } = req.sellerContext!
 
   try {
     const db = await connectToMongo()

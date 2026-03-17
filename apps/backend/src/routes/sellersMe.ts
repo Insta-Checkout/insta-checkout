@@ -1,29 +1,31 @@
 import { Router, Request, Response } from "express"
 import { connectToMongo } from "../db.js"
 import { requireFirebaseAuth } from "../middleware/firebaseAuth.js"
+import { resolveSellerContext } from "../middleware/resolveSellerContext.js"
+import { ALL_PERMISSIONS } from "../permissions.js"
 import sellersAnalyticsRouter from "./sellersAnalytics.js"
 import sellersProductsRouter from "./sellersProducts.js"
 import sellersPaymentLinksRouter from "./sellersPaymentLinks.js"
+import sellersTeamRouter from "./sellersTeam.js"
+import sellersInvitationsRouter from "./sellersInvitations.js"
 
 const router = Router()
 router.use(requireFirebaseAuth)
+router.use(resolveSellerContext)
 
-/** Debug: returns current Firebase UID from token. Use to verify it matches a seller's firebaseUid in MongoDB. */
+/** Debug: returns current Firebase UID from token and seller context. */
 router.get("/debug", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
+  const ctx = req.sellerContext!
   try {
     const db = await connectToMongo()
-    const seller = await db.collection("sellers").findOne({ firebaseUid })
+    const seller = await db.collection("sellers").findOne({ _id: ctx.sellerId })
     res.json({
-      firebaseUid,
+      firebaseUid: req.firebaseUid,
+      isOwner: ctx.isOwner,
+      permissions: ctx.permissions,
       sellerFound: !!seller,
       sellerEmail: seller?.email ?? null,
       sellerBusinessName: seller?.businessName ?? null,
-      hint: seller ? "Your session matches this seller." : "No seller in DB with this firebaseUid. Ensure you're logged in with the same account you used during onboarding.",
     })
   } catch (err) {
     console.error("[GET /sellers/me/debug]", err)
@@ -31,25 +33,23 @@ router.get("/debug", async (req: Request, res: Response) => {
   }
 })
 
-async function getSeller(firebaseUid: string) {
-  const db = await connectToMongo()
-  return db.collection("sellers").findOne({ firebaseUid })
-}
-
 router.get("/", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
-    return
-  }
+  const ctx = req.sellerContext!
   try {
-    const seller = await getSeller(firebaseUid)
+    const db = await connectToMongo()
+    const seller = await db.collection("sellers").findOne({ _id: ctx.sellerId })
     if (!seller) {
       res.status(404).json({ error: "NOT_FOUND", message: "Seller not found" })
       return
     }
     const hasSocialLinks = !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook)
     const onboardingComplete = seller.onboardingComplete ?? (!!seller.instapayLink && !!seller.category && hasSocialLinks)
+
+    // Role context for frontend permission-gating
+    const roleLabel = ctx.isOwner
+      ? "Owner"
+      : (await db.collection("memberships").findOne({ _id: ctx.membershipId }))?.roleLabel ?? "Custom"
+
     res.json({
       id: seller._id,
       fullName: seller.fullName ?? null,
@@ -69,6 +69,13 @@ router.get("/", async (req: Request, res: Response) => {
         logo: !!seller.logoUrl,
         socialLinks: !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook || seller.socialLinks?.whatsapp),
       },
+      approvalStatus: seller.approvalStatus ?? "approved",
+      approvalNote: seller.approvalNote ?? null,
+      role: {
+        isOwner: ctx.isOwner,
+        permissions: ctx.permissions,
+        roleLabel,
+      },
     })
   } catch (err) {
     console.error("[GET /sellers/me]", err)
@@ -77,11 +84,12 @@ router.get("/", async (req: Request, res: Response) => {
 })
 
 router.patch("/onboarding", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
+  const ctx = req.sellerContext!
+  if (!ctx.isOwner) {
+    res.status(403).json({ error: "FORBIDDEN", message: "Only the account owner can update onboarding" })
     return
   }
+  const firebaseUid = req.firebaseUid!
   const body = req.body as Record<string, unknown>
   const updates: Record<string, unknown> = {}
   if (typeof body.fullName === "string") {
@@ -181,11 +189,12 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
 })
 
 router.patch("/", async (req: Request, res: Response) => {
-  const firebaseUid = req.firebaseUid
-  if (!firebaseUid) {
-    res.status(401).json({ error: "UNAUTHORIZED" })
+  const ctx = req.sellerContext!
+  if (!ctx.isOwner) {
+    res.status(403).json({ error: "FORBIDDEN", message: "Only the account owner can update the profile" })
     return
   }
+  const firebaseUid = req.firebaseUid!
   const body = req.body as Record<string, unknown>
   const updates: Record<string, unknown> = {}
 
@@ -284,5 +293,7 @@ router.patch("/", async (req: Request, res: Response) => {
 router.use(sellersAnalyticsRouter)
 router.use(sellersProductsRouter)
 router.use(sellersPaymentLinksRouter)
+router.use(sellersTeamRouter)
+router.use(sellersInvitationsRouter)
 
 export default router
