@@ -41,9 +41,9 @@ router.get("/analytics", async (_req: Request, res: Response) => {
 
     const byStatus: Record<string, number> = { pending: 0, approved: 0, rejected: 0 }
     for (const row of approvalBreakdown) {
-      const status = row._id as string
+      const status = (row._id as string | null) ?? "approved"
       if (status in byStatus) {
-        byStatus[status] = row.count
+        byStatus[status] += row.count
       }
     }
 
@@ -198,6 +198,7 @@ router.patch("/sellers/:id/approval", async (req: Request, res: Response) => {
       update.rejectedAt = null
     } else {
       update.rejectedAt = now
+      update.approvedAt = null
     }
 
     const result = await sellers.findOneAndUpdate(

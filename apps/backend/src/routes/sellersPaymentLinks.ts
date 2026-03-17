@@ -183,6 +183,7 @@ router.post(
   const price = typeof body.price === "number" ? body.price : NaN
   const description = typeof body.description === "string" ? body.description.trim() : ""
   const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim() : ""
+  const customerName = typeof body.customerName === "string" ? body.customerName.trim() : ""
 
   if (!title) {
     res.status(400).json({ error: "VALIDATION_ERROR", message: "Title is required" })
@@ -225,6 +226,7 @@ router.post(
       productImageUrl: imageUrl || null,
       price,
       description: description || null,
+      customerName: customerName || null,
       checkoutUrl,
       status: linkStatus,
       isQuickLink: true,

@@ -124,6 +124,28 @@ const sellerSchema = new mongoose.Schema(
       enum: { values: ["en", "ar"], message: "Locale must be en or ar" },
       default: "ar",
     },
+    approvalStatus: {
+      type: String,
+      enum: {
+        values: ["pending", "approved", "rejected"],
+        message: "Approval status must be pending, approved, or rejected",
+      },
+      default: "pending",
+    },
+    approvalNote: {
+      type: String,
+      default: null,
+      trim: true,
+      maxlength: [500, "Approval note must be at most 500 characters"],
+    },
+    approvedAt: {
+      type: Date,
+      default: null,
+    },
+    rejectedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -133,5 +155,6 @@ const sellerSchema = new mongoose.Schema(
 sellerSchema.index({ "instapayInfo.mobile": 1 }, { sparse: true });
 sellerSchema.index({ firebaseUid: 1 }, { unique: true });
 sellerSchema.index({ createdAt: 1 });
+sellerSchema.index({ approvalStatus: 1, createdAt: 1 });
 
 module.exports = mongoose.model("Seller", sellerSchema);

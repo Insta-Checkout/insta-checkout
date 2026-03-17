@@ -2,7 +2,7 @@
 
 import type React from "react";
 import { useEffect, useState, useCallback } from "react";
-import { Users, Link2, CheckCircle, DollarSign, AlertCircle, RefreshCw } from "lucide-react";
+import { Users, Link2, CheckCircle, DollarSign, AlertCircle, RefreshCw, Clock, XCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,11 @@ type Analytics = {
   totalPaymentLinks: number;
   totalConfirmedPayments: number;
   totalVolume: number;
+  sellersByApprovalStatus?: {
+    pending: number;
+    approved: number;
+    rejected: number;
+  };
 };
 
 function formatEGP(amount: number): string {
@@ -125,6 +130,45 @@ export default function AdminDashboardPage(): React.JSX.Element {
           </Card>
         ))}
       </div>
+
+      {/* Approval status breakdown */}
+      {analytics?.sellersByApprovalStatus && (
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Card className="border-yellow-200 shadow-sm">
+            <CardContent className="flex items-center gap-3 py-4">
+              <Clock className="h-5 w-5 text-yellow-600" />
+              <div>
+                <p className="text-2xl font-bold text-[#1E0A3C] font-heading">
+                  {analytics.sellersByApprovalStatus.pending}
+                </p>
+                <p className="text-xs text-[#6B5B7B]">Pending</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-green-200 shadow-sm">
+            <CardContent className="flex items-center gap-3 py-4">
+              <CheckCircle className="h-5 w-5 text-green-500" />
+              <div>
+                <p className="text-2xl font-bold text-[#1E0A3C] font-heading">
+                  {analytics.sellersByApprovalStatus.approved}
+                </p>
+                <p className="text-xs text-[#6B5B7B]">Approved</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="border-red-200 shadow-sm">
+            <CardContent className="flex items-center gap-3 py-4">
+              <XCircle className="h-5 w-5 text-red-500" />
+              <div>
+                <p className="text-2xl font-bold text-[#1E0A3C] font-heading">
+                  {analytics.sellersByApprovalStatus.rejected}
+                </p>
+                <p className="text-xs text-[#6B5B7B]">Rejected</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       <Card className="border-[#E4D8F0] shadow-sm">
         <CardContent className="py-12 text-center">

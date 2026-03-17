@@ -8,9 +8,10 @@ type Props = {
   icon: React.ElementType;
   label: string;
   active: boolean;
+  badge?: number;
 };
 
-export function AdminSidebarLink({ href, icon: Icon, label, active }: Props) {
+export function AdminSidebarLink({ href, icon: Icon, label, active, badge }: Props) {
   return (
     <Link
       href={href}
@@ -23,6 +24,11 @@ export function AdminSidebarLink({ href, icon: Icon, label, active }: Props) {
     >
       <Icon className="h-4 w-4" />
       {label}
+      {badge != null && badge > 0 && (
+        <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-bold text-white">
+          {badge}
+        </span>
+      )}
     </Link>
   );
 }

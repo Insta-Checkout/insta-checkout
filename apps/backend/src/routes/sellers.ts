@@ -114,6 +114,10 @@ router.post("/", async (req: Request, res: Response) => {
       createdAt: now,
       updatedAt: now,
       onboardingComplete,
+      approvalStatus: "pending",
+      approvalNote: null,
+      approvedAt: null,
+      rejectedAt: null,
     }
 
     console.log("[POST /sellers] Inserting doc:", { email, whatsappNumber, businessName, firebaseUid })
