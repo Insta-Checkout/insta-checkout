@@ -36,8 +36,7 @@ router.get(
     // Stats from confirmed payment links — aggregate by paidAt (actual payment date)
     // not confirmedAt (when seller clicked confirm), for accurate financial reporting
     const confirmedPipeline = [
-      { $match: { sellerId, status: "confirmed", paidAt: { $ne: null } } },
-      { $match: { paidAt: { $gte: fromDate, $lte: toDate } } },
+      { $match: { sellerId, status: "confirmed", paidAt: { $gte: fromDate, $lte: toDate } } },
       {
         $group: {
           _id: null,
@@ -59,8 +58,7 @@ router.get(
 
     const dateFormat = granularity === "weekly" ? "%Y-W%V" : "%Y-%m-%d"
     const revenuePipeline = [
-      { $match: { sellerId, status: "confirmed", paidAt: { $ne: null } } },
-      { $match: { paidAt: { $gte: fromDate, $lte: toDate } } },
+      { $match: { sellerId, status: "confirmed", paidAt: { $gte: fromDate, $lte: toDate } } },
       {
         $group: {
           _id: {
