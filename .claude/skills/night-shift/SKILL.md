@@ -160,13 +160,12 @@ Requirements for Task #XX:
 
 ### What counts as a requirement
 
-- Each checkbox item in the spec's task list
-- Each acceptance criterion or "verify" instruction
-- Each file/component change described in implementation steps
-- Each i18n string mentioned (both EN and AR)
-- Each edge case or error handling scenario described
+Focus on the **"1. General Idea"** section — this is the source of truth. The "2. Implementation Steps" section is just guidance for how to build it; the agent may deviate if it finds a better approach.
+
+- Each checkbox item (`- [ ]` or `- [x]`) under "General Idea"
+- Each acceptance criterion or behavioral detail within those checkboxes
 - Each `@agent` instruction
-- Each behavioral detail (e.g., "show X when Y happens")
+- Each i18n implication (if user-facing strings are described, both EN and AR are needed)
 
 ### Track with todos
 

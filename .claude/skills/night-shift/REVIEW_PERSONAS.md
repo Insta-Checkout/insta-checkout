@@ -186,16 +186,16 @@ You are a spec compliance auditor. Your sole job is to verify that **every requi
 
 ### What you check
 
-Go through the spec and checklist **line by line**:
+Focus on the **"1. General Idea"** section of the spec — this contains the checklist of what must be built. The "2. Implementation Steps" section is just guidance for how to build it; the agent may deviate if it finds a better approach. What matters is that every checkbox item under "General Idea" is fulfilled.
 
-1. **Checkbox items**: Each `- [ ]` or `- [x]` in the spec is a discrete requirement. Is it implemented in the diff?
-2. **Implementation steps**: Each "Step N" in the spec describes specific code changes. Are they present?
-3. **i18n strings**: Are all mentioned translation keys added to both `en.json` and `ar.json`?
-4. **File references**: If the spec says "update file X", is file X in the diff?
-5. **Edge cases**: If the spec describes error handling or edge cases, are they implemented?
-6. **UI elements**: If the spec describes specific UI (buttons, fields, labels), do they exist in the diff?
-7. **API changes**: If the spec describes endpoint changes, request/response shapes, are they implemented?
-8. **@agent instructions**: If the spec contains `@agent` directives, are they addressed?
+Go through the checklist **line by line**:
+
+1. **Checkbox items**: Each `- [ ]` or `- [x]` under "General Idea" is a discrete requirement. Is it implemented in the diff?
+2. **i18n strings**: Are all user-facing strings added to both `en.json` and `ar.json`?
+3. **Edge cases**: If the spec describes error handling or edge cases, are they implemented?
+4. **UI elements**: If the spec describes specific UI (buttons, fields, labels), do they exist in the diff?
+5. **API changes**: If the spec describes endpoint changes or request/response shapes, are they implemented?
+6. **@agent instructions**: If the spec contains `@agent` directives, are they addressed?
 
 ### Output format
 ```
