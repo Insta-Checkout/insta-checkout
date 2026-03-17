@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import { Link2, Loader2, Copy, ChevronDown } from "lucide-react"
+import { useState, useRef } from "react"
+import Image from "next/image"
+import { Link2, Loader2, Copy, ChevronDown, Upload, X } from "lucide-react"
 import { toast } from "sonner"
 
-import { auth } from "@/lib/firebase"
+import { auth, uploadProductImage } from "@/lib/firebase"
 import { fetchWithAuth, getBackendUrl } from "@/lib/api"
 import { useTranslations } from "@/lib/locale-provider"
 import {
@@ -29,9 +30,13 @@ export function QuickLinkModal({ open, onOpenChange, onCreated }: Props): React.
   const [title, setTitle] = useState("")
   const [price, setPrice] = useState("")
   const [description, setDescription] = useState("")
+  const [customerName, setCustomerName] = useState("")
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
   const [showMore, setShowMore] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [generatedUrl, setGeneratedUrl] = useState("")
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const egpShort = t("common.egpShort")
 
@@ -43,6 +48,9 @@ export function QuickLinkModal({ open, onOpenChange, onCreated }: Props): React.
     setTitle("")
     setPrice("")
     setDescription("")
+    setCustomerName("")
+    setImageUrl(null)
+    setUploadingImage(false)
     setShowMore(false)
     setGeneratedUrl("")
   }
@@ -50,6 +58,30 @@ export function QuickLinkModal({ open, onOpenChange, onCreated }: Props): React.
   const handleClose = (isOpen: boolean): void => {
     if (!isOpen) resetForm()
     onOpenChange(isOpen)
+  }
+
+  const handleImageUpload = async (file: File): Promise<void> => {
+    if (!auth.currentUser) return
+
+    if (!file.type.startsWith("image/")) {
+      toast.error(t("dashboard.products.chooseImage"))
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error(t("dashboard.products.imageSize"))
+      return
+    }
+
+    setUploadingImage(true)
+    try {
+      const url = await uploadProductImage(file, auth.currentUser.uid)
+      setImageUrl(url)
+      toast.success(t("dashboard.products.uploadSuccess"))
+    } catch {
+      toast.error(t("dashboard.products.uploadFailed"))
+    } finally {
+      setUploadingImage(false)
+    }
   }
 
   const handleSubmit = async (): Promise<void> => {
@@ -74,6 +106,8 @@ export function QuickLinkModal({ open, onOpenChange, onCreated }: Props): React.
             title: title.trim(),
             price: numPrice,
             description: description.trim() || undefined,
+            customerName: customerName.trim() || undefined,
+            imageUrl: imageUrl || undefined,
           }),
         },
         getToken
@@ -172,19 +206,89 @@ export function QuickLinkModal({ open, onOpenChange, onCreated }: Props): React.
                 {t("dashboard.quickLink.moreOptions")}
               </button>
 
-              {/* Optional description */}
+              {/* Optional fields */}
               {showMore && (
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-[#1E0A3C] font-cairo">
-                    {t("dashboard.quickLink.descriptionLabel")}
-                  </label>
-                  <textarea
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder={t("dashboard.quickLink.descriptionPlaceholder")}
-                    rows={2}
-                    className="w-full rounded-xl border border-[#E4D8F0] bg-white px-4 py-3 text-sm text-[#1E0A3C] placeholder:text-[#6B5B7B]/50 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/30 focus:border-[#7C3AED] font-cairo resize-none"
-                  />
+                <div className="space-y-4">
+                  {/* Customer name */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-[#1E0A3C] font-cairo">
+                      {t("dashboard.quickLink.customerNameLabel")}
+                    </label>
+                    <input
+                      type="text"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder={t("dashboard.quickLink.customerNamePlaceholder")}
+                      className="w-full h-11 rounded-xl border border-[#E4D8F0] bg-white px-4 text-sm text-[#1E0A3C] placeholder:text-[#6B5B7B]/50 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/30 focus:border-[#7C3AED] font-cairo"
+                    />
+                  </div>
+
+                  {/* Photo upload */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-[#1E0A3C] font-cairo">
+                      {t("dashboard.quickLink.imageLabel")}
+                    </label>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0]
+                        if (file) handleImageUpload(file)
+                        e.target.value = ""
+                      }}
+                    />
+                    {imageUrl ? (
+                      <div className="relative w-full h-32 rounded-xl overflow-hidden border border-[#E4D8F0] bg-[#F3EEFA]">
+                        <Image
+                          src={imageUrl}
+                          alt={t("dashboard.quickLink.imageLabel")}
+                          fill
+                          className="object-cover"
+                          sizes="400px"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setImageUrl(null)}
+                          className="absolute top-2 end-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-[#6B5B7B] hover:text-[#1E0A3C] shadow-sm cursor-pointer"
+                          aria-label={t("dashboard.quickLink.removeImage")}
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadingImage}
+                        className="w-full h-24 rounded-xl border-2 border-dashed border-[#E4D8F0] bg-[#F3EEFA]/30 flex flex-col items-center justify-center gap-1.5 text-[#6B5B7B] hover:border-[#7C3AED]/40 hover:bg-[#F3EEFA] transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        {uploadingImage ? (
+                          <Loader2 className="h-5 w-5 motion-safe:animate-spin text-[#7C3AED]" />
+                        ) : (
+                          <>
+                            <Upload className="h-5 w-5" aria-hidden="true" />
+                            <span className="text-xs font-cairo">{t("dashboard.quickLink.uploadImage")}</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Description */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-medium text-[#1E0A3C] font-cairo">
+                      {t("dashboard.quickLink.descriptionLabel")}
+                    </label>
+                    <textarea
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder={t("dashboard.quickLink.descriptionPlaceholder")}
+                      rows={2}
+                      className="w-full rounded-xl border border-[#E4D8F0] bg-white px-4 py-3 text-sm text-[#1E0A3C] placeholder:text-[#6B5B7B]/50 focus:outline-none focus:ring-2 focus:ring-[#7C3AED]/30 focus:border-[#7C3AED] font-cairo resize-none"
+                    />
+                  </div>
                 </div>
               )}
 
