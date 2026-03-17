@@ -140,6 +140,40 @@ Only fetch docs relevant to the current task — don't waste context loading eve
 
 ---
 
+## Phase 2.5: Extract Requirements Checklist
+
+Before writing any code, systematically extract **every discrete requirement** from the spec into a numbered checklist. This prevents requirements from getting lost in long specs.
+
+### How to extract
+
+Read the full task spec and produce a checklist like:
+
+```
+Requirements for Task #XX:
+[  ] 1. <specific requirement from spec>
+[  ] 2. <specific requirement from spec>
+[  ] 3. <specific UI behavior described>
+[  ] 4. <specific edge case mentioned>
+[  ] 5. <i18n string needed>
+...
+```
+
+### What counts as a requirement
+
+- Each checkbox item in the spec's task list
+- Each acceptance criterion or "verify" instruction
+- Each file/component change described in implementation steps
+- Each i18n string mentioned (both EN and AR)
+- Each edge case or error handling scenario described
+- Each `@agent` instruction
+- Each behavioral detail (e.g., "show X when Y happens")
+
+### Track with todos
+
+Add each extracted requirement as a todo item. Mark each as completed only after the code implementing it is written and verified. **After implementation (end of Phase 4), go back through the checklist and verify every item is addressed.** Any missed items must be implemented before proceeding to Phase 5.
+
+---
+
 ## Phase 3: Plan
 
 Analyze the codebase for the specific area being changed. Understand the existing patterns before writing any code.
@@ -288,7 +322,7 @@ kill $DEV_PID 2>/dev/null
 
 ---
 
-## Phase 6: Review (6 Sub-Agents)
+## Phase 6: Review (7 Sub-Agents)
 
 Run each reviewer persona from `REVIEW_PERSONAS.md` as a sub-agent. Reviewers analyze the **code**, not the live app (the dev server is already stopped). Each reviewer gets:
 - The full `git diff` of changes for this task
@@ -296,9 +330,30 @@ Run each reviewer persona from `REVIEW_PERSONAS.md` as a sub-agent. Reviewers an
 - The QA report from Phase 5 (health score, test results, screenshots) — so reviewers can reference actual app behavior without needing a running server
 - Their specific reference docs (listed in REVIEW_PERSONAS.md)
 
-### Review process
+### Spec Compliance reviewer (runs first)
 
-1. Spawn each reviewer as a sub-agent with their persona prompt
+Before spawning the 6 quality reviewers, run the **Spec Compliance** reviewer. This reviewer gets:
+- The **raw Notion spec** (full task page content)
+- The **requirements checklist** from Phase 2.5
+- The **full git diff**
+
+Its sole job is to answer: **"Is every requirement in the spec addressed in the code?"** It goes line by line through the spec and checklist, checking each requirement against the diff. It outputs:
+
+```
+PASS or FAIL
+- [MISSING] Requirement #3: "Add buyer name field to Step 2" — not found in diff
+- [PARTIAL] Requirement #7: "Show buyer name in landing app" — component updated but i18n string missing for AR
+- [MET] Requirement #1: "Fix CORS allowedOrigins" — pay.instacheckouteg.com added at index.ts:15
+```
+
+If the Spec Compliance reviewer returns `FAIL`:
+- Implement the missing/partial requirements immediately
+- Re-run the Spec Compliance reviewer (max 2 retries)
+- Only proceed to the 6 quality reviewers after it returns `PASS`
+
+### Quality review process
+
+1. Spawn each of the 6 quality reviewers as a sub-agent with their persona prompt
 2. Each reviewer outputs either `APPROVE` or `REQUEST_CHANGES` with specific file:line references
 3. If ANY reviewer returns `REQUEST_CHANGES`:
    - Apply the feedback
@@ -349,9 +404,15 @@ Use `notion-update-page` to append a toggle heading "Agent Report" to the task p
 | 2 | <test case description> | PASS/FAIL |
 | ... | ... | ... |
 
+### Spec Compliance
+- Result: **PASS/FAIL**
+- Requirements met: X/Y
+- Missing: <list any missing requirements, or "None">
+
 ### Reviewer Verdicts
 | Persona | Verdict | Notes |
 |---------|---------|-------|
+| Spec Compliance | PASS/FAIL | X/Y requirements met |
 | UX Designer | APPROVE/REQUEST_CHANGES | <brief note> |
 | Architect | APPROVE/REQUEST_CHANGES | <brief note> |
 | Domain Expert | APPROVE/REQUEST_CHANGES | <brief note> |
