@@ -8,12 +8,13 @@ import { useTranslations } from "@/lib/locale-provider";
 import { cn } from "@/lib/utils";
 
 type Props = {
-  name: string;
+  businessName: string;
+  userName: string | null;
   email: string;
   photoURL?: string | null;
 };
 
-export function UserMenu({ name, email, photoURL }: Props) {
+export function UserMenu({ businessName, userName, email, photoURL }: Props) {
   const { t } = useTranslations();
   const { signOut } = useAuth();
   const [open, setOpen] = useState(false);
@@ -29,7 +30,8 @@ export function UserMenu({ name, email, photoURL }: Props) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const initials = name
+  const displayName = userName || businessName;
+  const initials = displayName
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -43,13 +45,13 @@ export function UserMenu({ name, email, photoURL }: Props) {
         className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-[#F3EEFA] transition-colors cursor-pointer"
       >
         <Avatar className="h-8 w-8">
-          <AvatarImage src={photoURL ?? undefined} alt={name} />
+          <AvatarImage src={photoURL ?? undefined} alt={displayName} />
           <AvatarFallback className="bg-[#EDE9FE] text-[#7C3AED] text-xs font-cairo font-semibold">
             {initials}
           </AvatarFallback>
         </Avatar>
         <span className="hidden sm:inline font-medium text-[#1E0A3C] font-cairo max-w-[120px] truncate">
-          {name}
+          {businessName}
         </span>
         <ChevronDown
           className={cn("h-4 w-4 text-[#6B5B7B] transition-transform", open && "rotate-180")}
@@ -59,8 +61,11 @@ export function UserMenu({ name, email, photoURL }: Props) {
       {open && (
         <div className="absolute end-0 top-full mt-1 w-56 rounded-xl border border-[#E4D8F0] bg-white py-1 shadow-lg z-50">
           <div className="px-3 py-2 border-b border-[#E4D8F0]">
-            <p className="text-sm font-medium text-[#1E0A3C] font-cairo truncate">{name}</p>
-            <p className="text-xs text-[#6B5B7B] truncate">{email}</p>
+            <p className="text-sm font-bold text-[#1E0A3C] font-cairo truncate">{businessName}</p>
+            {userName && (
+              <p className="text-xs font-medium text-[#1E0A3C] font-cairo truncate mt-0.5">{userName}</p>
+            )}
+            <p className="text-xs text-[#6B5B7B] truncate mt-0.5">{email}</p>
           </div>
           <button
             onClick={() => signOut()}

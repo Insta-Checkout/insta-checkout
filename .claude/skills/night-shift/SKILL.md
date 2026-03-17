@@ -13,14 +13,30 @@ Run an autonomous coding session that picks Groomed tasks from Notion, implement
 
 Before starting the loop, check that **bypass permissions mode** is enabled. If it's not, ask the user to enable it before proceeding — the session will stall on permission prompts otherwise.
 
+### Check for session assignment
+
+The user may provide a **session assignment** from `/night-shift-plan`. This looks like:
+
+> Session tasks: #XX, #YY, #ZZ
+> Branch: claude/night-shift-YYYY-MM-DD-sN
+
+If a session assignment is provided:
+- Use the specified branch name (not the default)
+- Only work on the assigned task IDs — do not query the board for other tasks
+- Pick tasks in the order listed
+
+If NO session assignment is provided:
+- Fall back to the original behavior: query the board and pick Groomed tasks top to bottom
+
 Then confirm with the user:
 
 > Starting Night Shift session. I will:
-> 1. Pick Groomed tasks from the Dev Launch Board (top to bottom)
+> 1. {Pick assigned tasks / Pick Groomed tasks from the board (top to bottom)}
 > 2. Implement, validate with headless QA, and review with 6 personas
-> 3. Commit all work to `claude/night-shift-YYYY-MM-DD`
+> 3. Commit all work to `{branch name}`
 > 4. Write Agent Reports on each Notion task card
 > 5. Create a PR at session end
+> 6. Verify all Vercel deployments pass — fix any failures automatically
 >
 > Shall I proceed?
 
@@ -45,9 +61,11 @@ Wait for explicit confirmation before continuing.
 
 2. Read session config from `.claude/skills/night-shift/config.md`
 
-3. Create the session branch (one branch for the entire session):
+3. Create the session branch:
    ```bash
+   # Use the assigned branch name if provided, otherwise default:
    git checkout -b claude/night-shift-$(date +%Y-%m-%d)
+   # If session assignment specified a branch like claude/night-shift-2026-03-17-s2, use that instead
    ```
 
 4. Read reviewer personas from `.claude/skills/night-shift/REVIEW_PERSONAS.md`
@@ -119,6 +137,39 @@ Only fetch docs relevant to the current task — don't waste context loading eve
 | Brand Guidelines | `31dc92f98d9c815c9063c80e2ba6667e` |
 | Brand Voice Guide | `31cc92f98d9c81acbb1ae8cfd0e217b4` |
 | E2E Testing Spec | `aad7dc7c2ccf4e7da22be2ba5e979361` |
+
+---
+
+## Phase 2.5: Extract Requirements Checklist
+
+Before writing any code, systematically extract **every discrete requirement** from the spec into a numbered checklist. This prevents requirements from getting lost in long specs.
+
+### How to extract
+
+Read the full task spec and produce a checklist like:
+
+```
+Requirements for Task #XX:
+[  ] 1. <specific requirement from spec>
+[  ] 2. <specific requirement from spec>
+[  ] 3. <specific UI behavior described>
+[  ] 4. <specific edge case mentioned>
+[  ] 5. <i18n string needed>
+...
+```
+
+### What counts as a requirement
+
+Focus on the **"1. General Idea"** section — this is the source of truth. The "2. Implementation Steps" section is just guidance for how to build it; the agent may deviate if it finds a better approach.
+
+- Each checkbox item (`- [ ]` or `- [x]`) under "General Idea"
+- Each acceptance criterion or behavioral detail within those checkboxes
+- Each `@agent` instruction
+- Each i18n implication (if user-facing strings are described, both EN and AR are needed)
+
+### Track with todos
+
+Add each extracted requirement as a todo item. Mark each as completed only after the code implementing it is written and verified. **After implementation (end of Phase 4), go back through the checklist and verify every item is addressed.** Any missed items must be implemented before proceeding to Phase 5.
 
 ---
 
@@ -270,7 +321,7 @@ kill $DEV_PID 2>/dev/null
 
 ---
 
-## Phase 6: Review (6 Sub-Agents)
+## Phase 6: Review (7 Sub-Agents)
 
 Run each reviewer persona from `REVIEW_PERSONAS.md` as a sub-agent. Reviewers analyze the **code**, not the live app (the dev server is already stopped). Each reviewer gets:
 - The full `git diff` of changes for this task
@@ -278,9 +329,30 @@ Run each reviewer persona from `REVIEW_PERSONAS.md` as a sub-agent. Reviewers an
 - The QA report from Phase 5 (health score, test results, screenshots) — so reviewers can reference actual app behavior without needing a running server
 - Their specific reference docs (listed in REVIEW_PERSONAS.md)
 
-### Review process
+### Spec Compliance reviewer (runs first)
 
-1. Spawn each reviewer as a sub-agent with their persona prompt
+Before spawning the 6 quality reviewers, run the **Spec Compliance** reviewer. This reviewer gets:
+- The **raw Notion spec** (full task page content)
+- The **requirements checklist** from Phase 2.5
+- The **full git diff**
+
+Its sole job is to answer: **"Is every requirement in the spec addressed in the code?"** It goes line by line through the spec and checklist, checking each requirement against the diff. It outputs:
+
+```
+PASS or FAIL
+- [MISSING] Requirement #3: "Add buyer name field to Step 2" — not found in diff
+- [PARTIAL] Requirement #7: "Show buyer name in landing app" — component updated but i18n string missing for AR
+- [MET] Requirement #1: "Fix CORS allowedOrigins" — pay.instacheckouteg.com added at index.ts:15
+```
+
+If the Spec Compliance reviewer returns `FAIL`:
+- Implement the missing/partial requirements immediately
+- Re-run the Spec Compliance reviewer (max 2 retries)
+- Only proceed to the 6 quality reviewers after it returns `PASS`
+
+### Quality review process
+
+1. Spawn each of the 6 quality reviewers as a sub-agent with their persona prompt
 2. Each reviewer outputs either `APPROVE` or `REQUEST_CHANGES` with specific file:line references
 3. If ANY reviewer returns `REQUEST_CHANGES`:
    - Apply the feedback
@@ -331,9 +403,15 @@ Use `notion-update-page` to append a toggle heading "Agent Report" to the task p
 | 2 | <test case description> | PASS/FAIL |
 | ... | ... | ... |
 
+### Spec Compliance
+- Result: **PASS/FAIL**
+- Requirements met: X/Y
+- Missing: <list any missing requirements, or "None">
+
 ### Reviewer Verdicts
 | Persona | Verdict | Notes |
 |---------|---------|-------|
+| Spec Compliance | PASS/FAIL | X/Y requirements met |
 | UX Designer | APPROVE/REQUEST_CHANGES | <brief note> |
 | Architect | APPROVE/REQUEST_CHANGES | <brief note> |
 | Domain Expert | APPROVE/REQUEST_CHANGES | <brief note> |
@@ -364,10 +442,6 @@ Update the Notion task status to "🔍 To Be Reviewed" via `notion-update-page`.
 - At **~70% context consumed**: run `/compact` to free up space, then continue
 - At **~90% context consumed**: hard stop — proceed to session end regardless of remaining tasks
 
-### Check limits
-
-Read `max_tasks` from config.md. If you've completed that many tasks, proceed to session end.
-
 ### Large task detection
 
 Before starting a task, estimate its scope. If a task involves **scaffolding a new app**, **creating 10+ new files**, or would consume more than ~40% of remaining context, do NOT skip it — instead:
@@ -396,13 +470,51 @@ Go back to **Phase 1** to pick the next task.
    - Body: list all completed tasks with their Notion links and brief summaries
    - Link to each task's Agent Report
 
-3. Stop caffeinate and put the Mac to sleep:
+3. **Verify deployments** (see Phase 9 below) before winding down.
+
+4. Stop caffeinate and put the Mac to sleep:
    ```bash
    kill $CAFFEINATE_PID 2>/dev/null
    pmset sleepnow
    ```
 
-4. Report to the user what was accomplished (they'll see it when they wake the Mac).
+5. Report to the user what was accomplished (they'll see it when they wake the Mac).
+
+---
+
+## Phase 9: Verify Deployments
+
+After the PR is created and Agent Reports are written, verify that all Vercel deployments succeed.
+
+### Steps
+
+1. **Wait ~90 seconds** after the PR is created to give Vercel time to start builds.
+
+2. **Check deployment status** using `gh pr checks <PR_NUMBER>`:
+   - Look for all Vercel deployment checks (checkout, landing, admin, etc.)
+   - If all checks pass → done, proceed to sleep the Mac
+   - If any check is still pending, wait another 60 seconds and re-check (max 5 retries)
+
+3. **If a deployment fails**:
+   a. Identify the failed deployment from the check output (get the deployment ID or URL)
+   b. Find the team ID: read `.vercel/project.json` if it exists, or use `list_teams` via Vercel MCP
+   c. Fetch build logs using `get_deployment_build_logs` via Vercel MCP with the deployment ID and team ID
+   d. Analyze the error — common failures:
+      - **Missing dependency**: add it to the correct app's `package.json`, run `pnpm install`
+      - **TypeScript error**: fix the type error in the reported file
+      - **Build-time import error**: fix the import path or add the missing module
+      - **Environment variable missing**: log it as a blocker (don't add secrets)
+   e. Commit the fix:
+      ```
+      fix(<app>): resolve deployment failure — <brief description>
+      ```
+   f. Push the fix to the same branch — this will trigger a new Vercel deployment
+   g. **Re-run Phase 9 from step 1** to verify the new deployment succeeds
+   h. Maximum 3 fix attempts per deployment — if still failing after 3 tries, log it as a blocker in the PR body and move on
+
+4. **Update the PR body** if any deployment fixes were made:
+   - Add a "Deployment Fixes" section listing what was fixed
+   - Use `gh pr edit` to append to the body
 
 ---
 

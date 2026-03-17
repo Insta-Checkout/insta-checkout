@@ -1,33 +1,18 @@
-import { CheckoutFlow } from "@/components/checkout/checkout-flow"
+import type { Metadata } from "next"
+import { SplashPage } from "@/components/splash/splash-page"
 
-export const dynamic = "force-dynamic";
-
-// In production, this data would come from a database lookup
-// based on the unique payment link ID in the URL path
-const checkoutData = {
-  sellerName: "حلويات سارة",
-  categoryTag: "حلويات ومخبوزات",
-  productName: "كيكة شوكولاتة",
-  productNameAr: "كيكة شوكولاتة",
-  productNameEn: "Chocolate cake",
-  productImage: "/images/chocolate-cake.jpg",
-  price: "300",
-  instapayLink: "https://ipn.eg/S/demo",
-  whatsappLink: "https://wa.me/201012345678",
+export const metadata: Metadata = {
+  title: "Insta Checkout — لينكات دفع InstaPay للبائعين",
+  description:
+    "Insta Checkout powers secure InstaPay payment links for Egyptian sellers. Create a link, share it, get paid.",
+  openGraph: {
+    title: "Insta Checkout — InstaPay Payment Links for Sellers",
+    description:
+      "The payment link platform built for Egyptian sellers. Create a link in seconds, share it on WhatsApp or Instagram, and get paid via InstaPay.",
+    type: "website",
+  },
 }
 
-export default function CheckoutPage() {
-  return (
-    <CheckoutFlow
-      sellerName={checkoutData.sellerName}
-      categoryTag={checkoutData.categoryTag}
-      productName={checkoutData.productName}
-      productNameAr={checkoutData.productNameAr}
-      productNameEn={checkoutData.productNameEn}
-      productImage={checkoutData.productImage}
-      price={checkoutData.price}
-      instapayLink={checkoutData.instapayLink}
-      whatsappLink={checkoutData.whatsappLink}
-    />
-  )
+export default function CheckoutPage(): React.JSX.Element {
+  return <SplashPage />
 }

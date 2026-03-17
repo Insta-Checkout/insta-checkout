@@ -53,7 +53,7 @@ export function QuickProductsRow({ products, loading }: Props) {
 
   if (loading) {
     return (
-      <section className="sm:hidden space-y-3">
+      <section className="space-y-3">
         <div className="flex items-center justify-between">
           <Skeleton className="h-5 w-28" />
           <Skeleton className="h-4 w-24" />

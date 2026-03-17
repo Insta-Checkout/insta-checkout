@@ -889,6 +889,36 @@
       "generateLink": "إنشاء لينك",
       "linkGenerated": "تم إنشاء اللينك"
     },
+    "recentLinks": {
+      "title": "آخر لينكات الدفع",
+      "refresh": "تحديث",
+      "emptyTitle": "مفيش لينكات دفع لسه",
+      "emptySubtitle": "أنشئ أول منتج وولّد لينك دفع لمشاركته مع العملاء.",
+      "createFirst": "الذهاب للمنتجات",
+      "confirm": "أكّد الدفع",
+      "confirmSuccess": "تم تأكيد الدفع",
+      "confirmFailed": "مقدرناش نأكد الدفع — جرب تاني",
+      "viewAll": "عرض الكل"
+    },
+    "quickLink": {
+      "title": "أنشئ لينك سريع",
+      "subtitle": "ابعت لينك دفع في ثواني — من غير منتج",
+      "titleLabel": "الدفع ده لإيه؟",
+      "titlePlaceholder": "مثلاً: تصميم لوجو",
+      "priceLabel": "المبلغ",
+      "priceRequired": "ادخل سعر صحيح",
+      "titleRequired": "العنوان مطلوب",
+      "moreOptions": "خيارات تانية",
+      "descriptionLabel": "ملاحظة للمشتري (اختياري)",
+      "descriptionPlaceholder": "مثلاً: مشروع تصميم — شامل ٢ تعديلات",
+      "create": "أنشئ لينك سريع",
+      "createFailed": "مقدرناش ننشئ اللينك",
+      "linkReady": "اللينك جاهز!",
+      "linkReadySubtitle": "انسخ اللينك أو شاركه على واتساب",
+      "copyLink": "نسخ اللينك",
+      "shareWhatsApp": "مشاركة على واتساب",
+      "badge": "لينك سريع"
+    },
     "onboarding": {
       "completeTitle": "أكمل بياناتك لتفعيل لينكات الدفع",
       "progress": "{done} من {total} — {pct}%",

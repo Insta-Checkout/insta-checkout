@@ -1,8 +1,5 @@
 # Night Shift Session Config
 
-# Maximum number of tasks to complete per session
-max_tasks: 3
-
 # Only pick tasks in these categories (comma-separated, or "all")
 # Options: Backend, WhatsApp Bot, Infrastructure, Legal & Compliance, Design, Landing App, Checkout App
 category_filter: all
