@@ -137,7 +137,7 @@ export function InviteModal({ open, onOpenChange, onInvited }: Props): React.JSX
       }
 
       const data = await res.json()
-      setInviteLink(data.inviteLink ?? "")
+      setInviteLink(data.invitation?.inviteUrl ?? "")
       setStep("success")
       onInvited?.()
     } catch {

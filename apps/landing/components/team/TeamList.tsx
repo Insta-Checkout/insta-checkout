@@ -17,17 +17,17 @@ import {
 import { EditMemberModal } from "@/components/team/EditMemberModal"
 
 type TeamMember = {
-  _id: string
+  id: string
   email: string
-  role: string
+  roleLabel: string
   permissions?: string[]
   joinedAt?: string
 }
 
 type PendingInvite = {
-  _id: string
+  id: string
   email: string
-  role: string
+  roleLabel: string
   expiresAt?: string
 }
 
@@ -139,7 +139,7 @@ export function TeamList({ members, pendingInvites, onRefresh }: Props): React.J
           <div className="space-y-3">
             {members.map((member) => (
               <div
-                key={member._id}
+                key={member.id}
                 className="bg-white rounded-2xl border border-[#E4D8F0] p-4 flex items-center gap-4"
               >
                 <div className="h-10 w-10 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
@@ -153,9 +153,9 @@ export function TeamList({ members, pendingInvites, onRefresh }: Props): React.J
                   <div className="flex items-center gap-3 mt-1 flex-wrap">
                     <span className="inline-flex items-center gap-1 text-xs bg-[#EDE9FE] text-[#7C3AED] px-2 py-0.5 rounded-full font-cairo">
                       <Shield className="h-3 w-3" />
-                      {member.role === "owner"
+                      {member.roleLabel === "owner"
                         ? t("dashboard.team.ownerBadge")
-                        : member.role}
+                        : member.roleLabel}
                     </span>
                     {member.joinedAt && (
                       <span className="text-xs text-[#6B5B7B] font-cairo">
@@ -211,7 +211,7 @@ export function TeamList({ members, pendingInvites, onRefresh }: Props): React.J
           <div className="space-y-3">
             {pendingInvites.map((invite) => (
               <div
-                key={invite._id}
+                key={invite.id}
                 className="bg-white rounded-2xl border border-[#E4D8F0] p-4 flex items-center gap-4"
               >
                 <div className="h-10 w-10 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0">
@@ -224,7 +224,7 @@ export function TeamList({ members, pendingInvites, onRefresh }: Props): React.J
                   </p>
                   <div className="flex items-center gap-3 mt-1 flex-wrap">
                     <span className="inline-flex items-center gap-1 text-xs bg-[#EDE9FE] text-[#7C3AED] px-2 py-0.5 rounded-full font-cairo">
-                      {t("dashboard.team.role")}: {invite.role}
+                      {t("dashboard.team.role")}: {invite.roleLabel}
                     </span>
                     {invite.expiresAt && (
                       <span className="text-xs text-[#6B5B7B] font-cairo">
@@ -237,11 +237,11 @@ export function TeamList({ members, pendingInvites, onRefresh }: Props): React.J
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => handleRevoke(invite._id)}
-                  disabled={revokingId === invite._id}
+                  onClick={() => handleRevoke(invite.id)}
+                  disabled={revokingId === invite.id}
                   className="text-red-500 hover:text-red-600 hover:bg-red-50 font-cairo shrink-0 cursor-pointer"
                 >
-                  {revokingId === invite._id ? (
+                  {revokingId === invite.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
                     <X className="h-4 w-4" />

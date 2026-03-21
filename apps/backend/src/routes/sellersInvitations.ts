@@ -4,6 +4,7 @@ import { requirePermission } from "../middleware/requirePermission.js"
 import { PERMISSIONS, ROLE_PRESETS, ALL_PERMISSIONS, type Permission } from "../permissions.js"
 import crypto from "crypto"
 import { ObjectId } from "mongodb"
+import { sendInvitationEmail } from "../services/email.js"
 
 const router = Router()
 const INVITE_TTL_DAYS = 7
@@ -118,8 +119,13 @@ router.post(
 
       await invitations.insertOne(doc)
 
-      // TODO: Send invitation email via email service (Task #78)
       const inviteUrl = `${process.env.LANDING_BASE_URL ?? "https://instacheckouteg.com"}/invite/${token}`
+      const businessName = seller?.businessName ?? seller?.name ?? "A business"
+
+      // Send invitation email (non-blocking — don't fail the request if email fails)
+      sendInvitationEmail(normalizedEmail, inviteUrl, businessName, roleLabel).catch((err) => {
+        console.error("[POST /sellers/me/invitations] Email send failed:", err)
+      })
 
       res.status(201).json({
         success: true,

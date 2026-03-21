@@ -12,17 +12,17 @@ import { InviteModal } from "@/components/team/InviteModal"
 import { TeamList } from "@/components/team/TeamList"
 
 type TeamMember = {
-  _id: string
+  id: string
   email: string
-  role: string
+  roleLabel: string
   permissions?: string[]
   joinedAt?: string
 }
 
 type PendingInvite = {
-  _id: string
+  id: string
   email: string
-  role: string
+  roleLabel: string
   expiresAt?: string
 }
 
@@ -45,12 +45,12 @@ export default function TeamPage(): React.JSX.Element {
 
       if (teamRes.ok) {
         const teamData = await teamRes.json()
-        setMembers(teamData.members ?? teamData ?? [])
+        setMembers(teamData.items ?? teamData.members ?? [])
       }
 
       if (invitesRes.ok) {
         const invitesData = await invitesRes.json()
-        setPendingInvites(invitesData.invitations ?? invitesData ?? [])
+        setPendingInvites(invitesData.items ?? invitesData.invitations ?? [])
       }
     } catch {
       toast.error(t("dashboard.team.loadFailed"))

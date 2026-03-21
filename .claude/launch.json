@@ -19,6 +19,12 @@
       "runtimeExecutable": "/usr/local/lib/node_modules/corepack/shims/pnpm",
       "runtimeArgs": ["dev:backend"],
       "port": 4000
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "/usr/local/lib/node_modules/corepack/shims/pnpm",
+      "runtimeArgs": ["dev:admin"],
+      "port": 3002
     }
   ]
 }
