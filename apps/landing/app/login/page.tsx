@@ -180,7 +180,7 @@ export default function LoginPage() {
           ) : (
             <form onSubmit={handleSubmit(handleEmailSignIn)} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">{t("onboard.step3.email")}</Label>
+                <Label htmlFor="email">{t("onboard.step2.email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -192,10 +192,10 @@ export default function LoginPage() {
                 {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">{t("onboard.step3.password")}</Label>
+                <Label htmlFor="password">{t("onboard.step2.password")}</Label>
                 <PasswordInput
                   id="password"
-                  placeholder={t("onboard.step3.placeholders.passwordSignin")}
+                  placeholder={t("onboard.step2.placeholders.passwordSignin")}
                   className="h-12 rounded-lg"
                   dir="ltr"
                   {...register("password")}
@@ -213,7 +213,7 @@ export default function LoginPage() {
                   {t("common.back")}
                 </Button>
                 <Button type="submit" disabled={isLoading} className="h-12 flex-1 rounded-xl bg-primary font-bold">
-                  {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : t("onboard.step3.signInBtn")}
+                  {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : t("onboard.step2.signInBtn")}
                 </Button>
               </div>
             </form>
