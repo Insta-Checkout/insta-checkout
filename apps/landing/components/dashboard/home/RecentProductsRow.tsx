@@ -125,6 +125,7 @@ export function RecentProductsRow({
                       fill
                       className="object-cover"
                       sizes="160px"
+                      priority={displayProducts.indexOf(product) === 0}
                     />
                   </div>
                 ) : (
