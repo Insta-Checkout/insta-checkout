@@ -61,9 +61,7 @@ function KpiCard({
     <Card className="font-cairo border-[#E4D8F0] shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-[#6B5B7B]">{label}</CardTitle>
-        <div className="w-8 h-8 bg-[#EDE9FE] rounded-full flex items-center justify-center">
-          <Icon className="h-4 w-4 text-[#7C3AED]" aria-hidden="true" />
-        </div>
+        <Icon className="h-5 w-5 text-[#7C3AED]/60" aria-hidden="true" />
       </CardHeader>
       <CardContent>
         {loading ? (
