@@ -102,6 +102,7 @@ export default function TeamPage(): React.JSX.Element {
       <TeamList
         members={members}
         pendingInvites={pendingInvites}
+        onInviteClick={() => setInviteOpen(true)}
         onRefresh={handleRefresh}
       />
 

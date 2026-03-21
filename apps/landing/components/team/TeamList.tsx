@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Users, Mail, Shield, Clock, Edit2, Trash2, X, Loader2 } from "lucide-react"
+import { Users, Mail, Shield, Clock, Edit2, Trash2, X, Loader2, UserPlus } from "lucide-react"
 import { toast } from "sonner"
 
 import { auth } from "@/lib/firebase"
@@ -35,9 +35,10 @@ type Props = {
   members: TeamMember[]
   pendingInvites: PendingInvite[]
   onRefresh: () => void
+  onInviteClick?: () => void
 }
 
-export function TeamList({ members, pendingInvites, onRefresh }: Props): React.JSX.Element {
+export function TeamList({ members, pendingInvites, onRefresh, onInviteClick }: Props): React.JSX.Element {
   const { t } = useTranslations()
   const [editMember, setEditMember] = useState<TeamMember | null>(null)
   const [editOpen, setEditOpen] = useState(false)
@@ -129,11 +130,23 @@ export function TeamList({ members, pendingInvites, onRefresh }: Props): React.J
         </div>
 
         {members.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-[#E4D8F0] p-8 text-center">
-            <Users className="h-10 w-10 text-[#E4D8F0] mx-auto mb-3" />
-            <p className="text-sm text-[#6B5B7B] font-cairo">
+          <div className="bg-white rounded-2xl border border-[#E4D8F0] p-10 text-center space-y-3">
+            <Users className="h-10 w-10 text-[#C4B5FD] mx-auto" />
+            <p className="text-base font-semibold text-[#1E0A3C] font-cairo">
               {t("dashboard.team.noMembers")}
             </p>
+            <p className="text-sm text-[#6B5B7B] font-cairo max-w-xs mx-auto">
+              {t("dashboard.team.noMembersSubtitle")}
+            </p>
+            {onInviteClick && (
+              <Button
+                onClick={onInviteClick}
+                className="gap-2 font-cairo bg-[#7C3AED] hover:bg-[#6D28D9] text-white cursor-pointer mt-2"
+              >
+                <UserPlus className="h-4 w-4" />
+                {t("dashboard.team.inviteMember")}
+              </Button>
+            )}
           </div>
         ) : (
           <div className="space-y-3">
