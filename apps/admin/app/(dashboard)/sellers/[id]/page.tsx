@@ -43,6 +43,7 @@ type SellerDetail = {
   whatsappVerified: boolean;
   onboardingComplete: boolean;
   instapayNumber: string;
+  instapayLink?: string;
   instapayInfo?: {
     method?: string;
     mobile?: string;
@@ -424,6 +425,13 @@ export default function SellerDetailPage(): React.JSX.Element {
               label="Onboarding Complete"
               value={seller.onboardingComplete ? "Yes" : "No"}
             />
+            {seller.instapayLink && (
+              <InfoItem
+                icon={<Link2 className="h-4 w-4 text-[#7C3AED]" />}
+                label="InstaPay Link"
+                value={seller.instapayLink}
+              />
+            )}
             {seller.instapayInfo?.method && (
               <InfoItem
                 icon={<DollarSign className="h-4 w-4 text-[#7C3AED]" />}

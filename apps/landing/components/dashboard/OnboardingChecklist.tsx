@@ -386,13 +386,13 @@ export function OnboardingChecklist() {
                       </div>
 
                       {/* Screenshot showing where to find the link */}
-                      <div className="rounded-xl overflow-hidden border border-border">
+                      <div className="rounded-xl overflow-hidden border border-border w-fit">
                         <Image
                           src="/instapay-link-hint.png"
                           alt={t("dashboard.onboarding.instapayLinkHint")}
                           width={600}
                           height={400}
-                          className="w-full h-auto object-cover"
+                          className="h-44 w-auto object-cover"
                           unoptimized
                         />
                       </div>

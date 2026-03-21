@@ -1093,6 +1093,8 @@
       "logout": "Log out"
     },
     "approval": {
+      "incompleteTitle": "Complete your profile to start accepting payments",
+      "incompleteBody": "Fill in your business info and payment link below to activate your account and start receiving orders.",
       "pendingTitle": "Your account is under review",
       "pendingBody": "We've received your information. Our team is reviewing your account — this usually takes 8 to 48 hours.",
       "pendingNote": "We'll notify you when your account is activated.",

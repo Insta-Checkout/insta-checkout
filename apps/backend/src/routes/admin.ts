@@ -247,6 +247,7 @@ router.get("/sellers/:id", async (req: Request, res: Response) => {
         whatsappVerified: 1,
         onboardingComplete: 1,
         instapayNumber: 1,
+        instapayLink: 1,
         instapayInfo: 1,
         maskedName: 1,
         maskedFullName: 1,

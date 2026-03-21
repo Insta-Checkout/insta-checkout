@@ -115,6 +115,7 @@ export function DashboardHomeContent(): React.JSX.Element {
   const [refreshKey, setRefreshKey] = useState<number>(0)
   const [approvalStatus, setApprovalStatus] = useState<"pending" | "approved" | "rejected" | undefined>(undefined)
   const [approvalNote, setApprovalNote] = useState<string | null>(null)
+  const [onboardingComplete, setOnboardingComplete] = useState<boolean | undefined>(undefined)
   const egpShort = t("common.egpShort")
 
   const getToken = useCallback(
@@ -212,6 +213,7 @@ export function DashboardHomeContent(): React.JSX.Element {
           const data = await res.json()
           setApprovalStatus(data.approvalStatus ?? "approved")
           setApprovalNote(data.approvalNote ?? null)
+          setOnboardingComplete(data.onboardingComplete ?? false)
         }
       } catch {
         // Non-critical — default to not showing banner
@@ -247,11 +249,11 @@ export function DashboardHomeContent(): React.JSX.Element {
 
   return (
     <div className="space-y-8">
-      <ApprovalStatusBanner status={approvalStatus} note={approvalNote} />
+      <ApprovalStatusBanner status={approvalStatus} note={approvalNote} onboardingComplete={onboardingComplete} />
       <OnboardingChecklist />
 
-      {/* Welcome card — shown when no payments yet */}
-      {isEmpty && (
+      {/* Welcome card — shown when no payments yet and account is approved */}
+      {isEmpty && approvalStatus === "approved" && (
         <Card className="border-[#E4D8F0] bg-gradient-to-br from-[#F3EEFA] via-white to-white">
           <CardContent className="flex items-center gap-4 px-5 py-4">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#EDE9FE]">
