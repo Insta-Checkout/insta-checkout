@@ -1196,6 +1196,10 @@
       "saving": "Saving...",
       "saveSuccess": "Profile updated",
       "saveFailed": "Failed to update profile"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Account settings — coming soon"
     }
   },
   "businessTypes": {
