@@ -5,6 +5,13 @@ import { SidebarLink } from "./SidebarLink";
 import { Home, Package, Link2, Settings, Languages, User, Users } from "lucide-react";
 import { useTranslations } from "@/lib/locale-provider";
 import { LOCALES } from "@insta-checkout/i18n";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const NAV_ITEMS = [
   { labelKey: "dashboard.sidebar.home", href: "/dashboard/home", icon: Home },
@@ -44,18 +51,19 @@ export function Sidebar() {
 
       <div className="px-3 pt-4 border-t border-[#E4D8F0] space-y-0.5">
         <div className="flex items-center gap-2 px-3 py-2">
-          <Languages className="h-4 w-4 text-[#6B5B7B]" />
-          <select
-            value={locale}
-            onChange={(e) => setLocale(e.target.value as "ar" | "en")}
-            className="flex-1 rounded-lg border border-[#E4D8F0] bg-white px-2 py-1.5 text-sm font-cairo text-[#1E0A3C]"
-          >
-            {LOCALES.map((l) => (
-              <option key={l} value={l}>
-                {t(`dashboard.sidebar.locale${l === "ar" ? "Ar" : "En"}`)}
-              </option>
-            ))}
-          </select>
+          <Languages className="h-4 w-4 text-[#6B5B7B] shrink-0" />
+          <Select value={locale} onValueChange={(v) => setLocale(v as "ar" | "en")}>
+            <SelectTrigger className="flex-1 h-8 text-sm font-cairo text-[#1E0A3C] border-[#E4D8F0]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {LOCALES.map((l) => (
+                <SelectItem key={l} value={l} className="font-cairo text-sm">
+                  {t(`dashboard.sidebar.locale${l === "ar" ? "Ar" : "En"}`)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <SidebarLink
           href="/dashboard/settings"
