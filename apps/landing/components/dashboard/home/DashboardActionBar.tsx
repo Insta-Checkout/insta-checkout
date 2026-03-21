@@ -22,7 +22,7 @@ export function DashboardActionBar({ onQuickLinkClick }: DashboardActionBarProps
       <Link href="/dashboard/products">
         <Button
           variant="outline"
-          className="gap-2 font-cairo border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA] cursor-pointer"
+          className="gap-2 font-cairo border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA] cursor-pointer h-11"
         >
           <Package className="h-4 w-4" aria-hidden="true" />
           {t("dashboard.home.addProduct")}
@@ -34,7 +34,7 @@ export function DashboardActionBar({ onQuickLinkClick }: DashboardActionBarProps
           <TooltipTrigger asChild>
             <Button
               variant="outline"
-              className="gap-2 font-cairo border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA] cursor-pointer"
+              className="gap-2 font-cairo border-[#E4D8F0] text-[#7C3AED] hover:bg-[#F3EEFA] cursor-pointer h-11"
             >
               <Link2 className="h-4 w-4" aria-hidden="true" />
               {t("dashboard.home.createLink")}
@@ -49,7 +49,7 @@ export function DashboardActionBar({ onQuickLinkClick }: DashboardActionBarProps
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            className="gap-2 font-cairo bg-[#7C3AED] hover:bg-[#6D28D9] text-white cursor-pointer"
+            className="gap-2 font-cairo bg-[#7C3AED] hover:bg-[#6D28D9] text-white cursor-pointer h-11"
             onClick={onQuickLinkClick}
           >
             <Zap className="h-4 w-4" aria-hidden="true" />
