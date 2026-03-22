@@ -16,6 +16,14 @@ const _geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono
 export const metadata: Metadata = {
   title: 'Checkout - InstaPay Payment',
   description: 'Complete your InstaPay payment securely. Verify, pay, and confirm your transaction.',
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '48x48' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: '/apple-icon.png',
+  },
 }
 
 export const viewport: Viewport = {

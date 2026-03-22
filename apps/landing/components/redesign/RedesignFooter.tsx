@@ -1,6 +1,6 @@
 "use client"
 
-import { Zap, Instagram } from "lucide-react"
+import { Instagram } from "lucide-react"
 import { useTranslations } from "@/lib/locale-provider"
 
 function WhatsAppIcon({ className }: { className?: string }) {
@@ -63,13 +63,12 @@ export function RedesignFooter() {
       <div className="mx-auto max-w-7xl">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--r-primary)] to-[var(--r-secondary)]">
-                <Zap className="h-5 w-5 text-[var(--r-on-primary)]" />
-              </div>
-              <span className="text-lg font-bold text-[var(--footer-foreground)]">
-                Insta Checkout
-              </span>
+            <div className="flex items-center">
+              <img
+                src="/logo/logo.svg"
+                alt="Insta Checkout"
+                className="h-9 w-auto"
+              />
             </div>
             <p className="mt-3 text-sm leading-relaxed text-[var(--footer-muted)]">
               {t("landing.footer.tagline")}

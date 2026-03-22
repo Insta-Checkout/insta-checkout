@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Menu, X, LogOut, Zap, Globe } from "lucide-react"
+import { Menu, X, LogOut, Globe } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { onAuthStateChanged } from "firebase/auth"
 import { useTranslations } from "@/lib/locale-provider"
@@ -45,13 +45,12 @@ export function Navbar() {
         }`}
       >
         {/* Logo */}
-        <a href="#" className="flex items-center gap-2.5 cursor-pointer">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#7C3AED]">
-            <Zap className="h-4 w-4 text-white" />
-          </div>
-          <span className={`text-base font-bold tracking-tight transition-colors ${scrolled ? "text-[#1E0A3C]" : "text-white"}`}>
-            Insta Checkout
-          </span>
+        <a href="#" className="flex items-center cursor-pointer">
+          <img
+            src={scrolled ? "/logo/logo.svg" : "/logo/logo-white.svg"}
+            alt="Insta Checkout"
+            className="h-8 w-auto transition-opacity"
+          />
         </a>
 
         {/* Desktop Nav */}

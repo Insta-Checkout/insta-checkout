@@ -42,7 +42,7 @@ function buildInvitationHtml(
           <!-- Header -->
           <tr>
             <td style="background-color:#7C3AED;padding:32px 40px;text-align:center;">
-              <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">Insta Checkout</h1>
+              <img src="https://instacheckouteg.com/logo/logo-white.svg" alt="Insta Checkout" width="180" style="display:inline-block;height:auto;" />
             </td>
           </tr>
           <!-- Body -->

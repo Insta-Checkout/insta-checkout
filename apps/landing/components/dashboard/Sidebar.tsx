@@ -29,10 +29,8 @@ export function Sidebar() {
   return (
     <nav className="flex flex-col h-full py-6">
       <div className="px-6 mb-8">
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#7C3AED] to-[#8B5CF6] flex items-center justify-center">
-            <span className="text-white text-xs font-bold">IC</span>
-          </div>
+        <div className="flex items-center gap-2.5">
+          <img src="/logo/logomark.svg" alt="" className="h-7 w-7" />
           <h2 className="text-base font-bold text-[#1E0A3C] font-cairo">Insta Checkout</h2>
         </div>
       </div>
