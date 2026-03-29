@@ -53,6 +53,7 @@ Follow these rules unless the user explicitly instructs otherwise.
 - **No Laziness**: Find root causes. No temporary fixes. Senior developer standards.
 - **Minimal Impact**: Changes should only touch what's necessary. Avoid introducing bugs.
 - **Follow Existing Patterns**: Match the codebase's existing structures and conventions.
+- **Responsive by Default**: Every feature must be fully responsive and work on both mobile and desktop. Use Tailwind responsive classes (`sm:`, `md:`, `lg:`) and test layouts at all breakpoints. Only skip responsiveness if the user explicitly states a feature is for a specific form factor only (e.g., "mobile only" or "desktop only").
 
 ## Project-Specific Setup
 
