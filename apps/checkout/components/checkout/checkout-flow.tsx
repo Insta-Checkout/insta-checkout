@@ -27,8 +27,6 @@ interface CheckoutFlowProps {
   sellerLogo?: string
   categoryTag?: string
   productName: string
-  productNameAr?: string | null
-  productNameEn?: string | null
   productImage?: string
   productDescription?: string
   price: string
@@ -49,23 +47,11 @@ function getContrastForeground(hex: string): string {
   return luminance > 0.5 ? "#1E0A3C" : "#FFFFFF"
 }
 
-function getProductDisplayName(
-  productName: string,
-  productNameAr?: string | null,
-  productNameEn?: string | null,
-  locale: string = "ar"
-): string {
-  if (locale === "ar") return productNameAr || productName
-  return productNameEn || productName
-}
-
 export function CheckoutFlow({
   sellerName,
   sellerLogo,
   categoryTag,
   productName,
-  productNameAr,
-  productNameEn,
   productImage,
   productDescription,
   price,
@@ -76,7 +62,7 @@ export function CheckoutFlow({
   sellerBranding,
 }: CheckoutFlowProps) {
   const { t, locale } = useTranslations()
-  const displayName = getProductDisplayName(productName, productNameAr, productNameEn, locale)
+  const displayName = productName
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -119,7 +105,7 @@ export function CheckoutFlow({
   }, [router, pathname])
 
   const handleSubmitPayment = useCallback(
-    async (phoneNumber: string, fullName: string, screenshot: File) => {
+    async (phoneNumber: string, fullName: string, screenshot: File, buyerEmail: string) => {
       if (!token) {
         toast.error(t("checkout.errors.notFound"))
         return
@@ -136,6 +122,7 @@ export function CheckoutFlow({
         const res = await confirmPayment(token, {
           buyerPhone: egyptianPhone,
           buyerName: fullName,
+          buyerEmail,
           screenshot,
         })
 

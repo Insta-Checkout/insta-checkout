@@ -41,17 +41,13 @@ router.get("/payment-links", async (req: Request, res: Response) => {
     ])
 
     const productIds = [...new Set(items.map((i) => i.productId?.toString()).filter(Boolean))]
-    const productMap: Record<string, { name: string; nameAr?: string | null; nameEn?: string | null }> = {}
+    const productMap: Record<string, { name: string }> = {}
     if (productIds.length > 0) {
       const prods = await products
         .find({ _id: { $in: productIds.map((id) => new ObjectId(id)) } })
         .toArray()
       prods.forEach((p) => {
-        productMap[p._id.toString()] = {
-          name: p.name,
-          nameAr: p.nameAr ?? null,
-          nameEn: p.nameEn ?? null,
-        }
+        productMap[p._id.toString()] = { name: p.name }
       })
     }
 
@@ -62,12 +58,6 @@ router.get("/payment-links", async (req: Request, res: Response) => {
       productName: i.productId
         ? (productMap[i.productId?.toString()]?.name ?? i.productName ?? "—")
         : (i.productName ?? "Quick link"),
-      productNameAr: i.productId
-        ? (productMap[i.productId?.toString()]?.nameAr ?? null)
-        : (i.productNameAr ?? null),
-      productNameEn: i.productId
-        ? (productMap[i.productId?.toString()]?.nameEn ?? null)
-        : (i.productNameEn ?? null),
       checkoutUrl: i.checkoutUrl ?? "",
       status: i.status ?? "active",
       createdAt: i.createdAt,
@@ -76,6 +66,7 @@ router.get("/payment-links", async (req: Request, res: Response) => {
       price: i.price ?? 0,
       ...((i.status === "paid" || i.status === "confirmed") && {
         buyerPhone: i.buyerPhone ?? null,
+        buyerEmail: i.buyerEmail ?? null,
         buyerName: i.buyerName ?? null,
         screenshotUrl: i.screenshotUrl ?? null,
       }),
@@ -143,8 +134,6 @@ router.post(
       sellerId,
       productId,
       productName: product.name,
-      productNameAr: product.nameAr ?? null,
-      productNameEn: product.nameEn ?? null,
       productImageUrl: product.imageUrl ?? null,
       price: product.price,
       checkoutUrl,
@@ -179,8 +168,6 @@ router.post(
 
   const body = req.body as Record<string, unknown>
   const title = typeof body.title === "string" ? body.title.trim() : ""
-  const titleAr = typeof body.titleAr === "string" ? body.titleAr.trim() : ""
-  const titleEn = typeof body.titleEn === "string" ? body.titleEn.trim() : ""
   const price = typeof body.price === "number" ? body.price : NaN
   const description = typeof body.description === "string" ? body.description.trim() : ""
   const imageUrl = typeof body.imageUrl === "string" ? body.imageUrl.trim() : ""
@@ -222,8 +209,6 @@ router.post(
       sellerId,
       productId: null,
       productName: title,
-      productNameAr: titleAr || title,
-      productNameEn: titleEn || title,
       productImageUrl: imageUrl || null,
       price,
       description: description || null,
@@ -298,16 +283,13 @@ router.patch(
     )
 
     // Notify buyer that payment was confirmed (non-blocking)
-    // Only send if buyer provided an email (currently we only have buyerPhone, so skip for now)
-    // The spec says: "Recipient: buyer email (if collected) or omit if only phone is available"
-    // Future: when buyer email is collected during checkout, send notification here
     const buyerEmail = link.buyerEmail as string | undefined
     if (buyerEmail) {
       ;(async () => {
         const sellers = db.collection("sellers")
         const seller = await sellers.findOne({ _id: sellerId })
         const businessName = (seller?.businessName as string) ?? "Seller"
-        const locale = (seller?.preferredLocale as "en" | "ar") ?? "ar"
+        const locale = (seller?.contentLocale as "en" | "ar") ?? (seller?.preferredLocale as "en" | "ar") ?? "en"
         await sendPaymentConfirmedEmail(buyerEmail, locale, {
           businessName,
           productName: (link.productName as string) ?? "Payment",

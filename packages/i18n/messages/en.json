@@ -834,7 +834,12 @@
       "fileTooLarge": "Image must be under 10MB",
       "submit": "Confirm transfer",
       "submitting": "Submitting...",
-      "completeFields": "Complete all required fields to continue"
+      "completeFields": "Complete all required fields to continue",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "emailHint": "We'll send your receipt here",
+      "emailRequired": "Email address is required",
+      "emailInvalid": "Please enter a valid email address"
     },
     "step3": {
       "successTitle": "Payment details sent!",

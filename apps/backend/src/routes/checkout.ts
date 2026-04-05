@@ -90,8 +90,8 @@ router.get("/:token", async (req: Request, res: Response) => {
       status: paymentLink.status ?? "active",
       product: {
         name: paymentLink.productName ?? "",
-        nameAr: paymentLink.productNameAr ?? paymentLink.productName ?? "",
-        nameEn: paymentLink.productNameEn ?? paymentLink.productName ?? "",
+
+
         price: paymentLink.price ?? 0,
         imageUrl: productImageUrl ?? undefined,
         description: productDescription ?? undefined,
@@ -106,7 +106,7 @@ router.get("/:token", async (req: Request, res: Response) => {
         branding: seller.branding ?? null,
       },
       expiresAt: expiresAt?.toISOString() ?? null,
-      locale: seller.locale ?? "ar",
+      locale: seller.contentLocale ?? seller.preferredLocale ?? "en",
     })
   } catch (err) {
     console.error("[GET /checkout/:token]", err)
@@ -138,6 +138,7 @@ router.post(
     const body = (req.body as Record<string, string>) ?? {}
     const buyerPhone = typeof body.buyerPhone === "string" ? body.buyerPhone.trim() : ""
     const buyerName = typeof body.buyerName === "string" ? body.buyerName.trim() || null : null
+    const buyerEmail = typeof body.buyerEmail === "string" ? body.buyerEmail.trim().toLowerCase() : ""
 
     if (!buyerPhone) {
       res.status(400).json({ error: "VALIDATION_ERROR", details: [{ field: "buyerPhone", message: "Buyer phone is required" }] })
@@ -148,6 +149,15 @@ router.post(
       res.status(400).json({
         error: "VALIDATION_ERROR",
         details: [{ field: "buyerPhone", message: "Must be a valid Egyptian phone number (20XXXXXXXXXX)" }],
+      })
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!buyerEmail || !emailRegex.test(buyerEmail)) {
+      res.status(400).json({
+        error: "VALIDATION_ERROR",
+        details: [{ field: "buyerEmail", message: "Valid email is required" }],
       })
       return
     }
@@ -192,6 +202,7 @@ router.post(
             status: "paid",
             paidAt: now,
             buyerPhone,
+            buyerEmail,
             buyerName: buyerName ?? null,
             screenshotUrl,
             updatedAt: now,
@@ -206,7 +217,7 @@ router.post(
           const sellers = db.collection("sellers")
           const seller = await sellers.findOne({ _id: new ObjectId(sellerId.toString()) })
           if (seller?.email) {
-            const locale = (seller.preferredLocale as "en" | "ar") ?? "ar"
+            const locale = (seller.contentLocale as "en" | "ar") ?? (seller.preferredLocale as "en" | "ar") ?? "en"
             await sendPaymentReceivedEmail(seller.email as string, locale, {
               productName: (paymentLink.productName as string) ?? "Payment",
               amount: (paymentLink.price as number) ?? 0,

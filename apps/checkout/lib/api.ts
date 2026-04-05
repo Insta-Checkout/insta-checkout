@@ -19,7 +19,7 @@ export interface CheckoutData {
   paymentLinkId: string
   token: string
   status: string
-  product: { name: string; nameAr: string; nameEn: string; price: number; imageUrl?: string; description?: string }
+  product: { name: string; price: number; imageUrl?: string; description?: string }
   seller: {
     businessName: string
     category: string | null
@@ -61,10 +61,11 @@ export async function fetchCheckoutData(token: string): Promise<
 
 export async function confirmPayment(
   token: string,
-  data: { buyerPhone: string; buyerName?: string; screenshot?: File }
+  data: { buyerPhone: string; buyerName?: string; buyerEmail: string; screenshot?: File }
 ): Promise<{ status?: string; error?: string; message?: string }> {
   const formData = new FormData()
   formData.append("buyerPhone", data.buyerPhone)
+  formData.append("buyerEmail", data.buyerEmail)
   if (data.buyerName) formData.append("buyerName", data.buyerName)
   if (data.screenshot) formData.append("screenshot", data.screenshot)
 
