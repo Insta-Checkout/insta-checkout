@@ -36,7 +36,8 @@
       "signInWithEmail": "سجّل دخول بالإيميل",
       "noAccount": "مش عندك حساب؟",
       "registerLink": "سجّل بيزنسك",
-      "passwordRequired": "كلمة السر مطلوبة"
+      "passwordRequired": "كلمة السر مطلوبة",
+      "forgotPassword": "نسيت كلمة السر؟"
     },
     "hero": {
       "headline": "أنشئ رابط دفع إنستا باي — في ثواني",

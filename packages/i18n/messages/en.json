@@ -36,7 +36,8 @@
       "signInWithEmail": "Sign in with email",
       "noAccount": "Don't have an account?",
       "registerLink": "Register your business",
-      "passwordRequired": "Password is required"
+      "passwordRequired": "Password is required",
+      "forgotPassword": "Forgot password?"
     },
     "hero": {
       "headline": "Create an InstaPay payment link — in seconds",

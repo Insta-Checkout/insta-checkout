@@ -17,7 +17,15 @@ import { toast } from "sonner";
 import { onAuthStateChanged } from "firebase/auth";
 import { LocaleAwareToaster } from "@/components/locale-aware-toaster";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { auth, signInWithGoogle, signInWithEmail } from "@/lib/firebase";
+import { auth, signInWithGoogle, signInWithEmail, resetPassword } from "@/lib/firebase";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 function createEmailSchema(t: (key: string) => string) {
   return z.object({
@@ -44,6 +52,10 @@ export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showEmailForm, setShowEmailForm] = useState(false);
+  const [forgetPasswordOpen, setForgetPasswordOpen] = useState(false);
+  const [forgetEmail, setForgetEmail] = useState("");
+  const [forgetSending, setForgetSending] = useState(false);
+  const [forgetSent, setForgetSent] = useState(false);
 
   const schema = useMemo(() => createEmailSchema(t), [t]);
   const {
@@ -110,6 +122,19 @@ export default function LoginPage() {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleForgetPassword = async () => {
+    if (!forgetEmail.trim()) return;
+    setForgetSending(true);
+    try {
+      await resetPassword(forgetEmail.trim());
+      setForgetSent(true);
+    } catch {
+      toast.error(t("onboard.errors.generic"));
+    } finally {
+      setForgetSending(false);
     }
   };
 
@@ -201,6 +226,17 @@ export default function LoginPage() {
                   {...register("password")}
                 />
                 {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setForgetSent(false);
+                    setForgetEmail("");
+                    setForgetPasswordOpen(true);
+                  }}
+                  className="text-sm text-primary hover:underline cursor-pointer"
+                >
+                  {t("landing.loginPage.forgotPassword")}
+                </button>
               </div>
               <div className="flex gap-3">
                 <Button
@@ -227,6 +263,44 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+      <Dialog open={forgetPasswordOpen} onOpenChange={setForgetPasswordOpen}>
+        <DialogContent className="sm:max-w-md" showCloseButton>
+          <DialogHeader>
+            <DialogTitle>{t("onboard.step2.forgotTitle")}</DialogTitle>
+            <DialogDescription>
+              {forgetSent ? t("onboard.step2.forgotSent") : t("onboard.step2.forgotPrompt")}
+            </DialogDescription>
+          </DialogHeader>
+          {!forgetSent && (
+            <div className="space-y-2 py-2">
+              <Label htmlFor="forget-email">{t("onboard.step2.email")}</Label>
+              <Input
+                id="forget-email"
+                type="email"
+                placeholder="you@example.com"
+                value={forgetEmail}
+                onChange={(e) => setForgetEmail(e.target.value)}
+                className="h-12 rounded-lg"
+                dir="ltr"
+              />
+            </div>
+          )}
+          <DialogFooter>
+            {forgetSent ? (
+              <Button onClick={() => setForgetPasswordOpen(false)}>{t("onboard.step2.ok")}</Button>
+            ) : (
+              <>
+                <Button variant="outline" onClick={() => setForgetPasswordOpen(false)}>
+                  {t("common.cancel")}
+                </Button>
+                <Button onClick={handleForgetPassword} disabled={forgetSending}>
+                  {forgetSending ? <Loader2 className="h-4 w-4 animate-spin" /> : t("common.send")}
+                </Button>
+              </>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <LocaleAwareToaster />
     </main>
   );
