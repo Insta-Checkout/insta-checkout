@@ -33,8 +33,7 @@ export interface CheckoutData {
       coverPhotoUrl?: string | null
       slogan?: string | null
       sloganAr?: string | null
-      secondaryColor?: string | null
-      accentColor?: string | null
+      backgroundColor?: string | null
       hidePoweredBy?: boolean
     } | null
   }

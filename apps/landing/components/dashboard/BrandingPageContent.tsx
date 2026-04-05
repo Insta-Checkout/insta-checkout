@@ -15,22 +15,20 @@ import { Switch } from "@/components/ui/switch"
 interface BrandingState {
   logoUrl: string | null
   primaryColor: string | null
+  backgroundColor: string | null
   coverPhotoUrl: string | null
   slogan: string | null
   sloganAr: string | null
-  secondaryColor: string | null
-  accentColor: string | null
   hidePoweredBy: boolean
 }
 
 const DEFAULT_BRANDING: BrandingState = {
   logoUrl: null,
   primaryColor: null,
+  backgroundColor: null,
   coverPhotoUrl: null,
   slogan: null,
   sloganAr: null,
-  secondaryColor: null,
-  accentColor: null,
   hidePoweredBy: false,
 }
 
@@ -65,7 +63,7 @@ export function BrandingPageContent(): React.JSX.Element {
   const logoInputRef = useRef<HTMLInputElement>(null)
   const coverInputRef = useRef<HTMLInputElement>(null)
 
-  const isPro = plan === "pro"
+  const isPro = true // TODO: re-enable plan gating when pro is ready
 
   // Load seller data
   useEffect(() => {
@@ -78,18 +76,15 @@ export function BrandingPageContent(): React.JSX.Element {
         if (cancelled) return
         setPlan(data.plan ?? "free")
         setBusinessName(data.businessName ?? "")
-        if (data.branding) {
-          setBranding({
-            logoUrl: data.branding.logoUrl ?? null,
-            primaryColor: data.branding.primaryColor ?? null,
-            coverPhotoUrl: data.branding.coverPhotoUrl ?? null,
-            slogan: data.branding.slogan ?? null,
-            sloganAr: data.branding.sloganAr ?? null,
-            secondaryColor: data.branding.secondaryColor ?? null,
-            accentColor: data.branding.accentColor ?? null,
-            hidePoweredBy: data.branding.hidePoweredBy ?? false,
-          })
-        }
+        setBranding({
+          logoUrl: data.branding?.logoUrl ?? data.logoUrl ?? null,
+          primaryColor: data.branding?.primaryColor ?? null,
+          backgroundColor: data.branding?.backgroundColor ?? null,
+          coverPhotoUrl: data.branding?.coverPhotoUrl ?? null,
+          slogan: data.branding?.slogan ?? null,
+          sloganAr: data.branding?.sloganAr ?? null,
+          hidePoweredBy: data.branding?.hidePoweredBy ?? false,
+        })
       } catch {
         toast.error(t("branding.errors.loadFailed"))
       } finally {
@@ -240,7 +235,7 @@ export function BrandingPageContent(): React.JSX.Element {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left column: Settings form */}
-        <div className="space-y-4">
+        <div className="space-y-4 order-2 lg:order-1">
           {/* Logo upload */}
           <Card className="bg-white border-[#E4D8F0] shadow-sm">
             <CardHeader className="pb-3">
@@ -259,29 +254,42 @@ export function BrandingPageContent(): React.JSX.Element {
                   if (file) handleUpload(file, "logo")
                 }}
               />
-              <button
-                type="button"
-                onClick={() => logoInputRef.current?.click()}
-                onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }}
-                onDrop={(e) => {
-                  e.preventDefault(); e.stopPropagation()
-                  const file = e.dataTransfer.files?.[0]
-                  if (file) handleUpload(file, "logo")
-                }}
-                disabled={uploading === "logo"}
-                className="w-full border-2 border-dashed border-[#E4D8F0] rounded-xl p-6 flex flex-col items-center gap-2 hover:border-[#7C3AED] hover:bg-[#F3EEFA]/50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
-              >
-                {branding.logoUrl ? (
-                  <img src={branding.logoUrl} alt="" className="w-16 h-16 rounded-2xl object-cover" />
-                ) : (
+              {branding.logoUrl ? (
+                <div className="flex items-center gap-4">
+                  <img src={branding.logoUrl} alt="" className="w-16 h-16 rounded-2xl object-cover border border-[#E4D8F0]" />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => logoInputRef.current?.click()}
+                    disabled={uploading === "logo"}
+                    className="border-[#E4D8F0] text-[#6B5B7B] hover:border-[#7C3AED] hover:text-[#7C3AED]"
+                  >
+                    <Upload className="w-3.5 h-3.5 mr-1.5" />
+                    {uploading === "logo" ? t("branding.uploading") : t("branding.logo.change")}
+                  </Button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => logoInputRef.current?.click()}
+                  onDragOver={(e) => { e.preventDefault(); e.stopPropagation() }}
+                  onDrop={(e) => {
+                    e.preventDefault(); e.stopPropagation()
+                    const file = e.dataTransfer.files?.[0]
+                    if (file) handleUpload(file, "logo")
+                  }}
+                  disabled={uploading === "logo"}
+                  className="w-full border-2 border-dashed border-[#E4D8F0] rounded-xl p-6 flex flex-col items-center gap-2 hover:border-[#7C3AED] hover:bg-[#F3EEFA]/50 transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2"
+                >
                   <div className="w-16 h-16 bg-[#EDE9FE] rounded-2xl flex items-center justify-center">
                     <Upload className="w-6 h-6 text-[#7C3AED]" aria-hidden="true" />
                   </div>
-                )}
-                <span className="text-sm text-[#6B5B7B]">
-                  {uploading === "logo" ? t("branding.uploading") : t("branding.logo.hint")}
-                </span>
-              </button>
+                  <span className="text-sm text-[#6B5B7B]">
+                    {uploading === "logo" ? t("branding.uploading") : t("branding.logo.hint")}
+                  </span>
+                </button>
+              )}
             </CardContent>
           </Card>
 
@@ -366,51 +374,23 @@ export function BrandingPageContent(): React.JSX.Element {
                 </div>
               </div>
 
-              {/* Secondary color (pro) */}
+              {/* Background color */}
               <div className="space-y-1.5">
-                <Label htmlFor="secondaryColor" className="text-sm text-[#1E0A3C] flex items-center gap-2">
-                  {t("branding.colors.secondary")}
-                  {!isPro && <ProBadge />}
+                <Label htmlFor="backgroundColor" className="text-sm text-[#1E0A3C]">
+                  {t("branding.colors.background")}
                 </Label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    id="secondaryColor"
-                    value={branding.secondaryColor || "#F3EEFA"}
-                    onChange={(e) => setBranding(prev => ({ ...prev, secondaryColor: e.target.value }))}
-                    disabled={!isPro}
-                    className={`w-10 h-10 rounded-lg border border-[#E4D8F0] ${isPro ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}`}
+                    id="backgroundColor"
+                    value={branding.backgroundColor || "#FFFFFF"}
+                    onChange={(e) => setBranding(prev => ({ ...prev, backgroundColor: e.target.value }))}
+                    className="w-10 h-10 rounded-lg border border-[#E4D8F0] cursor-pointer"
                   />
                   <Input
-                    value={branding.secondaryColor || ""}
-                    onChange={(e) => setBranding(prev => ({ ...prev, secondaryColor: e.target.value || null }))}
-                    placeholder="#F3EEFA"
-                    disabled={!isPro}
-                    className="flex-1 border-[#E4D8F0] text-sm"
-                  />
-                </div>
-              </div>
-
-              {/* Accent color (pro) */}
-              <div className="space-y-1.5">
-                <Label htmlFor="accentColor" className="text-sm text-[#1E0A3C] flex items-center gap-2">
-                  {t("branding.colors.accent")}
-                  {!isPro && <ProBadge />}
-                </Label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    id="accentColor"
-                    value={branding.accentColor || "#F3EEFA"}
-                    onChange={(e) => setBranding(prev => ({ ...prev, accentColor: e.target.value }))}
-                    disabled={!isPro}
-                    className={`w-10 h-10 rounded-lg border border-[#E4D8F0] ${isPro ? "cursor-pointer" : "opacity-60 cursor-not-allowed"}`}
-                  />
-                  <Input
-                    value={branding.accentColor || ""}
-                    onChange={(e) => setBranding(prev => ({ ...prev, accentColor: e.target.value || null }))}
-                    placeholder="#F3EEFA"
-                    disabled={!isPro}
+                    value={branding.backgroundColor || ""}
+                    onChange={(e) => setBranding(prev => ({ ...prev, backgroundColor: e.target.value || null }))}
+                    placeholder="#FFFFFF"
                     className="flex-1 border-[#E4D8F0] text-sm"
                   />
                 </div>
@@ -476,7 +456,7 @@ export function BrandingPageContent(): React.JSX.Element {
         </div>
 
         {/* Right column: Live preview */}
-        <div className="lg:sticky lg:top-6 lg:self-start">
+        <div className="lg:sticky lg:top-6 lg:self-start order-1 lg:order-2">
           <Card className="bg-white border-[#E4D8F0] shadow-sm overflow-hidden">
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-semibold text-[#1E0A3C] flex items-center gap-2">
@@ -486,8 +466,9 @@ export function BrandingPageContent(): React.JSX.Element {
             </CardHeader>
             <CardContent className="p-0">
               <div
-                className="bg-[#FAFAFA] px-4 py-6 min-h-[480px]"
+                className="px-4 py-6"
                 style={{
+                  backgroundColor: branding.backgroundColor || "#FAFAFA",
                   "--primary": primaryColor,
                   "--primary-foreground": getContrastForeground(primaryColor),
                 } as React.CSSProperties}

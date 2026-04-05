@@ -17,7 +17,7 @@ import sellersInvitationsRouter from "./sellersInvitations.js"
 
 const HEX_COLOR_RE = /^#[0-9a-fA-F]{6}$/
 
-const PRO_ONLY_BRANDING_FIELDS = ["coverPhotoUrl", "slogan", "sloganAr", "secondaryColor", "accentColor", "hidePoweredBy"] as const
+const PRO_ONLY_BRANDING_FIELDS = ["coverPhotoUrl", "slogan", "sloganAr", "backgroundColor", "hidePoweredBy"] as const
 
 const brandingUpload = multer({
   storage: multer.memoryStorage(),
@@ -281,17 +281,9 @@ router.patch("/", async (req: Request, res: Response) => {
     const seller = await db.collection("sellers").findOne({ firebaseUid })
     const plan = seller?.plan ?? "free"
 
-    // Check for pro-only fields
-    const proFieldsInRequest = PRO_ONLY_BRANDING_FIELDS.filter(f => branding[f] !== undefined)
-    if (plan !== "pro" && proFieldsInRequest.length > 0) {
-      res.status(403).json({
-        error: "PRO_REQUIRED",
-        message: `The following branding fields require a Pro plan: ${proFieldsInRequest.join(", ")}`,
-      })
-      return
-    }
+    // TODO: re-enable plan gating when pro is ready
+    // All branding fields are open for now regardless of plan
 
-    // Validate and set free-tier fields
     if (typeof branding.logoUrl === "string") {
       updates["branding.logoUrl"] = branding.logoUrl.trim() || null
     }
@@ -303,33 +295,24 @@ router.patch("/", async (req: Request, res: Response) => {
         updates["branding.primaryColor"] = val
       }
     }
-
-    // Pro-only fields (already gated above)
-    if (plan === "pro") {
-      if (typeof branding.coverPhotoUrl === "string") {
-        updates["branding.coverPhotoUrl"] = branding.coverPhotoUrl.trim() || null
-      }
-      if (typeof branding.slogan === "string") {
-        const val = branding.slogan.trim()
-        updates["branding.slogan"] = val.length <= 80 ? val || null : null
-      }
-      if (typeof branding.sloganAr === "string") {
-        const val = branding.sloganAr.trim()
-        updates["branding.sloganAr"] = val.length <= 80 ? val || null : null
-      }
-      if (typeof branding.secondaryColor === "string") {
-        const val = branding.secondaryColor.trim()
-        if (!val) updates["branding.secondaryColor"] = null
-        else if (HEX_COLOR_RE.test(val)) updates["branding.secondaryColor"] = val
-      }
-      if (typeof branding.accentColor === "string") {
-        const val = branding.accentColor.trim()
-        if (!val) updates["branding.accentColor"] = null
-        else if (HEX_COLOR_RE.test(val)) updates["branding.accentColor"] = val
-      }
-      if (typeof branding.hidePoweredBy === "boolean") {
-        updates["branding.hidePoweredBy"] = branding.hidePoweredBy
-      }
+    if (typeof branding.coverPhotoUrl === "string") {
+      updates["branding.coverPhotoUrl"] = branding.coverPhotoUrl.trim() || null
+    }
+    if (typeof branding.slogan === "string") {
+      const val = branding.slogan.trim()
+      updates["branding.slogan"] = val.length <= 80 ? val || null : null
+    }
+    if (typeof branding.sloganAr === "string") {
+      const val = branding.sloganAr.trim()
+      updates["branding.sloganAr"] = val.length <= 80 ? val || null : null
+    }
+    if (typeof branding.backgroundColor === "string") {
+      const val = branding.backgroundColor.trim()
+      if (!val) updates["branding.backgroundColor"] = null
+      else if (HEX_COLOR_RE.test(val)) updates["branding.backgroundColor"] = val
+    }
+    if (typeof branding.hidePoweredBy === "boolean") {
+      updates["branding.hidePoweredBy"] = branding.hidePoweredBy
     }
   }
 
@@ -409,15 +392,7 @@ router.post(
       return
     }
 
-    // Cover photos are pro-only
-    if (type === "cover") {
-      const db = await connectToMongo()
-      const seller = await db.collection("sellers").findOne({ _id: ctx.sellerId })
-      if ((seller?.plan ?? "free") !== "pro") {
-        res.status(403).json({ error: "PRO_REQUIRED", message: "Cover photo uploads require a Pro plan" })
-        return
-      }
-    }
+    // TODO: re-enable cover photo pro gating when pro is ready
 
     try {
       const sellerDir = path.join(BRANDING_UPLOADS_DIR, ctx.sellerId.toString())

@@ -757,7 +757,8 @@
     "proRequired": "Upgrade to Pro to unlock",
     "logo": {
       "title": "Logo",
-      "hint": "Click to upload logo (PNG, JPG, WebP — max 2MB)"
+      "hint": "Click to upload logo (PNG, JPG, WebP — max 2MB)",
+      "change": "Change logo"
     },
     "cover": {
       "title": "Cover Photo",
@@ -766,8 +767,7 @@
     "colors": {
       "title": "Colors",
       "primary": "Primary color",
-      "secondary": "Secondary color",
-      "accent": "Accent color"
+      "background": "Background color"
     },
     "extra": {
       "title": "Slogan & Settings",
@@ -811,7 +811,7 @@
       "openInstapayButton": "Open InstaPay to pay",
       "openInstapayHint": "Tap the button to open InstaPay and send the payment",
       "noInstapayLink": "Payment method not configured — contact the seller",
-      "ensureTransfer": "Make sure you see \"Transfer successful\" in your app before continuing",
+      "ensureTransfer": "Make sure you see \"Transfer successful\" in your Instapay success screen before continuing",
       "ensureTransferBold": "Transfer successful",
       "paidButton": "I've paid",
       "welcomeMessage": "{seller} is requesting a payment from you"

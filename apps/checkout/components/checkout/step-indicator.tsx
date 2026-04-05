@@ -28,10 +28,10 @@ export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
                 <div
                   className={`flex items-center justify-center size-8 rounded-full text-sm font-bold shrink-0 transition-all ${
                     isComplete
-                      ? "bg-[#7C3AED] text-white"
+                      ? "bg-primary text-primary-foreground"
                       : isActive
-                        ? "bg-[#7C3AED] text-white ring-4 ring-[#7C3AED]/20"
-                        : "bg-muted text-muted-foreground"
+                        ? "bg-primary text-primary-foreground ring-4 ring-primary/20"
+                        : "bg-primary/10 text-primary/40"
                   }`}
                 >
                   {isComplete ? (
@@ -45,7 +45,7 @@ export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
                 {/* Label */}
                 <span
                   className={`text-xs font-medium mt-1.5 text-center whitespace-nowrap ${
-                    isActive || isComplete ? "text-[#7C3AED]" : "text-muted-foreground"
+                    isActive || isComplete ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   {stepLabels[i]}
@@ -55,7 +55,7 @@ export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
               {i < totalSteps - 1 && (
                 <div
                   className={`h-0.5 flex-1 mx-1 mt-4 rounded-full ${
-                    isComplete ? "bg-[#7C3AED]" : "bg-border"
+                    isComplete ? "bg-primary" : "bg-border"
                   }`}
                 />
               )}

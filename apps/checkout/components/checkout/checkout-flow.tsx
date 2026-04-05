@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useCallback, useMemo } from "react"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
 import { useTranslations } from "@/lib/locale-provider"
 import { confirmPayment } from "@/lib/api"
 import { toast } from "sonner"
@@ -17,8 +18,7 @@ interface SellerBranding {
   coverPhotoUrl?: string | null
   slogan?: string | null
   sloganAr?: string | null
-  secondaryColor?: string | null
-  accentColor?: string | null
+  backgroundColor?: string | null
   hidePoweredBy?: boolean
 }
 
@@ -75,8 +75,21 @@ export function CheckoutFlow({
 }: CheckoutFlowProps) {
   const { t, locale } = useTranslations()
   const displayName = getProductDisplayName(productName, productNameAr, productNameEn, locale)
-  const [currentStep, setCurrentStep] = useState(1)
+  const router = useRouter()
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  // Track the highest step the user has legitimately reached in this session.
+  // This prevents direct URL access to step 2/3 without going through the flow.
+  const [maxAllowedStep, setMaxAllowedStep] = useState(1)
+  const [paymentConfirmed, setPaymentConfirmed] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const urlStep = parseInt(searchParams.get("step") ?? "1", 10)
+  const currentStep = useMemo(() => {
+    if (urlStep === 3 && paymentConfirmed) return 3
+    if (urlStep === 2 && maxAllowedStep >= 2) return 2
+    return 1
+  }, [urlStep, maxAllowedStep, paymentConfirmed])
 
   const brandingStyles = useMemo(() => {
     if (!sellerBranding) return undefined
@@ -86,11 +99,8 @@ export function CheckoutFlow({
       vars["--primary-foreground"] = getContrastForeground(sellerBranding.primaryColor)
       vars["--ring"] = sellerBranding.primaryColor
     }
-    if (sellerBranding.secondaryColor) {
-      vars["--secondary"] = sellerBranding.secondaryColor
-    }
-    if (sellerBranding.accentColor) {
-      vars["--accent"] = sellerBranding.accentColor
+    if (sellerBranding.backgroundColor) {
+      vars["--background"] = sellerBranding.backgroundColor
     }
     return Object.keys(vars).length > 0 ? vars : undefined
   }, [sellerBranding])
@@ -101,9 +111,10 @@ export function CheckoutFlow({
     : (sellerBranding?.slogan || sellerBranding?.sloganAr)
 
   const handleProceedToStep2 = useCallback(() => {
-    setCurrentStep(2)
+    setMaxAllowedStep(prev => Math.max(prev, 2))
+    router.push(`${pathname}?step=2`)
     window.scrollTo({ top: 0, behavior: "smooth" })
-  }, [])
+  }, [router, pathname])
 
   const handleSubmitPayment = useCallback(
     async (phoneNumber: string, fullName: string, screenshot: File) => {
@@ -134,7 +145,9 @@ export function CheckoutFlow({
           return
         }
 
-        setCurrentStep(3)
+        setPaymentConfirmed(true)
+        setMaxAllowedStep(3)
+        router.push(`${pathname}?step=3`)
         window.scrollTo({ top: 0, behavior: "smooth" })
       } catch {
         toast.error(t("checkout.errors.notFound"))
@@ -170,6 +183,7 @@ export function CheckoutFlow({
               price={price}
               instapayLink={instapayLink}
               onProceed={handleProceedToStep2}
+              showFooter={showFooter}
             />
           )}
 
@@ -190,8 +204,8 @@ export function CheckoutFlow({
           )}
         </main>
 
-        {/* Footer — hidden for pro sellers with hidePoweredBy */}
-        {showFooter && (
+        {/* Footer — hidden for pro sellers with hidePoweredBy, and hidden on step 1 (shown inline instead) */}
+        {showFooter && currentStep !== 1 && (
           <footer className="mt-10 pb-4 flex justify-center">
             <a
               href="https://instacheckouteg.com"
@@ -200,11 +214,11 @@ export function CheckoutFlow({
               className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground/60 transition-colors"
             >
               <Image
-                src="/icon-32x32.png"
+                src="/icon.svg"
                 alt="Insta Checkout"
-                width={14}
-                height={14}
-                className="rounded-sm"
+                width={18}
+                height={18}
+                className="rounded-sm shrink-0"
               />
               {t("checkout.footer")}
             </a>
