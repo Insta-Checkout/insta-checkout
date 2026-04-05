@@ -7,6 +7,7 @@ import { writeFile } from "fs/promises"
 import crypto from "crypto"
 import { connectToMongo } from "../db.js"
 import { API_BASE_URL } from "../config.js"
+import { sendPaymentReceivedEmail } from "../services/email.js"
 
 const router = Router()
 
@@ -194,6 +195,26 @@ router.post(
           },
         }
       )
+
+      // Notify seller about new payment (non-blocking)
+      const sellerId = paymentLink.sellerId
+      if (sellerId) {
+        ;(async () => {
+          const sellers = db.collection("sellers")
+          const seller = await sellers.findOne({ _id: new ObjectId(sellerId.toString()) })
+          if (seller?.email) {
+            const locale = (seller.preferredLocale as "en" | "ar") ?? "ar"
+            await sendPaymentReceivedEmail(seller.email as string, locale, {
+              productName: (paymentLink.productName as string) ?? "Payment",
+              amount: (paymentLink.price as number) ?? 0,
+              buyerPhone,
+              paymentLinkId: paymentLink._id.toString(),
+            })
+          }
+        })().catch((err) => {
+          console.error("[POST /checkout/:token/confirm] Payment notification email failed:", err)
+        })
+      }
 
       res.status(201).json({
         status: "paid",
