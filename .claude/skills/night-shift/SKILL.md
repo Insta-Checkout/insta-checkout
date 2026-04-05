@@ -108,6 +108,24 @@ If no Groomed tasks remain, skip to Phase 8 (Session End).
 
 The task's Notion page body contains the spec. Read it carefully.
 
+### Check for Agent Context block
+
+Scan the task page for an **"🤖 Agent Context"** callout block. This is written by `/night-shift-plan` and contains pre-researched code context:
+
+- **Entry point** — the single best file to open first
+- **Relevant files** — exact paths to read before writing code
+- **Pattern to follow** — how similar things are done in the codebase
+- **Key types** — TypeScript types the new code must conform to
+- **Gotchas** — known pitfalls for this specific task
+
+If an Agent Context block exists:
+1. Read ALL files listed under "Relevant files" before writing any code
+2. Follow the "Pattern to follow" guidance when structuring your implementation
+3. Start from the "Entry point" file to understand the existing shape
+4. Keep the "Gotchas" in mind throughout implementation
+
+If no Agent Context block exists, proceed with your own codebase investigation in Phase 3.
+
 ### Check for `@agent` instructions
 
 Scan the task description for any text prefixed with `@agent`. These are direct instructions from the user to the agent — they may ask for information, request a specific approach, or add constraints. Track all `@agent` instructions found and address each one during implementation. The results will be included in the Agent Report under an **"Agent Answers"** section (see Phase 7).
@@ -380,53 +398,49 @@ Notion Task: #<task-id> - <task-title>
 
 Read the QA report from `.gstack/qa-reports/` and combine with reviewer verdicts.
 
-Use `notion-update-page` to append a toggle heading "Agent Report" to the task page. The report structure:
+Use `notion-update-page` to append the report to the task page. **CRITICAL: Do NOT pass raw markdown text — construct proper Notion blocks.** The report must use these Notion block types:
 
-```markdown
-## Agent Report
+- `heading_2` for "Agent Report"
+- `heading_3` for sub-sections (Changes Made, QA Validation, Spec Compliance, etc.)
+- `bulleted_list_item` for bullet points
+- `paragraph` for plain text lines
+- `table` for tabular data (Test Cases, Reviewer Verdicts)
+- `code` (inline) for branch names and code references — use rich_text with `code: true`
 
-- Branch: `claude/night-shift-YYYY-MM-DD`
-- PR: <link to the GitHub PR>
-- Commits: <number of commits for this task>
+**Never use `quote` blocks.** If the tool defaults to quote formatting, explicitly set the block type to `paragraph` or `bulleted_list_item`.
 
-### Changes Made
-- <bullet point summary of what was implemented>
+The report structure (expressed as Notion block types):
 
-### QA Validation
-- Health Score: **<score>/100**
-- Console Errors: <count>
+```
+heading_2: "Agent Report"
 
-#### Test Cases
-| # | Description | Result |
-|---|-------------|--------|
-| 1 | <test case description> | PASS/FAIL |
-| 2 | <test case description> | PASS/FAIL |
-| ... | ... | ... |
+bulleted_list_item: "Branch: claude/night-shift-YYYY-MM-DD"
+bulleted_list_item: "PR: <link>"
+bulleted_list_item: "Commits: <number>"
 
-### Spec Compliance
-- Result: **PASS/FAIL**
-- Requirements met: X/Y
-- Missing: <list any missing requirements, or "None">
+heading_3: "Changes Made"
+bulleted_list_item: <each change>
 
-### Reviewer Verdicts
-| Persona | Verdict | Notes |
-|---------|---------|-------|
-| Spec Compliance | PASS/FAIL | X/Y requirements met |
-| UX Designer | APPROVE/REQUEST_CHANGES | <brief note> |
-| Architect | APPROVE/REQUEST_CHANGES | <brief note> |
-| Domain Expert | APPROVE/REQUEST_CHANGES | <brief note> |
-| Code Quality | APPROVE/REQUEST_CHANGES | <brief note> |
-| Performance | APPROVE/REQUEST_CHANGES | <brief note> |
-| Human Advocate | APPROVE/REQUEST_CHANGES | <brief note> |
+heading_3: "QA Validation"
+bulleted_list_item: "Health Score: <score>/100"
+bulleted_list_item: "Console Errors: <count>"
 
-### Agent Answers
-<!-- Only include this section if the task description contained @agent instructions -->
-| Instruction | Answer |
-|-------------|--------|
-| <@agent instruction from the spec> | <what the agent did or found> |
+heading_3: "Test Cases"
+table: columns [#, Description, Result] with one row per test case
 
-### Blockers / Follow-ups
-- <any unresolved issues or things for human review>
+heading_3: "Spec Compliance"
+bulleted_list_item: "Result: PASS/FAIL"
+bulleted_list_item: "Requirements met: X/Y"
+bulleted_list_item: "Missing: <list or None>"
+
+heading_3: "Reviewer Verdicts"
+table: columns [Persona, Verdict, Notes] with one row per reviewer
+
+heading_3: "Agent Answers"   (only if @agent instructions existed)
+table: columns [Instruction, Answer]
+
+heading_3: "Blockers / Follow-ups"
+bulleted_list_item: <each blocker, or "None">
 ```
 
 ### Update task status

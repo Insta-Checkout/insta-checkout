@@ -36,7 +36,8 @@
       "signInWithEmail": "سجّل دخول بالإيميل",
       "noAccount": "مش عندك حساب؟",
       "registerLink": "سجّل بيزنسك",
-      "passwordRequired": "كلمة السر مطلوبة"
+      "passwordRequired": "كلمة السر مطلوبة",
+      "forgotPassword": "نسيت كلمة السر؟"
     },
     "hero": {
       "headline": "أنشئ رابط دفع إنستا باي — في ثواني",
@@ -743,6 +744,53 @@
       "userNotFoundReset": "مفيش حساب بالإيميل ده."
     }
   },
+  "branding": {
+    "title": "العلامة التجارية",
+    "subtitle": "خصّص شكل صفحة الدفع للمشترين",
+    "save": "حفظ التغييرات",
+    "saving": "جارِ الحفظ...",
+    "saveSuccess": "تم تحديث العلامة التجارية بنجاح",
+    "resetDefault": "إعادة للافتراضي",
+    "resetSuccess": "تم إعادة العلامة التجارية للثيم الافتراضي",
+    "uploading": "جارِ الرفع...",
+    "uploadSuccess": "تم رفع الملف بنجاح",
+    "proRequired": "ترقّى لـ Pro عشان تفتح الميزة دي",
+    "logo": {
+      "title": "اللوجو",
+      "hint": "اضغط لرفع اللوجو (PNG, JPG, WebP — أقصى حجم 2MB)"
+    },
+    "cover": {
+      "title": "صورة الغلاف",
+      "hint": "اضغط لرفع صورة الغلاف (PNG, JPG, WebP — أقصى حجم 5MB)"
+    },
+    "colors": {
+      "title": "الألوان",
+      "primary": "اللون الأساسي",
+      "secondary": "اللون الثانوي",
+      "accent": "لون التمييز"
+    },
+    "extra": {
+      "title": "الشعار والإعدادات",
+      "slogan": "الشعار (إنجليزي)",
+      "sloganPlaceholder": "Your tagline here",
+      "sloganAr": "الشعار (عربي)",
+      "sloganArPlaceholder": "شعارك هنا",
+      "hidePoweredBy": "إخفاء شارة \"Powered by\""
+    },
+    "preview": {
+      "title": "المعاينة الحية",
+      "sampleProduct": "منتج تجريبي",
+      "ctaButton": "دفعت",
+      "storeFallback": "متجرك"
+    },
+    "errors": {
+      "loadFailed": "فشل تحميل إعدادات العلامة التجارية",
+      "saveFailed": "فشل حفظ إعدادات العلامة التجارية",
+      "uploadFailed": "فشل رفع الملف",
+      "fileTooLarge": "حجم الملف كبير جداً",
+      "invalidFileType": "مسموح فقط بملفات PNG وJPG وWebP"
+    }
+  },
   "checkout": {
     "meta": {
       "title": "Checkout - InstaPay Payment",
@@ -799,7 +847,7 @@
       "statusSubtitle": "ستتلقى تأكيدًا بمجرد أن يتحقق البائع من دفعتك. عادةً ما يستغرق ذلك بضع دقائق.",
       "contactSeller": "تواصل مع البائع عبر واتساب"
     },
-    "footer": "مدعوم بواسطة دفع آمن عبر انستاباي",
+    "footer": "مدعوم بواسطة Instacheckouteg.com",
     "errors": {
       "expired": "هذا اللينك منتهي الصلاحية",
       "cancelled": "هذا اللينك تم إلغاؤه",
@@ -824,6 +872,7 @@
       "links": "لينكات الدفع",
       "profile": "الملف الشخصي",
       "team": "الفريق",
+      "branding": "العلامة التجارية",
       "settings": "الإعدادات"
     },
     "title": "مرحباً في لوحتك",
@@ -938,6 +987,7 @@
       "instapayLink": "رابط InstaPay",
       "instapayLinkPlaceholder": "https://ipn.eg/S/...",
       "instapayLinkHint": "افتح تطبيق InstaPay ← اسمك ← مشاركة ← انسخ الرابط",
+      "instapayLinkInvalid": "رابط InstaPay غير صالح. الصيغة المتوقعة: ipn.eg/S/username/instapay/...",
       "choose": "اختر...",
       "save": "حفظ",
       "saveSuccess": "تم الحفظ",
@@ -1055,6 +1105,7 @@
       "deleteFailed": "فشل الحذف",
       "startWithFirst": "ابدأ بإضافة منتجك الأول",
       "startSubtitle": "أضف منتجاتك مع السعر والوصف، ثم أنشئ لينكات دفع لشاركها مع عملائك على واتساب أو أي منصة.",
+      "emptyPlaceholder": "منتجاتك هتظهر هنا أول ما تعمل واحد.",
       "active": "نشط",
       "archived": "مؤرشف",
       "edit": "تعديل",
@@ -1100,6 +1151,9 @@
       "pendingNote": "هنبعتلك إشعار لما حسابك يتفعّل.",
       "rejectedTitle": "للأسف، طلبك ما اتقبلش",
       "rejectedContact": "لو حاسس إن ده غلط، كلمنا على واتساب أو الإيميل.",
+      "approvedTitle": "تم اعتماد حسابك!",
+      "approvedBody": "كل حاجة جاهزة — ابدأ اعمل لينكات دفع من منتجاتك أو استخدم الروابط السريعة عشان تقبض فوراً.",
+      "dismiss": "إغلاق",
       "linkDisabled": "لازم حسابك يتعتمد الأول عشان تقدر تعمل لينكات دفع"
     },
     "team": {

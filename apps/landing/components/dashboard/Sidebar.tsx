@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { SidebarLink } from "./SidebarLink";
-import { Home, Package, Link2, Settings, Languages, User, Users } from "lucide-react";
+import { Home, Package, Link2, Settings, Languages, User, Users, Palette } from "lucide-react";
 import { useTranslations } from "@/lib/locale-provider";
 import { LOCALES } from "@insta-checkout/i18n";
 import {
@@ -19,6 +19,7 @@ const NAV_ITEMS = [
   { labelKey: "dashboard.sidebar.links", href: "/dashboard/links", icon: Link2 },
   { labelKey: "dashboard.sidebar.profile", href: "/dashboard/profile", icon: User },
   { labelKey: "dashboard.sidebar.team", href: "/dashboard/team", icon: Users },
+  { labelKey: "dashboard.sidebar.branding", href: "/dashboard/branding", icon: Palette },
 ];
 
 

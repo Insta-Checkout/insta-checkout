@@ -50,6 +50,8 @@ export default async function CheckoutTokenPage({ params }: PageProps) {
       }
       paymentLinkId={data.paymentLinkId}
       token={token}
+      sellerPlan={data.seller.plan ?? "free"}
+      sellerBranding={data.seller.branding ?? undefined}
     />
   )
 }

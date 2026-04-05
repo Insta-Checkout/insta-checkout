@@ -126,6 +126,15 @@ export function DashboardHomeContent(): React.JSX.Element {
     setRefreshKey((prev) => prev + 1)
   }, [])
 
+  // Re-fetch seller profile when onboarding completes (banner update without refresh)
+  useEffect(() => {
+    function handleOnboardingComplete(): void {
+      setOnboardingComplete(true)
+    }
+    window.addEventListener("onboarding-complete", handleOnboardingComplete)
+    return () => window.removeEventListener("onboarding-complete", handleOnboardingComplete)
+  }, [])
+
   const handleQuickLinkClick = useCallback((): void => {
     if (approvalStatus && approvalStatus !== "approved") {
       toast.error(t("dashboard.approval.linkDisabled"))
