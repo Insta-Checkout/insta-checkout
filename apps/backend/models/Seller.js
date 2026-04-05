@@ -110,6 +110,21 @@ const sellerSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    plan: {
+      type: String,
+      enum: { values: ["free", "pro"], message: "Plan must be free or pro" },
+      default: "free",
+    },
+    branding: {
+      logoUrl: { type: String, default: null },
+      primaryColor: { type: String, default: null, trim: true },
+      coverPhotoUrl: { type: String, default: null },
+      slogan: { type: String, default: null, trim: true, maxlength: [80, "Slogan must be at most 80 characters"] },
+      sloganAr: { type: String, default: null, trim: true, maxlength: [80, "Arabic slogan must be at most 80 characters"] },
+      secondaryColor: { type: String, default: null, trim: true },
+      accentColor: { type: String, default: null, trim: true },
+      hidePoweredBy: { type: Boolean, default: false },
+    },
     socialLinks: {
       instagram: { type: String, default: "" },
       facebook: { type: String, default: "" },

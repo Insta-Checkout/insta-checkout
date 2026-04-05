@@ -102,7 +102,7 @@ export function OnboardingForm() {
       const payload: Record<string, string> = {
         firebaseUid,
         email: emailAddr,
-        businessName: opts.businessName || emailAddr.split("@")[0],
+        businessName: opts.businessName || opts.fullName || emailAddr.split("@")[0],
       };
       if (opts.fullName) payload.fullName = opts.fullName;
       if (opts.phoneNumber) payload.phoneNumber = opts.phoneNumber;
@@ -179,7 +179,10 @@ export function OnboardingForm() {
         toast.error(t("onboard.errors.googleNoEmail"));
         return;
       }
-      const ok = await createSellerOnBackend(user.uid, user.email);
+      const ok = await createSellerOnBackend(user.uid, user.email, {
+        fullName: user.displayName || undefined,
+        businessName: user.displayName || undefined,
+      });
       if (ok) {
         toast.success(t("onboard.errors.accountCreated"));
         router.replace("/dashboard/home");

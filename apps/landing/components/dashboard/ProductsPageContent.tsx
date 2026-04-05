@@ -654,25 +654,26 @@ export function ProductsPageContent() {
           ))}
         </div>
       ) : products.length === 0 ? (
-        <Card className="overflow-hidden border-[#E4D8F0] bg-gradient-to-br from-[#F3EEFA] via-white to-[#EDE9FE]/30">
-          <CardContent className="flex flex-col items-center gap-6 px-6 py-12 text-center sm:flex-row sm:items-start sm:justify-center sm:text-start">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-[#EDE9FE]">
-              <Package className="h-10 w-10 text-[#7C3AED]" />
-            </div>
-            <div className="space-y-2">
-              <h2 className="text-xl font-bold text-[#1E0A3C] font-cairo">
-                {t("dashboard.products.startWithFirst")}
-              </h2>
-              <p className="max-w-md text-[#6B5B7B] font-cairo">
-                {t("dashboard.products.startSubtitle")}
-              </p>
+        <Card className="overflow-hidden border-[#E4D8F0]">
+          <CardContent className="flex flex-col items-center gap-6 px-6 py-10 sm:flex-row sm:items-stretch sm:justify-center">
+            <div className="flex flex-col items-center gap-3 text-center sm:items-start sm:text-start">
               <Button
                 onClick={openCreate}
-                className="mt-2 gap-2 font-cairo bg-[#7C3AED] hover:bg-[#6D28D9] text-white cursor-pointer"
+                className="gap-2 font-cairo bg-[#7C3AED] hover:bg-[#6D28D9] text-white cursor-pointer"
               >
                 <Plus className="h-4 w-4" />
                 {t("dashboard.products.addProduct")}
               </Button>
+            </div>
+            <div className="hidden sm:block w-px bg-[#E4D8F0] self-stretch" />
+            <hr className="sm:hidden w-full border-[#E4D8F0]" />
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#EDE9FE]">
+                <Package className="h-5 w-5 text-[#7C3AED]" />
+              </div>
+              <p className="text-sm text-[#6B5B7B] font-cairo max-w-xs">
+                {t("dashboard.products.emptyPlaceholder")}
+              </p>
             </div>
           </CardContent>
         </Card>

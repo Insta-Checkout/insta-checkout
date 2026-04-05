@@ -101,15 +101,16 @@ export function OnboardingChecklist() {
       );
       if (!res.ok) throw new Error("Failed");
       const data = await res.json();
+      const updated = {
+        onboardingComplete: data.onboardingComplete ?? false,
+        onboardingProgress: data.onboardingProgress,
+      };
       setProfile((p) =>
-        p
-          ? {
-              ...p,
-              onboardingComplete: data.onboardingComplete ?? p.onboardingComplete,
-              onboardingProgress: data.onboardingProgress ?? p.onboardingProgress,
-            }
-          : null
+        p ? { ...p, ...updated } : null
       );
+      if (updated.onboardingComplete) {
+        window.dispatchEvent(new CustomEvent("onboarding-complete"));
+      }
       toast.success(t("dashboard.onboarding.saveSuccess"));
       setExpandedStep(null);
     } catch {
@@ -191,9 +192,19 @@ export function OnboardingChecklist() {
     return true;
   };
 
+  const INSTAPAY_PATTERN = /^https?:\/\/(ipn\.eg|instapay\.eg)\//i;
+
   const isInstapayFormValid = () => {
-    return formData.instapayLink.trim().length > 0;
+    const link = formData.instapayLink.trim();
+    return link.length > 0 && INSTAPAY_PATTERN.test(link);
   };
+
+  const instapayError = (() => {
+    const link = formData.instapayLink.trim();
+    if (!link) return null;
+    if (!INSTAPAY_PATTERN.test(link)) return t("dashboard.onboarding.instapayLinkInvalid");
+    return null;
+  })();
 
   return (
     <Card className="border-primary/30 bg-primary/5">
@@ -380,9 +391,13 @@ export function OnboardingChecklist() {
                           className="font-mono font-cairo"
                           dir="ltr"
                         />
-                        <p className="text-xs text-muted-foreground font-cairo">
-                          {t("dashboard.onboarding.instapayLinkHint")}
-                        </p>
+                        {instapayError ? (
+                          <p className="text-xs text-red-600 font-cairo">{instapayError}</p>
+                        ) : (
+                          <p className="text-xs text-muted-foreground font-cairo">
+                            {t("dashboard.onboarding.instapayLinkHint")}
+                          </p>
+                        )}
                       </div>
 
                       {/* Screenshot showing where to find the link */}

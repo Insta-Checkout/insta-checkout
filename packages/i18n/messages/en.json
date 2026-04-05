@@ -36,7 +36,8 @@
       "signInWithEmail": "Sign in with email",
       "noAccount": "Don't have an account?",
       "registerLink": "Register your business",
-      "passwordRequired": "Password is required"
+      "passwordRequired": "Password is required",
+      "forgotPassword": "Forgot password?"
     },
     "hero": {
       "headline": "Create an InstaPay payment link — in seconds",
@@ -743,6 +744,53 @@
       "userNotFoundReset": "No account with this email."
     }
   },
+  "branding": {
+    "title": "Branding",
+    "subtitle": "Customize how your checkout page looks to buyers",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "saveSuccess": "Branding updated successfully",
+    "resetDefault": "Reset to default",
+    "resetSuccess": "Branding reset to default theme",
+    "uploading": "Uploading...",
+    "uploadSuccess": "File uploaded successfully",
+    "proRequired": "Upgrade to Pro to unlock",
+    "logo": {
+      "title": "Logo",
+      "hint": "Click to upload logo (PNG, JPG, WebP — max 2MB)",
+      "change": "Change logo"
+    },
+    "cover": {
+      "title": "Cover Photo",
+      "hint": "Click to upload cover photo (PNG, JPG, WebP — max 5MB)"
+    },
+    "colors": {
+      "title": "Colors",
+      "primary": "Primary color",
+      "background": "Background color"
+    },
+    "extra": {
+      "title": "Slogan & Settings",
+      "slogan": "Slogan (English)",
+      "sloganPlaceholder": "Your tagline here",
+      "sloganAr": "Slogan (Arabic)",
+      "sloganArPlaceholder": "شعارك هنا",
+      "hidePoweredBy": "Hide \"Powered by\" badge"
+    },
+    "preview": {
+      "title": "Live Preview",
+      "sampleProduct": "Sample Product",
+      "ctaButton": "I've paid",
+      "storeFallback": "Your Store"
+    },
+    "errors": {
+      "loadFailed": "Failed to load branding settings",
+      "saveFailed": "Failed to save branding settings",
+      "uploadFailed": "Failed to upload file",
+      "fileTooLarge": "File is too large",
+      "invalidFileType": "Only PNG, JPG, and WebP files are allowed"
+    }
+  },
   "checkout": {
     "meta": {
       "title": "Checkout - InstaPay Payment",
@@ -763,7 +811,7 @@
       "openInstapayButton": "Open InstaPay to pay",
       "openInstapayHint": "Tap the button to open InstaPay and send the payment",
       "noInstapayLink": "Payment method not configured — contact the seller",
-      "ensureTransfer": "Make sure you see \"Transfer successful\" in your app before continuing",
+      "ensureTransfer": "Make sure you see \"Transfer successful\" in your Instapay success screen before continuing",
       "ensureTransferBold": "Transfer successful",
       "paidButton": "I've paid",
       "welcomeMessage": "{seller} is requesting a payment from you"
@@ -799,7 +847,7 @@
       "statusSubtitle": "You'll get a confirmation once the seller verifies your payment. Usually takes a few minutes.",
       "contactSeller": "Contact seller on WhatsApp"
     },
-    "footer": "Powered by secure InstaPay payment",
+    "footer": "Powered by Instacheckouteg.com",
     "errors": {
       "expired": "This payment link has expired",
       "cancelled": "This payment link has been cancelled",
@@ -824,6 +872,7 @@
       "links": "Payment Links",
       "profile": "Profile",
       "team": "Team",
+      "branding": "Branding",
       "settings": "Settings"
     },
     "title": "Welcome to your dashboard",
@@ -938,6 +987,7 @@
       "instapayLink": "InstaPay Link",
       "instapayLinkPlaceholder": "https://ipn.eg/S/...",
       "instapayLinkHint": "Open InstaPay app → your name → Share → Copy link",
+      "instapayLinkInvalid": "Invalid InstaPay link. Expected format: ipn.eg/S/username/instapay/...",
       "choose": "Choose...",
       "save": "Save",
       "saveSuccess": "Saved",
@@ -1055,6 +1105,7 @@
       "deleteFailed": "Delete failed",
       "startWithFirst": "Start by adding your first product",
       "startSubtitle": "Add products with price and description, then create payment links to share with customers on WhatsApp or any platform.",
+      "emptyPlaceholder": "Your products will appear here once you create one.",
       "active": "Active",
       "archived": "Archived",
       "edit": "Edit",
@@ -1100,6 +1151,9 @@
       "pendingNote": "We'll notify you when your account is activated.",
       "rejectedTitle": "Your account was not approved",
       "rejectedContact": "If you think this is a mistake, contact us on WhatsApp or email.",
+      "approvedTitle": "Your account has been approved!",
+      "approvedBody": "You're all set — start creating payment links from your products or use quick links to get paid instantly.",
+      "dismiss": "Dismiss",
       "linkDisabled": "Your account must be approved before you can create payment links"
     },
     "team": {

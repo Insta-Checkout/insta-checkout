@@ -26,6 +26,16 @@ export interface CheckoutData {
     instapayLink: string | null
     logoUrl: string | null
     whatsappNumber: string
+    plan?: string
+    branding?: {
+      logoUrl?: string | null
+      primaryColor?: string | null
+      coverPhotoUrl?: string | null
+      slogan?: string | null
+      sloganAr?: string | null
+      backgroundColor?: string | null
+      hidePoweredBy?: boolean
+    } | null
   }
   expiresAt: string | null
   locale: string
