@@ -1,5 +1,11 @@
 import { Router, Request, Response } from "express"
+import multer from "multer"
+import path from "path"
+import fs from "fs"
+import { writeFile } from "fs/promises"
+import crypto from "crypto"
 import { connectToMongo } from "../db.js"
+import { API_BASE_URL } from "../config.js"
 import { requireFirebaseAuth } from "../middleware/firebaseAuth.js"
 import { resolveSellerContext } from "../middleware/resolveSellerContext.js"
 import { ALL_PERMISSIONS } from "../permissions.js"
@@ -8,6 +14,24 @@ import sellersProductsRouter from "./sellersProducts.js"
 import sellersPaymentLinksRouter from "./sellersPaymentLinks.js"
 import sellersTeamRouter from "./sellersTeam.js"
 import sellersInvitationsRouter from "./sellersInvitations.js"
+
+const HEX_COLOR_RE = /^#[0-9a-fA-F]{6}$/
+
+const PRO_ONLY_BRANDING_FIELDS = ["coverPhotoUrl", "slogan", "sloganAr", "secondaryColor", "accentColor", "hidePoweredBy"] as const
+
+const brandingUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    const allowed = ["image/png", "image/jpeg", "image/webp"]
+    cb(null, allowed.includes(file.mimetype))
+  },
+})
+
+const BRANDING_UPLOADS_DIR = path.join(process.cwd(), "uploads", "branding")
+if (!fs.existsSync(BRANDING_UPLOADS_DIR)) {
+  fs.mkdirSync(BRANDING_UPLOADS_DIR, { recursive: true })
+}
 
 const router = Router()
 router.use(requireFirebaseAuth)
@@ -71,6 +95,8 @@ router.get("/", async (req: Request, res: Response) => {
       },
       approvalStatus: seller.approvalStatus ?? "approved",
       approvalNote: seller.approvalNote ?? null,
+      plan: seller.plan ?? "free",
+      branding: seller.branding ?? null,
       role: {
         isOwner: ctx.isOwner,
         permissions: ctx.permissions,
@@ -248,6 +274,65 @@ router.patch("/", async (req: Request, res: Response) => {
     }
   }
 
+  // Handle branding fields with pro-gating
+  if (body.branding && typeof body.branding === "object") {
+    const branding = body.branding as Record<string, unknown>
+    const db = await connectToMongo()
+    const seller = await db.collection("sellers").findOne({ firebaseUid })
+    const plan = seller?.plan ?? "free"
+
+    // Check for pro-only fields
+    const proFieldsInRequest = PRO_ONLY_BRANDING_FIELDS.filter(f => branding[f] !== undefined)
+    if (plan !== "pro" && proFieldsInRequest.length > 0) {
+      res.status(403).json({
+        error: "PRO_REQUIRED",
+        message: `The following branding fields require a Pro plan: ${proFieldsInRequest.join(", ")}`,
+      })
+      return
+    }
+
+    // Validate and set free-tier fields
+    if (typeof branding.logoUrl === "string") {
+      updates["branding.logoUrl"] = branding.logoUrl.trim() || null
+    }
+    if (typeof branding.primaryColor === "string") {
+      const val = branding.primaryColor.trim()
+      if (!val) {
+        updates["branding.primaryColor"] = null
+      } else if (HEX_COLOR_RE.test(val)) {
+        updates["branding.primaryColor"] = val
+      }
+    }
+
+    // Pro-only fields (already gated above)
+    if (plan === "pro") {
+      if (typeof branding.coverPhotoUrl === "string") {
+        updates["branding.coverPhotoUrl"] = branding.coverPhotoUrl.trim() || null
+      }
+      if (typeof branding.slogan === "string") {
+        const val = branding.slogan.trim()
+        updates["branding.slogan"] = val.length <= 80 ? val || null : null
+      }
+      if (typeof branding.sloganAr === "string") {
+        const val = branding.sloganAr.trim()
+        updates["branding.sloganAr"] = val.length <= 80 ? val || null : null
+      }
+      if (typeof branding.secondaryColor === "string") {
+        const val = branding.secondaryColor.trim()
+        if (!val) updates["branding.secondaryColor"] = null
+        else if (HEX_COLOR_RE.test(val)) updates["branding.secondaryColor"] = val
+      }
+      if (typeof branding.accentColor === "string") {
+        const val = branding.accentColor.trim()
+        if (!val) updates["branding.accentColor"] = null
+        else if (HEX_COLOR_RE.test(val)) updates["branding.accentColor"] = val
+      }
+      if (typeof branding.hidePoweredBy === "boolean") {
+        updates["branding.hidePoweredBy"] = branding.hidePoweredBy
+      }
+    }
+  }
+
   if (Object.keys(updates).length === 0) {
     res.status(400).json({ error: "VALIDATION_ERROR", details: ["No valid fields provided"] })
     return
@@ -283,12 +368,86 @@ router.patch("/", async (req: Request, res: Response) => {
         logo: !!result.logoUrl,
         socialLinks: !!(result.socialLinks?.instagram || result.socialLinks?.facebook || result.socialLinks?.whatsapp),
       },
+      plan: result.plan ?? "free",
+      branding: result.branding ?? null,
     })
   } catch (err) {
     console.error("[PATCH /sellers/me]", err)
     res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to update profile" })
   }
 })
+
+// POST /sellers/me/branding/upload — upload logo or cover photo
+router.post(
+  "/branding/upload",
+  (req, res, next) => {
+    brandingUpload.single("file")(req, res, (err: unknown) => {
+      if (err) {
+        const msg = err instanceof Error ? err.message : "Upload failed"
+        res.status(400).json({ error: "UPLOAD_ERROR", message: msg })
+        return
+      }
+      next()
+    })
+  },
+  async (req: Request, res: Response) => {
+    const ctx = req.sellerContext!
+    if (!ctx.isOwner) {
+      res.status(403).json({ error: "FORBIDDEN", message: "Only the account owner can upload branding assets" })
+      return
+    }
+
+    const file = req.file
+    if (!file || !file.buffer) {
+      res.status(400).json({ error: "VALIDATION_ERROR", message: "No file provided" })
+      return
+    }
+
+    const type = (req.body as Record<string, string>)?.type
+    if (type !== "logo" && type !== "cover") {
+      res.status(400).json({ error: "VALIDATION_ERROR", message: "Type must be 'logo' or 'cover'" })
+      return
+    }
+
+    // Cover photos are pro-only
+    if (type === "cover") {
+      const db = await connectToMongo()
+      const seller = await db.collection("sellers").findOne({ _id: ctx.sellerId })
+      if ((seller?.plan ?? "free") !== "pro") {
+        res.status(403).json({ error: "PRO_REQUIRED", message: "Cover photo uploads require a Pro plan" })
+        return
+      }
+    }
+
+    try {
+      const sellerDir = path.join(BRANDING_UPLOADS_DIR, ctx.sellerId.toString())
+      if (!fs.existsSync(sellerDir)) {
+        fs.mkdirSync(sellerDir, { recursive: true })
+      }
+
+      const ext = path.extname(file.originalname) || ".png"
+      const token = crypto.randomBytes(9).toString("base64url")
+      const filename = `${type}-${token}${ext}`
+      const filepath = path.join(sellerDir, filename)
+      await writeFile(filepath, file.buffer)
+
+      const fileUrl = `${API_BASE_URL}/uploads/branding/${ctx.sellerId}/${filename}`
+
+      // Auto-update the branding field
+      const db = await connectToMongo()
+      const brandingField = type === "logo" ? "branding.logoUrl" : "branding.coverPhotoUrl"
+      await db.collection("sellers").updateOne(
+        { _id: ctx.sellerId },
+        { $set: { [brandingField]: fileUrl, updatedAt: new Date() } }
+      )
+
+      res.json({ url: fileUrl })
+    } catch (err) {
+      console.error("[POST /sellers/me/branding/upload]", err)
+      res.status(500).json({ error: "INTERNAL_ERROR", message: "Failed to upload file" })
+    }
+  }
+)
 
 router.use(sellersAnalyticsRouter)
 router.use(sellersProductsRouter)

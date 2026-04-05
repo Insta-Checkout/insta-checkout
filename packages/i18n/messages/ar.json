@@ -780,7 +780,8 @@
     "preview": {
       "title": "المعاينة الحية",
       "sampleProduct": "منتج تجريبي",
-      "ctaButton": "دفعت"
+      "ctaButton": "دفعت",
+      "storeFallback": "متجرك"
     },
     "errors": {
       "loadFailed": "فشل تحميل إعدادات العلامة التجارية",

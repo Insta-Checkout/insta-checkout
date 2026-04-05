@@ -780,7 +780,8 @@
     "preview": {
       "title": "Live Preview",
       "sampleProduct": "Sample Product",
-      "ctaButton": "I've paid"
+      "ctaButton": "I've paid",
+      "storeFallback": "Your Store"
     },
     "errors": {
       "loadFailed": "Failed to load branding settings",
