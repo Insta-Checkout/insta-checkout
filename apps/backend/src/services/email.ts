@@ -197,7 +197,7 @@ export async function sendPaymentReceivedEmail(
   locale: "en" | "ar",
   data: PaymentReceivedData
 ): Promise<void> {
-  const dashboardUrl = `${LANDING_BASE_URL}/dashboard/payment-links`
+  const dashboardUrl = `${LANDING_BASE_URL}/dashboard/links`
 
   const amountStr =
     locale === "ar"
