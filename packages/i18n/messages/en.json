@@ -743,6 +743,52 @@
       "userNotFoundReset": "No account with this email."
     }
   },
+  "branding": {
+    "title": "Branding",
+    "subtitle": "Customize how your checkout page looks to buyers",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "saveSuccess": "Branding updated successfully",
+    "resetDefault": "Reset to default",
+    "resetSuccess": "Branding reset to default theme",
+    "uploading": "Uploading...",
+    "uploadSuccess": "File uploaded successfully",
+    "proRequired": "Upgrade to Pro to unlock",
+    "logo": {
+      "title": "Logo",
+      "hint": "Click to upload logo (PNG, JPG, WebP — max 2MB)"
+    },
+    "cover": {
+      "title": "Cover Photo",
+      "hint": "Click to upload cover photo (PNG, JPG, WebP — max 5MB)"
+    },
+    "colors": {
+      "title": "Colors",
+      "primary": "Primary color",
+      "secondary": "Secondary color",
+      "accent": "Accent color"
+    },
+    "extra": {
+      "title": "Slogan & Settings",
+      "slogan": "Slogan (English)",
+      "sloganPlaceholder": "Your tagline here",
+      "sloganAr": "Slogan (Arabic)",
+      "sloganArPlaceholder": "شعارك هنا",
+      "hidePoweredBy": "Hide \"Powered by\" badge"
+    },
+    "preview": {
+      "title": "Live Preview",
+      "sampleProduct": "Sample Product",
+      "ctaButton": "I've paid"
+    },
+    "errors": {
+      "loadFailed": "Failed to load branding settings",
+      "saveFailed": "Failed to save branding settings",
+      "uploadFailed": "Failed to upload file",
+      "fileTooLarge": "File is too large",
+      "invalidFileType": "Only PNG, JPG, and WebP files are allowed"
+    }
+  },
   "checkout": {
     "meta": {
       "title": "Checkout - InstaPay Payment",
@@ -824,6 +870,7 @@
       "links": "Payment Links",
       "profile": "Profile",
       "team": "Team",
+      "branding": "Branding",
       "settings": "Settings"
     },
     "title": "Welcome to your dashboard",
@@ -1104,6 +1151,7 @@
       "rejectedContact": "If you think this is a mistake, contact us on WhatsApp or email.",
       "approvedTitle": "Your account has been approved!",
       "approvedBody": "You're all set — start creating payment links from your products or use quick links to get paid instantly.",
+      "dismiss": "Dismiss",
       "linkDisabled": "Your account must be approved before you can create payment links"
     },
     "team": {

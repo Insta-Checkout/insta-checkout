@@ -33,7 +33,7 @@ export function ApprovalStatusBanner({ status, note, onboardingComplete }: Appro
         <button
           onClick={() => setDismissedApproved(true)}
           className="shrink-0 p-1 text-green-400 hover:text-green-600 rounded cursor-pointer transition-colors"
-          aria-label="Dismiss"
+          aria-label={t("dashboard.approval.dismiss")}
         >
           <X className="h-4 w-4" />
         </button>
