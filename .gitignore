@@ -25,6 +25,9 @@ apps/backend/uploads/
 # Claude Code worktrees
 .claude/worktrees/
 
+# Firebase service account credentials
+firebase-adminsdk.json
+
 # Claude Code MCP config (contains credentials)
 .claude/mcp.json
 .mcp.json
