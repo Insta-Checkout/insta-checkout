@@ -938,6 +938,7 @@
       "instapayLink": "رابط InstaPay",
       "instapayLinkPlaceholder": "https://ipn.eg/S/...",
       "instapayLinkHint": "افتح تطبيق InstaPay ← اسمك ← مشاركة ← انسخ الرابط",
+      "instapayLinkInvalid": "رابط InstaPay غير صالح. الصيغة المتوقعة: ipn.eg/S/username/instapay/...",
       "choose": "اختر...",
       "save": "حفظ",
       "saveSuccess": "تم الحفظ",
@@ -1055,6 +1056,7 @@
       "deleteFailed": "فشل الحذف",
       "startWithFirst": "ابدأ بإضافة منتجك الأول",
       "startSubtitle": "أضف منتجاتك مع السعر والوصف، ثم أنشئ لينكات دفع لشاركها مع عملائك على واتساب أو أي منصة.",
+      "emptyPlaceholder": "منتجاتك هتظهر هنا أول ما تعمل واحد.",
       "active": "نشط",
       "archived": "مؤرشف",
       "edit": "تعديل",
@@ -1100,6 +1102,8 @@
       "pendingNote": "هنبعتلك إشعار لما حسابك يتفعّل.",
       "rejectedTitle": "للأسف، طلبك ما اتقبلش",
       "rejectedContact": "لو حاسس إن ده غلط، كلمنا على واتساب أو الإيميل.",
+      "approvedTitle": "تم اعتماد حسابك!",
+      "approvedBody": "كل حاجة جاهزة — ابدأ اعمل لينكات دفع من منتجاتك أو استخدم الروابط السريعة عشان تقبض فوراً.",
       "linkDisabled": "لازم حسابك يتعتمد الأول عشان تقدر تعمل لينكات دفع"
     },
     "team": {

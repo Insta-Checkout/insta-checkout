@@ -1,6 +1,7 @@
 "use client";
 
-import { ClipboardList, Clock, XCircle } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle, ClipboardList, Clock, X, XCircle } from "lucide-react";
 import { useTranslations } from "@/lib/locale-provider";
 
 type ApprovalStatusBannerProps = {
@@ -11,8 +12,36 @@ type ApprovalStatusBannerProps = {
 
 export function ApprovalStatusBanner({ status, note, onboardingComplete }: ApprovalStatusBannerProps) {
   const { t } = useTranslations();
+  const [dismissedApproved, setDismissedApproved] = useState(false);
 
-  if (!status || status === "approved") return null;
+  if (!status) return null;
+
+  if (status === "approved" && !dismissedApproved) {
+    return (
+      <div className="rounded-xl border border-green-200 bg-green-50 p-4 flex items-start gap-3">
+        <div className="mt-0.5 shrink-0">
+          <CheckCircle className="h-5 w-5 text-green-600" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-green-800 font-cairo">
+            {t("dashboard.approval.approvedTitle")}
+          </h3>
+          <p className="mt-1 text-sm text-green-700 font-cairo">
+            {t("dashboard.approval.approvedBody")}
+          </p>
+        </div>
+        <button
+          onClick={() => setDismissedApproved(true)}
+          className="shrink-0 p-1 text-green-400 hover:text-green-600 rounded cursor-pointer transition-colors"
+          aria-label="Dismiss"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  }
+
+  if (status === "approved") return null;
 
   if (status === "pending") {
     if (!onboardingComplete) {

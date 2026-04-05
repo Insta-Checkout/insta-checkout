@@ -90,12 +90,24 @@ export function Navbar() {
               </button>
             </>
           ) : (
-            <a
-              href="/onboard"
-              className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-bold text-white transition-all hover:bg-[#6D28D9] hover:shadow-md cursor-pointer"
-            >
-              {t("landing.nav.cta")}
-            </a>
+            <>
+              <a
+                href="/login"
+                className={`text-sm font-medium transition-colors cursor-pointer ${
+                  scrolled
+                    ? "text-[#64748B] hover:text-[#1E0A3C]"
+                    : "text-white/75 hover:text-white"
+                }`}
+              >
+                {t("landing.nav.login")}
+              </a>
+              <a
+                href="/onboard"
+                className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-bold text-white transition-all hover:bg-[#6D28D9] hover:shadow-md cursor-pointer"
+              >
+                {t("landing.nav.cta")}
+              </a>
+            </>
           )}
         </div>
 
@@ -194,13 +206,22 @@ export function Navbar() {
                   </button>
                 </>
               ) : (
-                <a
-                  href="/onboard"
-                  onClick={() => setMobileOpen(false)}
-                  className="mt-2 rounded-xl bg-[#7C3AED] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
-                >
-                  {t("landing.nav.cta")}
-                </a>
+                <>
+                  <a
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-xl px-4 py-3 text-base font-medium text-[#1E0A3C] transition-colors hover:bg-[#F3EEFA] cursor-pointer"
+                  >
+                    {t("landing.nav.login")}
+                  </a>
+                  <a
+                    href="/onboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="mt-2 rounded-xl bg-[#7C3AED] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
+                  >
+                    {t("landing.nav.cta")}
+                  </a>
+                </>
               )}
             </div>
           </motion.div>

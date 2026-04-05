@@ -938,6 +938,7 @@
       "instapayLink": "InstaPay Link",
       "instapayLinkPlaceholder": "https://ipn.eg/S/...",
       "instapayLinkHint": "Open InstaPay app → your name → Share → Copy link",
+      "instapayLinkInvalid": "Invalid InstaPay link. Expected format: ipn.eg/S/username/instapay/...",
       "choose": "Choose...",
       "save": "Save",
       "saveSuccess": "Saved",
@@ -1055,6 +1056,7 @@
       "deleteFailed": "Delete failed",
       "startWithFirst": "Start by adding your first product",
       "startSubtitle": "Add products with price and description, then create payment links to share with customers on WhatsApp or any platform.",
+      "emptyPlaceholder": "Your products will appear here once you create one.",
       "active": "Active",
       "archived": "Archived",
       "edit": "Edit",
@@ -1100,6 +1102,8 @@
       "pendingNote": "We'll notify you when your account is activated.",
       "rejectedTitle": "Your account was not approved",
       "rejectedContact": "If you think this is a mistake, contact us on WhatsApp or email.",
+      "approvedTitle": "Your account has been approved!",
+      "approvedBody": "You're all set — start creating payment links from your products or use quick links to get paid instantly.",
       "linkDisabled": "Your account must be approved before you can create payment links"
     },
     "team": {
