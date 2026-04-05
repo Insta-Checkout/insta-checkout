@@ -21,12 +21,14 @@ import {
   Facebook,
 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type OnboardingProgress = {
   category: boolean;
   instapayLink: boolean;
   logo: boolean;
   socialLinks: boolean;
+  phoneNumber: boolean;
 };
 
 type SellerProfile = {
@@ -34,13 +36,15 @@ type SellerProfile = {
   businessName: string;
   category?: string | null;
   logoUrl?: string | null;
+  whatsappNumber?: string | null;
   socialLinks?: { instagram?: string; facebook?: string; whatsapp?: string };
+  contentLocale?: "en" | "ar" | null;
   onboardingComplete: boolean;
   onboardingProgress: OnboardingProgress;
 };
 
 export function OnboardingChecklist() {
-  const { t, get, locale } = useTranslations();
+  const { t, get, locale, setLocale } = useTranslations();
   const [profile, setProfile] = useState<SellerProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [expandedStep, setExpandedStep] = useState<string | null>(null);
@@ -51,7 +55,10 @@ export function OnboardingChecklist() {
     instagram: "",
     facebook: "",
     instapayLink: "",
+    phoneNumber: "",
   });
+
+  const [selectedLocale, setSelectedLocale] = useState<"en" | "ar">("en");
 
   // Logo upload state
   const [uploadingLogo, setUploadingLogo] = useState(false);
@@ -67,12 +74,16 @@ export function OnboardingChecklist() {
       const data = await res.json();
       setProfile(data);
       const socialLinks = data.socialLinks ?? {};
+      if (data.contentLocale) {
+        setSelectedLocale(data.contentLocale);
+      }
       setFormData({
         category: data.category ?? "",
         logoUrl: data.logoUrl ?? null,
         instagram: socialLinks.instagram ?? "",
         facebook: socialLinks.facebook ?? "",
         instapayLink: data.instapayLink ?? "",
+        phoneNumber: data.whatsappNumber ?? "",
       });
     } catch {
       // ignore
@@ -136,6 +147,42 @@ export function OnboardingChecklist() {
     await saveStep("instapayLink", { instapayLink: formData.instapayLink.trim() });
   };
 
+  const savePhoneNumber = async () => {
+    const raw = formData.phoneNumber.replace(/\D/g, "");
+    let normalized = raw;
+    if (raw.startsWith("0") && raw.length === 11) normalized = "20" + raw.slice(1);
+    else if (raw.length === 10) normalized = "20" + raw;
+    await saveStep("whatsappNumber", { whatsappNumber: normalized });
+  };
+
+  const saveLanguage = async () => {
+    if (!profile) return;
+    setSaving("language");
+    try {
+      const res = await fetchWithAuth(
+        `${getBackendUrl()}/sellers/me/onboarding`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contentLocale: selectedLocale }),
+        },
+        getToken
+      );
+      if (!res.ok) throw new Error("Failed");
+      const data = await res.json();
+      setProfile((p) =>
+        p ? { ...p, contentLocale: selectedLocale, onboardingComplete: data.onboardingComplete ?? false, onboardingProgress: data.onboardingProgress } : null
+      );
+      setLocale(selectedLocale);
+      toast.success(t("dashboard.onboarding.saveSuccess"));
+      setExpandedStep(null);
+    } catch {
+      toast.error(t("dashboard.onboarding.saveFailed"));
+    } finally {
+      setSaving(null);
+    }
+  };
+
   const handleLogoUpload = async (file: File) => {
     if (!auth.currentUser) return;
     if (!file.type.startsWith("image/")) {
@@ -172,18 +219,24 @@ export function OnboardingChecklist() {
   const progress = profile.onboardingProgress;
   const instapayDone = progress?.instapayLink;
   const businessInfoDone = progress?.category && progress?.socialLinks;
+  const phoneDone = progress?.phoneNumber;
   const requiredDone =
     (businessInfoDone ? 1 : 0) +
     (instapayDone ? 1 : 0);
   const requiredTotal = 2;
   const pct = Math.round((requiredDone / requiredTotal) * 100);
 
+  // Show phone step only if phone is missing (Google signup users)
+  const showPhoneStep = !phoneDone;
+
   const categoryValues = get<string[]>("dashboard.onboarding.categoryValues") ?? [];
   const categoryLabels = get<string[]>("dashboard.onboarding.categoryLabels") ?? [];
 
   const steps = [
+    { key: "language", labelKey: "dashboard.onboarding.languageStep", done: !!profile.contentLocale, required: false },
     { key: "category", labelKey: "dashboard.onboarding.businessType", done: businessInfoDone, required: true },
     { key: "instapayInfo", labelKey: "dashboard.onboarding.instapayLink", done: instapayDone, required: true },
+    ...(showPhoneStep ? [{ key: "phoneNumber", labelKey: "dashboard.onboarding.phoneNumber", done: false, required: false }] : []),
   ];
 
   const isBusinessInfoValid = () => {
@@ -192,11 +245,16 @@ export function OnboardingChecklist() {
     return true;
   };
 
-  const INSTAPAY_PATTERN = /^https?:\/\/(ipn\.eg|instapay\.eg)\//i;
+  const INSTAPAY_PATTERN = /^https?:\/\/(ipn\.eg|instapay\.eg)/i;
 
   const isInstapayFormValid = () => {
     const link = formData.instapayLink.trim();
     return link.length > 0 && INSTAPAY_PATTERN.test(link);
+  };
+
+  const isPhoneValid = () => {
+    const raw = formData.phoneNumber.replace(/\D/g, "");
+    return /^0?1[0-9]{9}$/.test(raw);
   };
 
   const instapayError = (() => {
@@ -256,7 +314,7 @@ export function OnboardingChecklist() {
                   <ChevronDown className="h-4 w-4" />
                 )}
               </button>
-              {isExpanded && !step.done && (
+              {isExpanded && (
                 <div className="border-t border-border px-4 py-3 space-y-3">
                   {step.key === "category" && (
                     <div className="space-y-4">
@@ -419,6 +477,35 @@ export function OnboardingChecklist() {
                         className="gap-2 font-cairo"
                       >
                         {saving === "instapayInfo" ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : null}
+                        {t("dashboard.onboarding.save")}
+                      </Button>
+                    </div>
+                  )}
+                  {step.key === "phoneNumber" && (
+                    <div className="space-y-3">
+                      <div className="space-y-2">
+                        <Label className="font-cairo">{t("dashboard.onboarding.phoneNumber")}</Label>
+                        <Input
+                          value={formData.phoneNumber}
+                          onChange={(e) => setFormData((p) => ({ ...p, phoneNumber: e.target.value }))}
+                          placeholder={t("dashboard.onboarding.phoneNumberPlaceholder")}
+                          className="font-cairo"
+                          dir="ltr"
+                          type="tel"
+                        />
+                        <p className="text-xs text-muted-foreground font-cairo">
+                          {t("dashboard.onboarding.phoneNumberHint")}
+                        </p>
+                      </div>
+                      <Button
+                        size="sm"
+                        onClick={savePhoneNumber}
+                        disabled={!isPhoneValid() || saving === "whatsappNumber"}
+                        className="gap-2 font-cairo"
+                      >
+                        {saving === "whatsappNumber" ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : null}
                         {t("dashboard.onboarding.save")}
