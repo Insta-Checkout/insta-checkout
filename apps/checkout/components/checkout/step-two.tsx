@@ -1,15 +1,17 @@
 "use client"
 
 import { useState, useRef, type ChangeEvent, type FormEvent } from "react"
-import { Upload, ImageIcon, X, Phone, Loader2, User } from "lucide-react"
+import { Upload, ImageIcon, X, Phone, Loader2, User, Mail } from "lucide-react"
 import { useTranslations } from "@/lib/locale-provider"
 import { toast } from "sonner"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
 interface StepTwoProps {
-  onSubmit: (phoneNumber: string, fullName: string, screenshot: File) => void
+  onSubmit: (phoneNumber: string, fullName: string, screenshot: File, buyerEmail: string) => void
   isSubmitting: boolean
 }
 
@@ -17,10 +19,12 @@ export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
   const { t } = useTranslations()
   const [fullName, setFullName] = useState("")
   const [phoneNumber, setPhoneNumber] = useState("")
+  const [buyerEmail, setBuyerEmail] = useState("")
   const [screenshot, setScreenshot] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [nameError, setNameError] = useState("")
   const [phoneError, setPhoneError] = useState("")
+  const [emailError, setEmailError] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const formatPhoneNumber = (value: string) => {
@@ -55,6 +59,19 @@ export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
     return true
   }
 
+  const validateEmail = () => {
+    const trimmed = buyerEmail.trim()
+    if (!trimmed) {
+      setEmailError(t("checkout.step2.emailRequired"))
+      return false
+    }
+    if (!EMAIL_REGEX.test(trimmed)) {
+      setEmailError(t("checkout.step2.emailInvalid"))
+      return false
+    }
+    return true
+  }
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -81,11 +98,12 @@ export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
       setNameError(t("checkout.step2.fullNameRequired"))
       return
     }
+    if (!validateEmail()) return
     if (!validatePhone() || !screenshot) return
-    onSubmit(phoneNumber.replace(/\D/g, ""), fullName.trim(), screenshot)
+    onSubmit(phoneNumber.replace(/\D/g, ""), fullName.trim(), screenshot, buyerEmail.trim().toLowerCase())
   }
 
-  const isFormValid = fullName.trim().length >= 2 && phoneNumber.replace(/\D/g, "").length === 11 && screenshot !== null
+  const isFormValid = fullName.trim().length >= 2 && EMAIL_REGEX.test(buyerEmail.trim()) && phoneNumber.replace(/\D/g, "").length === 11 && screenshot !== null
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
@@ -117,6 +135,45 @@ export function StepTwo({ onSubmit, isSubmitting }: StepTwoProps) {
             {nameError && (
               <p id="name-error" className="text-xs text-destructive font-medium">
                 {nameError}
+              </p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Email Field */}
+      <Card>
+        <CardContent className="py-5">
+          <div className="flex flex-col gap-3">
+            <label htmlFor="buyerEmail" className="text-sm font-bold text-foreground flex items-center gap-2">
+              <Mail className="size-4 text-primary" />
+              {t("checkout.step2.emailLabel")}
+              <span className="text-destructive">*</span>
+            </label>
+            <p className="text-xs text-muted-foreground">
+              {t("checkout.step2.emailHint")}
+            </p>
+            <Input
+              id="buyerEmail"
+              type="email"
+              inputMode="email"
+              value={buyerEmail}
+              onChange={(e) => {
+                setBuyerEmail(e.target.value)
+                if (emailError) setEmailError("")
+              }}
+              placeholder={t("checkout.step2.emailPlaceholder")}
+              required
+              dir="ltr"
+              className={`h-12 text-sm ${
+                emailError ? "border-destructive ring-destructive/20" : ""
+              }`}
+              aria-describedby={emailError ? "email-error" : undefined}
+              aria-invalid={!!emailError}
+            />
+            {emailError && (
+              <p id="email-error" className="text-xs text-destructive font-medium">
+                {emailError}
               </p>
             )}
           </div>
