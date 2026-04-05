@@ -30,6 +30,7 @@ interface CheckoutFlowProps {
   productNameAr?: string | null
   productNameEn?: string | null
   productImage?: string
+  productDescription?: string
   price: string
   instapayLink: string | null
   whatsappLink?: string
@@ -66,6 +67,7 @@ export function CheckoutFlow({
   productNameAr,
   productNameEn,
   productImage,
+  productDescription,
   price,
   instapayLink,
   whatsappLink,
@@ -180,6 +182,7 @@ export function CheckoutFlow({
               sellerName={sellerName}
               productName={displayName}
               productImage={productImage}
+              productDescription={productDescription}
               price={price}
               instapayLink={instapayLink}
               onProceed={handleProceedToStep2}

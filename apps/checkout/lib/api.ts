@@ -19,7 +19,7 @@ export interface CheckoutData {
   paymentLinkId: string
   token: string
   status: string
-  product: { name: string; nameAr: string; nameEn: string; price: number; imageUrl?: string }
+  product: { name: string; nameAr: string; nameEn: string; price: number; imageUrl?: string; description?: string }
   seller: {
     businessName: string
     category: string | null

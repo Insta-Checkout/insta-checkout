@@ -10,6 +10,7 @@ interface StepOneProps {
   sellerName: string
   productName: string
   productImage?: string
+  productDescription?: string
   price: string
   instapayLink: string | null
   onProceed: () => void
@@ -20,6 +21,7 @@ export function StepOne({
   sellerName,
   productName,
   productImage,
+  productDescription,
   price,
   instapayLink,
   onProceed,
@@ -51,6 +53,9 @@ export function StepOne({
         <CardContent className="flex items-center justify-between py-5">
           <div className="flex flex-col gap-1">
             <h3 className="font-bold text-foreground text-lg leading-tight">{productName}</h3>
+            {productDescription && (
+              <p className="text-sm text-muted-foreground leading-relaxed">{productDescription}</p>
+            )}
           </div>
           <div className="flex items-center gap-1.5 bg-primary/10 text-primary px-4 py-2.5 rounded-xl">
             <span className="text-2xl font-bold">{price}</span>

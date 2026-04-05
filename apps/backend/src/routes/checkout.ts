@@ -77,9 +77,11 @@ router.get("/:token", async (req: Request, res: Response) => {
     }
 
     let productImageUrl: string | null = paymentLink.productImageUrl ?? null
-    if (!productImageUrl && paymentLink.productId) {
+    let productDescription: string | null = paymentLink.description ?? null
+    if (paymentLink.productId && (!productImageUrl || productDescription === null)) {
       const product = await db.collection("products").findOne({ _id: paymentLink.productId })
-      productImageUrl = product?.imageUrl ?? null
+      if (!productImageUrl) productImageUrl = product?.imageUrl ?? null
+      if (productDescription === null) productDescription = product?.description ?? null
     }
 
     res.status(200).json({
@@ -92,6 +94,7 @@ router.get("/:token", async (req: Request, res: Response) => {
         nameEn: paymentLink.productNameEn ?? paymentLink.productName ?? "",
         price: paymentLink.price ?? 0,
         imageUrl: productImageUrl ?? undefined,
+        description: productDescription ?? undefined,
       },
       seller: {
         businessName: seller.businessName || seller.fullName || "Seller",
