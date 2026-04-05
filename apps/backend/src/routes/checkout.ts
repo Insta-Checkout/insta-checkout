@@ -93,7 +93,7 @@ router.get("/:token", async (req: Request, res: Response) => {
         imageUrl: productImageUrl ?? undefined,
       },
       seller: {
-        businessName: seller.businessName ?? "",
+        businessName: seller.businessName || seller.fullName || "Seller",
         category: seller.category ?? null,
         instapayLink: seller.instapayLink ?? null,
         logoUrl: seller.logoUrl ?? null,

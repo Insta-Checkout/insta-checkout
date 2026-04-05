@@ -96,14 +96,14 @@ export function SplashPage(): React.JSX.Element {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="mt-14 flex items-center gap-2 text-white/30 text-sm font-[family-name:var(--font-plus-jakarta)]"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-            <path
-              fillRule="evenodd"
-              d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <span>Powered by secure InstaPay payment</span>
+          <Image
+            src="/icon-32x32.png"
+            alt="Insta Checkout"
+            width={16}
+            height={16}
+            className="rounded-sm"
+          />
+          <span>Powered by Instacheckouteg.com</span>
         </motion.div>
       </div>
     </main>

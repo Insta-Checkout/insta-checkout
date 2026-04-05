@@ -799,7 +799,7 @@
       "statusSubtitle": "You'll get a confirmation once the seller verifies your payment. Usually takes a few minutes.",
       "contactSeller": "Contact seller on WhatsApp"
     },
-    "footer": "Powered by secure InstaPay payment",
+    "footer": "Powered by Instacheckouteg.com",
     "errors": {
       "expired": "This payment link has expired",
       "cancelled": "This payment link has been cancelled",

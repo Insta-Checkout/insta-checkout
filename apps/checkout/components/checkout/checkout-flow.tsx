@@ -4,6 +4,7 @@ import { useState, useCallback } from "react"
 import { useTranslations } from "@/lib/locale-provider"
 import { confirmPayment } from "@/lib/api"
 import { toast } from "sonner"
+import Image from "next/image"
 import { SellerHeader } from "./seller-header"
 import { StepIndicator } from "./step-indicator"
 import { StepOne } from "./step-one"
@@ -139,10 +140,22 @@ export function CheckoutFlow({
         </main>
 
         {/* Footer */}
-        <footer className="mt-10 pb-4 text-center">
-          <p className="text-xs text-muted-foreground">
+        <footer className="mt-10 pb-4 flex justify-center">
+          <a
+            href="https://instacheckouteg.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground/60 transition-colors"
+          >
+            <Image
+              src="/icon-32x32.png"
+              alt="Insta Checkout"
+              width={14}
+              height={14}
+              className="rounded-sm"
+            />
             {t("checkout.footer")}
-          </p>
+          </a>
         </footer>
       </div>
     </div>
