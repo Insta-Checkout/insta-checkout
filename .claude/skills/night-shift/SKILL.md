@@ -50,8 +50,12 @@ Wait for explicit confirmation before continuing.
    ```bash
    caffeinate -dims &
    CAFFEINATE_PID=$!
+   # Register this session so other parallel sessions know we're running
+   NIGHT_SHIFT_MARKER="/tmp/night-shift-$$.lock"
+   touch "$NIGHT_SHIFT_MARKER"
    ```
    This keeps the display, disk, and system awake until we kill it at session end.
+   The marker file coordinates with other parallel night shift sessions — sleep only happens when all sessions are done.
 
 2. Ensure we're on main and up to date:
    ```bash
@@ -462,7 +466,7 @@ Before starting a task, estimate its scope. If a task involves **scaffolding a n
 
 1. Commit and push all completed work so far
 2. Create the PR for completed tasks
-3. Stop caffeinate and sleep the Mac
+3. Remove marker file and conditionally sleep (same logic as session end — only sleep if no other sessions are running)
 4. **Start a fresh conversation** to tackle the large task with a full context window
 5. In the fresh session, continue on the same branch and pick up where you left off
 
@@ -486,10 +490,19 @@ Go back to **Phase 1** to pick the next task.
 
 3. **Verify deployments** (see Phase 9 below) before winding down.
 
-4. Stop caffeinate and put the Mac to sleep:
+4. Remove this session's marker file and check if other sessions are still running:
    ```bash
-   kill $CAFFEINATE_PID 2>/dev/null
-   pmset sleepnow
+   rm -f "$NIGHT_SHIFT_MARKER"
+   REMAINING=$(ls /tmp/night-shift-*.lock 2>/dev/null | wc -l | tr -d ' ')
+   if [ "$REMAINING" -eq 0 ]; then
+     # Last session — safe to sleep
+     killall caffeinate 2>/dev/null
+     pmset sleepnow
+   else
+     # Other sessions still running — kill only our caffeinate, don't sleep
+     kill $CAFFEINATE_PID 2>/dev/null
+     echo "Not sleeping — $REMAINING other night shift session(s) still running"
+   fi
    ```
 
 5. Report to the user what was accomplished (they'll see it when they wake the Mac).
