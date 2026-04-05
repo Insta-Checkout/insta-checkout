@@ -5,6 +5,7 @@ import crypto from "crypto"
 import { CHECKOUT_BASE_URL } from "../config.js"
 import { requirePermission } from "../middleware/requirePermission.js"
 import { PERMISSIONS } from "../permissions.js"
+import { sendPaymentConfirmedEmail } from "../services/email.js"
 
 const router = Router()
 const DEFAULT_TTL_DAYS = 7
@@ -295,6 +296,27 @@ router.patch(
       { _id: linkId, sellerId },
       { $set: { status: "confirmed", confirmedAt: now, updatedAt: now } }
     )
+
+    // Notify buyer that payment was confirmed (non-blocking)
+    // Only send if buyer provided an email (currently we only have buyerPhone, so skip for now)
+    // The spec says: "Recipient: buyer email (if collected) or omit if only phone is available"
+    // Future: when buyer email is collected during checkout, send notification here
+    const buyerEmail = link.buyerEmail as string | undefined
+    if (buyerEmail) {
+      ;(async () => {
+        const sellers = db.collection("sellers")
+        const seller = await sellers.findOne({ _id: sellerId })
+        const businessName = (seller?.businessName as string) ?? "Seller"
+        const locale = (seller?.preferredLocale as "en" | "ar") ?? "ar"
+        await sendPaymentConfirmedEmail(buyerEmail, locale, {
+          businessName,
+          productName: (link.productName as string) ?? "Payment",
+          amount: (link.price as number) ?? 0,
+        })
+      })().catch((err) => {
+        console.error("[PATCH /payment-links/:id/status] Buyer confirmation email failed:", err)
+      })
+    }
 
     res.json({ success: true, status: "confirmed" })
   } catch (err) {
