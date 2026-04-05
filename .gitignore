@@ -25,6 +25,10 @@ apps/backend/uploads/
 # Claude Code worktrees
 .claude/worktrees/
 
+# Claude Code MCP config (contains credentials)
+.claude/mcp.json
+.mcp.json
+
 # Python
 __pycache__/
 *.pyc

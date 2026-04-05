@@ -32,6 +32,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "http://localhost:3002",
+  "http://localhost:3003",
 ]
 if (process.env.CORS_ORIGINS) {
   allowedOrigins.push(...process.env.CORS_ORIGINS.split(",").map((o) => o.trim()))

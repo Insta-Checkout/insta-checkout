@@ -49,7 +49,7 @@ export function Navbar() {
           <img
             src={scrolled ? "/logo/logo.svg" : "/logo/logo-white.svg"}
             alt="Insta Checkout"
-            className="h-8 w-auto transition-opacity"
+            className={`${scrolled ? "h-14" : "h-10"} w-auto transition-all`}
           />
         </a>
 
