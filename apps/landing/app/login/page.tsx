@@ -126,7 +126,10 @@ export default function LoginPage() {
   };
 
   const handleForgetPassword = async () => {
-    if (!forgetEmail.trim()) return;
+    if (!forgetEmail.trim()) {
+      toast.error(t("onboard.errors.enterEmailFirst"));
+      return;
+    }
     setForgetSending(true);
     try {
       await resetPassword(forgetEmail.trim());
