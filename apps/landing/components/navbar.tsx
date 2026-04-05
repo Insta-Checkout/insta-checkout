@@ -5,7 +5,6 @@ import { Menu, X, LogOut, Globe } from "lucide-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { onAuthStateChanged } from "firebase/auth"
 import { useTranslations } from "@/lib/locale-provider"
-import { LanguageSwitcher } from "./language-switcher"
 import { auth, signOutUser } from "@/lib/firebase"
 
 export function Navbar() {
@@ -72,7 +71,6 @@ export function Navbar() {
 
         {/* Desktop Right */}
         <div className="hidden items-center gap-3 md:flex">
-          <LanguageSwitcher />
           {user ? (
             <>
               <a
@@ -92,6 +90,13 @@ export function Navbar() {
           ) : (
             <>
               <a
+                href="/onboard"
+                className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-bold text-white transition-all hover:bg-[#6D28D9] hover:shadow-md cursor-pointer"
+              >
+                {t("landing.nav.cta")}
+              </a>
+              <div className={`h-5 w-px ${scrolled ? "bg-[#E4D8F0]" : "bg-white/30"}`} />
+              <a
                 href="/login"
                 className={`text-sm font-medium transition-colors cursor-pointer ${
                   scrolled
@@ -100,12 +105,6 @@ export function Navbar() {
                 }`}
               >
                 {t("landing.nav.login")}
-              </a>
-              <a
-                href="/onboard"
-                className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-bold text-white transition-all hover:bg-[#6D28D9] hover:shadow-md cursor-pointer"
-              >
-                {t("landing.nav.cta")}
               </a>
             </>
           )}
@@ -208,18 +207,19 @@ export function Navbar() {
               ) : (
                 <>
                   <a
-                    href="/login"
-                    onClick={() => setMobileOpen(false)}
-                    className="rounded-xl px-4 py-3 text-base font-medium text-[#1E0A3C] transition-colors hover:bg-[#F3EEFA] cursor-pointer"
-                  >
-                    {t("landing.nav.login")}
-                  </a>
-                  <a
                     href="/onboard"
                     onClick={() => setMobileOpen(false)}
                     className="mt-2 rounded-xl bg-[#7C3AED] px-4 py-3 text-center text-base font-bold text-white cursor-pointer"
                   >
                     {t("landing.nav.cta")}
+                  </a>
+                  <hr className="border-[#E4D8F0]" />
+                  <a
+                    href="/login"
+                    onClick={() => setMobileOpen(false)}
+                    className="rounded-xl px-4 py-3 text-base font-medium text-[#1E0A3C] transition-colors hover:bg-[#F3EEFA] cursor-pointer"
+                  >
+                    {t("landing.nav.login")}
                   </a>
                 </>
               )}

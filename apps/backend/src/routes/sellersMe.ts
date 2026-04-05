@@ -92,6 +92,7 @@ router.get("/", async (req: Request, res: Response) => {
         instapayLink: !!seller.instapayLink,
         logo: !!seller.logoUrl,
         socialLinks: !!(seller.socialLinks?.instagram || seller.socialLinks?.facebook || seller.socialLinks?.whatsapp),
+        phoneNumber: !!seller.whatsappNumber,
       },
       approvalStatus: seller.approvalStatus ?? "approved",
       approvalNote: seller.approvalNote ?? null,
@@ -138,15 +139,10 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
   }
   if (typeof body.instapayLink === "string") {
     const val = body.instapayLink.trim()
-    if (val) {
-      try {
-        const url = new URL(val)
-        if (url.hostname === "ipn.eg" || url.hostname === "instapay.eg") {
-          updates.instapayLink = val
-        }
-      } catch { /* ignore invalid URLs */ }
-    } else {
+    if (!val) {
       updates.instapayLink = null
+    } else if (/^https?:\/\/(ipn\.eg|instapay\.eg)/i.test(val)) {
+      updates.instapayLink = val
     }
   }
   if (typeof body.logoUrl === "string") {
@@ -206,6 +202,7 @@ router.patch("/onboarding", async (req: Request, res: Response) => {
           const sl = doc.socialLinks as { instagram?: string; facebook?: string; whatsapp?: string } | undefined
           return !!(sl?.instagram || sl?.facebook || sl?.whatsapp)
         })(),
+        phoneNumber: !!(doc.whatsappNumber as string | undefined),
       },
     })
   } catch (err) {
@@ -251,15 +248,10 @@ router.patch("/", async (req: Request, res: Response) => {
   }
   if (typeof body.instapayLink === "string") {
     const val = body.instapayLink.trim()
-    if (val) {
-      try {
-        const url = new URL(val)
-        if (url.hostname === "ipn.eg" || url.hostname === "instapay.eg") {
-          updates.instapayLink = val
-        }
-      } catch { /* ignore invalid URLs */ }
-    } else {
+    if (!val) {
       updates.instapayLink = null
+    } else if (/^https?:\/\/(ipn\.eg|instapay\.eg)/i.test(val)) {
+      updates.instapayLink = val
     }
   }
   if (typeof body.logoUrl === "string") {
@@ -350,6 +342,7 @@ router.patch("/", async (req: Request, res: Response) => {
         instapayLink: !!result.instapayLink,
         logo: !!result.logoUrl,
         socialLinks: !!(result.socialLinks?.instagram || result.socialLinks?.facebook || result.socialLinks?.whatsapp),
+        phoneNumber: !!result.whatsappNumber,
       },
       plan: result.plan ?? "free",
       branding: result.branding ?? null,

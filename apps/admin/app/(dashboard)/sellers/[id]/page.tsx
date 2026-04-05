@@ -32,6 +32,7 @@ import {
 import { useAuth } from "@/lib/auth/AuthProvider";
 import { getBackendUrl, fetchWithAuth } from "@/lib/api";
 import { toast } from "sonner";
+import Image from "next/image";
 
 type SellerDetail = {
   _id: string;
@@ -276,13 +277,36 @@ export default function SellerDetailPage(): React.JSX.Element {
       </Button>
 
       <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-[#1E0A3C] font-heading">
-            {seller.businessName || seller.fullName}
-          </h1>
-          {seller.businessName && seller.fullName && (
-            <p className="mt-1 text-sm text-[#6B5B7B]">{seller.fullName}</p>
+        <div className="flex items-center gap-4">
+          {seller.logoUrl ? (
+            <Image
+              src={seller.logoUrl}
+              alt={seller.businessName || seller.fullName}
+              width={56}
+              height={56}
+              className="h-14 w-14 rounded-xl object-cover border border-[#E4D8F0] shrink-0"
+              unoptimized
+            />
+          ) : (
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#EDE9FE] border border-[#E4D8F0]">
+              <span className="text-lg font-bold text-[#7C3AED]">
+                {(seller.businessName || seller.fullName || "?")
+                  .split(" ")
+                  .map((w: string) => w[0])
+                  .join("")
+                  .slice(0, 2)
+                  .toUpperCase()}
+              </span>
+            </div>
           )}
+          <div>
+            <h1 className="text-2xl font-bold text-[#1E0A3C] font-heading">
+              {seller.businessName || seller.fullName}
+            </h1>
+            {seller.businessName && seller.fullName && (
+              <p className="mt-1 text-sm text-[#6B5B7B]">{seller.fullName}</p>
+            )}
+          </div>
         </div>
         <ApprovalStatusBadge status={seller.approvalStatus} />
       </div>

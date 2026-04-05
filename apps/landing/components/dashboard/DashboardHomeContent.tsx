@@ -256,7 +256,7 @@ export function DashboardHomeContent(): React.JSX.Element {
 
   return (
     <div className="space-y-8">
-      <ApprovalStatusBanner status={approvalStatus} note={approvalNote} onboardingComplete={onboardingComplete} />
+      <ApprovalStatusBanner status={approvalStatus} note={approvalNote} onboardingComplete={onboardingComplete} hasPaymentLinks={(analytics?.activeLinksCount ?? 0) > 0} />
       <OnboardingChecklist />
 
       {/* Welcome card — shown when no payments yet and account is approved */}

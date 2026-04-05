@@ -8,15 +8,21 @@ type ApprovalStatusBannerProps = {
   status: "pending" | "rejected" | "approved" | undefined;
   note?: string | null;
   onboardingComplete?: boolean;
+  hasPaymentLinks?: boolean;
 };
 
-export function ApprovalStatusBanner({ status, note, onboardingComplete }: ApprovalStatusBannerProps) {
+const BANNER_DISMISSED_KEY = "approvalBannerDismissed";
+
+export function ApprovalStatusBanner({ status, note, onboardingComplete, hasPaymentLinks }: ApprovalStatusBannerProps) {
   const { t } = useTranslations();
-  const [dismissedApproved, setDismissedApproved] = useState(false);
+  const [dismissedApproved, setDismissedApproved] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return localStorage.getItem(BANNER_DISMISSED_KEY) === "true";
+  });
 
   if (!status) return null;
 
-  if (status === "approved" && !dismissedApproved) {
+  if (status === "approved" && !dismissedApproved && !hasPaymentLinks) {
     return (
       <div className="rounded-xl border border-green-200 bg-green-50 p-4 flex items-start gap-3">
         <div className="mt-0.5 shrink-0">
@@ -31,7 +37,10 @@ export function ApprovalStatusBanner({ status, note, onboardingComplete }: Appro
           </p>
         </div>
         <button
-          onClick={() => setDismissedApproved(true)}
+          onClick={() => {
+            localStorage.setItem(BANNER_DISMISSED_KEY, "true");
+            setDismissedApproved(true);
+          }}
           className="shrink-0 p-1 text-green-400 hover:text-green-600 rounded cursor-pointer transition-colors"
           aria-label={t("dashboard.approval.dismiss")}
         >

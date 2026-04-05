@@ -1035,7 +1035,10 @@
         "فن وحرف يدوية",
         "منتجات رقمية",
         "أخرى"
-      ]
+      ],
+      "phoneNumber": "رقم الموبايل",
+      "phoneNumberPlaceholder": "01XXXXXXXXX",
+      "phoneNumberHint": "رقم الواتساب بتاعك عشان نبعتلك إشعارات الطلبات"
     },
     "links": {
       "title": "لينكات الدفع",

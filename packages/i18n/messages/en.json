@@ -1035,7 +1035,10 @@
         "Art & Crafts",
         "Digital Products",
         "Other"
-      ]
+      ],
+      "phoneNumber": "Phone Number",
+      "phoneNumberPlaceholder": "01XXXXXXXXX",
+      "phoneNumberHint": "Your WhatsApp number for order notifications"
     },
     "links": {
       "title": "Payment Links",
