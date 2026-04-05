@@ -4,6 +4,7 @@ import { ObjectId } from "mongodb"
 import type { Filter, Document } from "mongodb"
 import { connectToMongo } from "../db.js"
 import { requireAdmin } from "../middleware/requireAdmin.js"
+import { sendSellerApprovedEmail, sendSellerRejectedEmail } from "../services/email.js"
 
 const router = Router()
 router.use(requireAdmin)
@@ -213,6 +214,21 @@ router.patch("/sellers/:id/approval", async (req: Request, res: Response) => {
     }
 
     console.log(`[PATCH /admin/sellers/${req.params.id}/approval] ${action} by admin`)
+
+    // Send email notification (non-blocking)
+    const sellerEmail = result.email as string | undefined
+    if (sellerEmail) {
+      const locale = (result.preferredLocale as "en" | "ar") ?? "ar"
+      if (action === "approve") {
+        sendSellerApprovedEmail(sellerEmail, locale).catch((err) => {
+          console.error("[PATCH /admin/sellers/:id/approval] Approval email failed:", err)
+        })
+      } else {
+        sendSellerRejectedEmail(sellerEmail, locale, note).catch((err) => {
+          console.error("[PATCH /admin/sellers/:id/approval] Rejection email failed:", err)
+        })
+      }
+    }
 
     res.json({
       success: true,

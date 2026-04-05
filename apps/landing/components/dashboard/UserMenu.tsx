@@ -51,7 +51,7 @@ export function UserMenu({ businessName, userName, email, photoURL }: Props) {
           </AvatarFallback>
         </Avatar>
         <span className="hidden sm:inline font-medium text-[#1E0A3C] font-cairo max-w-[120px] truncate">
-          {businessName}
+          {displayName}
         </span>
         <ChevronDown
           className={cn("h-4 w-4 text-[#6B5B7B] transition-transform", open && "rotate-180")}
@@ -61,9 +61,9 @@ export function UserMenu({ businessName, userName, email, photoURL }: Props) {
       {open && (
         <div className="absolute end-0 top-full mt-1 w-56 rounded-xl border border-[#E4D8F0] bg-white py-1 shadow-lg z-50">
           <div className="px-3 py-2 border-b border-[#E4D8F0]">
-            <p className="text-sm font-bold text-[#1E0A3C] font-cairo truncate">{businessName}</p>
-            {userName && (
-              <p className="text-xs font-medium text-[#1E0A3C] font-cairo truncate mt-0.5">{userName}</p>
+            <p className="text-sm font-bold text-[#1E0A3C] font-cairo truncate">{displayName}</p>
+            {userName && userName !== businessName && (
+              <p className="text-xs font-medium text-[#1E0A3C] font-cairo truncate mt-0.5">{businessName}</p>
             )}
             <p className="text-xs text-[#6B5B7B] truncate mt-0.5">{email}</p>
           </div>
